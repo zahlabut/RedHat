@@ -9,5 +9,6 @@ controller_ips = [item['networks'].split('=')[-1] for item in controllers]
 for ip in controller_ips:
     ssh_object = SSH(ip,user='heat-admin',key_path='/home/stack/.ssh/id_rsa')
     ssh_object.ssh_connect_key()
-    spec_print([ip,ssh_object.ssh_command('docker ps | grep -i ironic')])
+    ironics=ssh_object.ssh_command('docker ps | grep -i ironic')
     ssh_object.ssh_close()
+    spec_print([ip,ironics])
