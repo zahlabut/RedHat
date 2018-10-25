@@ -73,3 +73,13 @@ def exec_command_line_command(command):
         print e
         return {'ReturnCode': e.returncode, 'CommandOutput': str(e)}
 
+def spec_print(string_list):
+    len_list=[]
+    for item in string_list:
+        len_list.append(len('### '+item.strip()+' ###'))
+    max_len=max(len_list)
+    print ''
+    print"#"*max_len
+    for item in string_list:
+        print "### "+item.strip()+" "*(max_len-len("### "+item.strip())-4)+" ###"
+    print"#"*max_len+'\n'
