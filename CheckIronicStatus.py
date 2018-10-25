@@ -11,6 +11,6 @@ for ip in controller_ips:
     ssh_object = SSH(ip,user='heat-admin',key_path='/home/stack/.ssh/id_rsa')
     ssh_object.ssh_connect_key()
     ironics=ssh_object.ssh_command('sudo docker ps | grep -i ironic')
-    for i in ironics.split('\r'):
+    for i in str(ironics).split('\r'):
         print i
     ssh_object.ssh_close()
