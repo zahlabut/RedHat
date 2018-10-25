@@ -5,22 +5,31 @@ import subprocess
 import json
 
 class SSH():
-    def __init__(self, host, user, password, key_path):
+    def __init__(self, host, user, password='', key_path=''):
         self.host=host
         self.user=user
         self.password=password
         self.key_path=key_path
 
-    def ssh_connect(self):
+    def ssh_connect_password(self):
         try:
             self.client = paramiko.SSHClient()
             self.client.load_system_host_keys()
             self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            self.client.connect(self.host, username=self.user, password=self.password, key_filename=self.key_path)
+            self.client.connect(self.host, username=self.user, password=self.password)
             return {'Status':True}
         except Exception, e:
             return {'Status':False,'Exception':e}
 
+    def ssh_connect_key(self):
+        try:
+            self.client = paramiko.SSHClient()
+            self.client.load_system_host_keys()
+            self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            self.client.connect(self.host, username=self.user, key_filename=self.key_path)
+            return {'Status':True}
+        except Exception, e:
+            return {'Status':False,'Exception':e}
 
     def ssh_command(self, command):
         stdin,stdout,stderr=self.client.exec_command(command)
