@@ -14,8 +14,9 @@ controller_ips = [item['networks'].split('=')[-1] for item in controllers]
 
 
 for ip in controller_ips:
-    ssh_object = SSH(host=ip,user='heat-admin',password='')
+    ssh_object = SSH(ip,'heat-admin','')
     ssh_object.ssh_command('date')
-    SSH.ssh_close()
+    ssh_object.ssh_close()
+
 
 
