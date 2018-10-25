@@ -9,8 +9,8 @@ controller_ips = [item['networks'].split('=')[-1] for item in controllers]
 
 ### Check The Ironic Status ###
 for ip in controller_ips:
-    print 'ssh heat-admin@'+ip+'; docker ps | grep -i ironic'
-    print exec_command_line_command('ssh heat-admin@'+ip+'; docker ps | grep -i ironic')['CommandOutput']
+    print 'ssh heat-admin@'+ip+'; docker ps | grep -i ironic; exit'
+    print exec_command_line_command('ssh heat-admin@'+ip+'; docker ps | grep -i ironic; exit')['CommandOutput']
 
 
 
