@@ -11,4 +11,4 @@ for ip in controller_ips:
     ssh_object.ssh_connect_key()
     ironics=ssh_object.ssh_command('docker ps | grep -i ironic')
     ssh_object.ssh_close()
-    spec_print([ip,ironics])
+    spec_print([ip,str(ironics)])
