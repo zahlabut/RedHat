@@ -93,3 +93,12 @@ def spec_print(string_list):
     for item in string_list:
         print "### "+item.strip()+" "*(max_len-len("### "+item.strip())-4)+" ###"
     print"#"*max_len+'\n'
+
+
+def source_file(path):
+    for line in open(path,'r').readlines():
+        if line.startswith('export'):
+            line=line.replace('\r','').replace('\n','').replace(' ','')
+            os.environ[line.split('=')[0]]=line.split('=')[-1]
+
+
