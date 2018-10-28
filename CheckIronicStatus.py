@@ -2,8 +2,7 @@ from Common import *
 
 ### Get controllers IPs ###
 spec_print(["Make sure you are sourced to Undercloud","Run source /home/stack/stackrc"])
-source_file('/home/stack/stackrc')
-controllers = exec_command_line_command('openstack server list --name controller -f json')['JsonOutput']
+controllers = exec_command_line_command('source /home/stack/stackrc;openstack server list --name controller -f json')['JsonOutput']
 controller_ips = [item['networks'].split('=')[-1] for item in controllers]
 
 # # Check Ironoic on Undercloud#
