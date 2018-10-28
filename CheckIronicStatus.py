@@ -53,3 +53,5 @@ for ip in controller_ips:
             print k, '-->', com_output[k]
     ssh_object.ssh_close()
 
+
+
