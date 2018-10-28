@@ -17,16 +17,19 @@ controller_ips = [item['networks'].split('=')[-1] for item in controllers]
 #     ssh_object.ssh_close()
 
 
-# Check Ironic on Overcloud #
+# Check Ironic on Overcloud + ERRORs in logs #
 catalog_output=exec_command_line_command('openstack catalog show ironic -f json')
 for k in catalog_output['JsonOutput'].keys():
     print k, '-->', catalog_output['JsonOutput'][k]
-controller_command="for i in ironic_pxe_http ironic_pxe_tftp ironic_neutron_agent ironic_conductor ironic_api; do sudo docker ps|grep $i; done"
+ironic_status= "for i in ironic_pxe_http ironic_pxe_tftp ironic_neutron_agent ironic_conductor ironic_api; do sudo docker ps|grep $i; done"
+ironic_errors='grep -i error /var/log/containers/ironic *'
+commands_to_execute=[ironic_status,ironic_errors]
 for ip in controller_ips:
-    print ip
+    print '---',ip,'---'
     ssh_object = SSH(ip,user='heat-admin',key_path='/home/stack/.ssh/id_rsa')
     ssh_object.ssh_connect_key()
-    ironics=ssh_object.ssh_command(controller_command)
-    for k in ironics.keys():
-        print k, '-->', ironics[k]
+    for com in commands_to_execute:
+        com_output=ssh_object.ssh_command(ironic_status)
+        for k in com_output.keys():
+            print k, '-->', com_output[k]
     ssh_object.ssh_close()
