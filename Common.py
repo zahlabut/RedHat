@@ -94,5 +94,3 @@ def spec_print(string_list):
         print "### "+item.strip()+" "*(max_len-len("### "+item.strip())-4)+" ###"
     print"#"*max_len+'\n'
 
-
-xec_command_line_command('echo $OS_PASSWORD')
