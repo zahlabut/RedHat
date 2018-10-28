@@ -22,7 +22,7 @@ catalog_output=exec_command_line_command('openstack catalog show ironic -f json'
 for k in catalog_output['JsonOutput'].keys():
     print k, '-->', catalog_output['JsonOutput'][k]
 ironic_status= "for i in ironic_pxe_http ironic_pxe_tftp ironic_neutron_agent ironic_conductor ironic_api; do sudo docker ps|grep $i; done"
-ironic_errors='grep -i error /var/log/containers/ironic *'
+ironic_errors='grep -i error /var/log/containers/ironic/*'
 commands_to_execute=[ironic_status,ironic_errors]
 for ip in controller_ips:
     print '---',ip,'---'
