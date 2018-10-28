@@ -30,7 +30,7 @@ for ip in controller_ips:
     ssh_object.ssh_connect_key()
     for com in commands_to_execute:
         print '-->',com
-        com_output=ssh_object.ssh_command(ironic_status)
+        com_output=ssh_object.ssh_command(com)
         for k in com_output.keys():
             print k, '-->', com_output[k]
     ssh_object.ssh_close()
