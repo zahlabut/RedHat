@@ -98,4 +98,5 @@ def spec_print(string_list):
 def source_file(path):
     for line in open(path,'r').readlines():
         if line.startswith('export'):
-            os.system(line.strip())
+            print line
+            print os.system(line.strip())
