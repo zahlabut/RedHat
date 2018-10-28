@@ -95,10 +95,4 @@ def spec_print(string_list):
     print"#"*max_len+'\n'
 
 
-# def source_file(path):
-#     for line in open(path,'r').readlines():
-#         if line.startswith('export'):
-#             print line
-#             print exec_command_line_command(line.strip())
-#     print exec_command_line_command('echo $OS_AUTH_URL')
-#     print exec_command_line_command('echo $OS_PASSWORD')
+xec_command_line_command('echo $OS_PASSWORD')

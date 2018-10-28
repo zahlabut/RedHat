@@ -4,18 +4,6 @@ from Common import *
 spec_print(["Make sure you are sourced to Undercloud","Run source /home/stack/stackrc"])
 controllers = exec_command_line_command('source /home/stack/stackrc;openstack server list --name controller -f json')['JsonOutput']
 controller_ips = [item['networks'].split('=')[-1] for item in controllers]
-print controller_ips
-
-# # Check Ironoic on Undercloud#
-# for ip in controller_ips:
-#     print ip
-#     ssh_object = SSH(ip,user='heat-admin',key_path='/home/stack/.ssh/id_rsa')
-#     ssh_object.ssh_connect_key()
-#     ironics=ssh_object.ssh_command('sudo docker ps | grep -i ironic')
-#     for k in ironics.keys():
-#         print k, '-->', ironics[k]
-#     ssh_object.ssh_close()
-
 
 # Check Ironic on Overcloud + ERRORs in logs #
 catalog_output=exec_command_line_command('source /home/stack/overcloudrc;openstack catalog show ironic -f json')
