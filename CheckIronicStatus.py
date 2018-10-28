@@ -17,6 +17,7 @@ controller_ips = [item['networks'].split('=')[-1] for item in controllers]
 
 
 # Check Ironic on Overcloud + ERRORs in logs #
+spec_print(['Check Ironic on Overcloud + ERRORs in logs'])
 catalog_output=exec_command_line_command('source /home/stack/overcloudrc;openstack catalog show ironic -f json')
 for k in catalog_output['JsonOutput'].keys():
     print k, '-->', catalog_output['JsonOutput'][k]
@@ -36,6 +37,7 @@ for ip in controller_ips:
 
 
 # Check Network Ansible (neutron_api) + ERRORs in logs
+spec_print(['Check Network Ansible (neutron_api) + ERRORs in logs'])
 net_ans_status= "sudo docker ps | grep -i neutron_api"
 net_ans_errors='grep -i error /var/log/containers/neutron/server.log*'
 expected_message='cat /var/log/containers/neutron/server.log* | grep -i networking_ansible.config; ' \
