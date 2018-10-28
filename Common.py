@@ -98,10 +98,4 @@ def spec_print(string_list):
 def source_file(path):
     for line in open(path,'r').readlines():
         if line.startswith('export'):
-            line=line.replace('\r','').replace('\n','').replace(' ','').replace('export','')
-            print line
-            print line.split('=')[0]
-            print line.split('=')[-1]
-            os.environ[line.split('=')[0]]=line.split('=')[-1]
-
-
+            os.system(line.strip())
