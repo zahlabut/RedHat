@@ -39,8 +39,8 @@ for ip in controller_ips:
 # Check Network Ansible (neutron_api) + ERRORs in logs
 net_ans_status= "sudo docker ps | grep -i neutron_api"
 net_ans_errors='grep -i error /var/log/containers/neutron/server.log*'
-expected_message='cat /var/log/containers/neutron/server.log* | grep -i networking_ansible; ' \
-                 'zcat /var/log/containers/neutron/server.log* | grep -i networking_ansible'
+expected_message='cat /var/log/containers/neutron/server.log* | grep -i networking_ansible.config; ' \
+                 'zcat /var/log/containers/neutron/server.log* | grep -i networking_ansible.config'
 commands_to_execute=[net_ans_status,net_ans_errors,expected_message]
 for ip in controller_ips:
     print '---',ip,'---'
