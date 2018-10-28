@@ -101,3 +101,4 @@ def source_file(path):
             print line
             print os.system(line.strip())
     print os.system('echo $OS_AUTH_URL=https')
+    print os.system('echo $OS_PASSWORD')
