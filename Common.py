@@ -100,5 +100,5 @@ def source_file(path):
         if line.startswith('export'):
             print line
             print os.system(line.strip())
-    print os.system('echo $OS_AUTH_URL=https')
+    print os.system('echo $OS_AUTH_URL')
     print os.system('echo $OS_PASSWORD')
