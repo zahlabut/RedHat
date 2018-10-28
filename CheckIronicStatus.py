@@ -40,7 +40,7 @@ for ip in controller_ips:
 net_ans_status= "sudo docker ps | grep -i neutron_api"
 net_ans_errors='grep -i error /var/log/containers/neutron/server.log*'
 expected_message='cat -i host /var/log/containers/neutron/server.log*; zcat -i host /var/log/containers/neutron/server.log*'
-commands_to_execute=[net_ans_status,net_ans_errors]
+commands_to_execute=[net_ans_status,net_ans_errors,expected_message]
 for ip in controller_ips:
     print '---',ip,'---'
     ssh_object = SSH(ip,user='heat-admin',key_path='/home/stack/.ssh/id_rsa')
