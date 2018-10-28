@@ -49,17 +49,17 @@ for ip in controller_ips:
 
 # Check Ceph Status + ERRORs in logs #
 spec_print(['Check Ceph Status + ERRORs in logs'])
-ceph_status= "cinder server-list | grep ceph"
+ceph_status= "source /home/stack/stackrc; cinder server-list | grep ceph"
 commands_to_execute=[ceph_status]
-for ip in cephs_ips:
-    spec_print([ip])
-    ssh_object = SSH(ip,user='heat-admin',key_path='/home/stack/.ssh/id_rsa')
-    ssh_object.ssh_connect_key()
-    for com in commands_to_execute:
-        print '-->',com
-        com_output=ssh_object.ssh_command(com)
-        for k in com_output.keys():
-            print k, '-->', com_output[k]
-    ssh_object.ssh_close()
+# for ip in cephs_ips:
+#     spec_print([ip])
+#     ssh_object = SSH(ip,user='heat-admin',key_path='/home/stack/.ssh/id_rsa')
+#     ssh_object.ssh_connect_key()
+#     for com in commands_to_execute:
+#         print '-->',com
+#         com_output=ssh_object.ssh_command(com)
+#         for k in com_output.keys():
+#             print k, '-->', com_output[k]
+#     ssh_object.ssh_close()
 
 
