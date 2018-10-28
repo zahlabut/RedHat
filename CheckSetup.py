@@ -50,8 +50,8 @@ for ip in controller_ips:
 # Check Ceph Status + ERRORs in logs #
 spec_print(['Check Ceph Status + ERRORs in logs'])
 ceph_status= "source /home/stack/overcloudrc; cinder service-list | grep ceph"
-exec_command_line_command(ceph_status)['CommandOutput']
-print #commands_to_execute=[remote_command_onCeph]
+print exec_command_line_command(ceph_status)['CommandOutput']
+#commands_to_execute=[remote_command_onCeph]
 # for ip in cephs_ips:
 #     spec_print([ip])
 #     ssh_object = SSH(ip,user='heat-admin',key_path='/home/stack/.ssh/id_rsa')
