@@ -99,6 +99,6 @@ def source_file(path):
     for line in open(path,'r').readlines():
         if line.startswith('export'):
             print line
-            print os.system(line.strip())
+            print exec_command_line_command(line.strip())
     print os.system('echo $OS_AUTH_URL')
     print os.system('echo $OS_PASSWORD')
