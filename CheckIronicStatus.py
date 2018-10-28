@@ -34,3 +34,20 @@ for ip in controller_ips:
         for k in com_output.keys():
             print k, '-->', com_output[k]
     ssh_object.ssh_close()
+
+
+# Check Network Ansible (neutron_api) + ERRORs in logs
+net_ans_status= "sudo docker ps | grep -i neutron_api"
+net_ans_errors='grep -i error /var/log/containers/neutron/server.log*'
+commands_to_execute=[ironic_status,ironic_errors]
+for ip in controller_ips:
+    print '---',ip,'---'
+    ssh_object = SSH(ip,user='heat-admin',key_path='/home/stack/.ssh/id_rsa')
+    ssh_object.ssh_connect_key()
+    for com in commands_to_execute:
+        print '-->',com
+        com_output=ssh_object.ssh_command(com)
+        for k in com_output.keys():
+            print k, '-->', com_output[k]
+    ssh_object.ssh_close()
+
