@@ -17,7 +17,7 @@ controller_ips = [item['networks'].split('=')[-1] for item in controllers]
 
 
 # Check Ironic on Overcloud + ERRORs in logs #
-catalog_output=exec_command_line_command('openstack catalog show ironic -f json')
+catalog_output=exec_command_line_command('source /home/stack/overcloudrc;openstack catalog show ironic -f json')
 for k in catalog_output['JsonOutput'].keys():
     print k, '-->', catalog_output['JsonOutput'][k]
 ironic_status= "for i in ironic_pxe_http ironic_pxe_tftp ironic_neutron_agent ironic_conductor ironic_api; do sudo docker ps|grep $i; done"
