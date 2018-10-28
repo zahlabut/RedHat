@@ -15,7 +15,7 @@ for ip in controller_ips:
     #print type(ironics)
     #print ironics.keys()
     for i in ironics.iteritems():
-        print i
+        print i.keys()
     # #for k in ironics.iteritems():
     # #    print k,'-->',ironics[k]
     # for i in str(ironics).split('\r'):
