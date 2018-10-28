@@ -18,7 +18,7 @@ controller_ips = [item['networks'].split('=')[-1] for item in controllers]
 
 
 # Check Ironic on Overcloud #
-print exec_command_line_command('openstack catalog show ironic')
+print exec_command_line_command('openstack catalog show ironic -f json')
 controller_command="for i in ironic_pxe_http ironic_pxe_tftp ironic_neutron_agent ironic_conductor ironic_api; do sudo docker ps|grep $i; done"
 for ip in controller_ips:
     print ip
