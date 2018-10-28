@@ -13,8 +13,9 @@ for ip in controller_ips:
     ironics=ssh_object.ssh_command('sudo docker ps | grep -i ironic')
     print ironics
     print type(ironics)
-    for k in ironics.iteritems():
-        print k,'-->',ironics[k]
+    print ironics.keys()
+    #for k in ironics.iteritems():
+    #    print k,'-->',ironics[k]
     for i in str(ironics).split('\r'):
         print i
     ssh_object.ssh_close()
