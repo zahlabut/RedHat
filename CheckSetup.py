@@ -65,4 +65,6 @@ from Common import *
 #     ssh_object.ssh_close()
 
 
-juniper_config_parser('/home/stack/jun_config.json')
+interfaces=juniper_config_parser('/home/stack/jun_config.json')['Interfaces']
+for k in interfaces.keys():
+    print k
