@@ -66,6 +66,5 @@ from Common import *
 
 
 interfaces=juniper_config_parser('/home/stack/jun_config.json')['Interfaces']
-print interfaces
 for i in interfaces:
     print i
