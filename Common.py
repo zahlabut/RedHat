@@ -95,5 +95,5 @@ def spec_print(string_list):
     print"#"*max_len+'\n'
 
 def juniper_config_parser(path_to_config_json):
-    json_output=json.loads(open('path_to_config_json','r').read().lower())
+    json_output=json.loads(open(path_to_config_json,'r').read().lower())
     print type(json_output)
