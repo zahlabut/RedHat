@@ -99,19 +99,13 @@ def juniper_config_parser(path_to_config_json):
     interfaces=json_output['configuration']['interfaces']['interface']
     int_vlan_dic={}
     for inter in interfaces:
-        #print inter
         inter_vlans=None
         name=inter['name']
-        print name
         try:
             inter_vlans=inter['unit'][0]['family']['ethernet-switching']['vlan']
         except Exception, e:
             print e
-        print inter_vlans
-        # int_vlan_dic[name]=inter_vlans
-
+        int_vlan_dic[name]=inter_vlans
     vlans=json_output['configuration']['vlans']
     return {'Interfaces':interfaces,'Vlans':vlans, 'InterfaceVlan':int_vlan_dic}
 
-
-#{u'name': u'xe-0/0/0', u'unit': [{u'name': 0, u'family': {u'ethernet-switching': {u'vlan': {u'members': [u'190']}, u'interface-mode': u'access'}}}]}
