@@ -51,16 +51,17 @@ for ip in controller_ips:
 spec_print(['Check Ceph Status + ERRORs in logs'])
 ceph_status= "source /home/stack/overcloudrc; cinder service-list | grep ceph"
 print exec_command_line_command(ceph_status)['CommandOutput']
-#commands_to_execute=[remote_command_onCeph]
-# for ip in cephs_ips:
-#     spec_print([ip])
-#     ssh_object = SSH(ip,user='heat-admin',key_path='/home/stack/.ssh/id_rsa')
-#     ssh_object.ssh_connect_key()
-#     for com in commands_to_execute:
-#         print '-->',com
-#         com_output=ssh_object.ssh_command(com)
-#         for k in com_output.keys():
-#             print k, '-->', com_output[k]
-#     ssh_object.ssh_close()
+ceph_health_command='sudo -s;ceph health'
+commands_to_execute=[ceph_health_command]
+for ip in controller_ips:
+    spec_print([ip])
+    ssh_object = SSH(ip,user='heat-admin',key_path='/home/stack/.ssh/id_rsa')
+    ssh_object.ssh_connect_key()
+    for com in commands_to_execute:
+        print '-->',com
+        com_output=ssh_object.ssh_command(com)
+        for k in com_output.keys():
+            print k, '-->', com_output[k]
+    ssh_object.ssh_close()
 
 
