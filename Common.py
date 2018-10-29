@@ -96,7 +96,15 @@ def spec_print(string_list):
 
 def juniper_config_parser(path_to_config_json):
     json_output=json.loads(open(path_to_config_json,'r').read().lower())
-    print type(json_output)
     interfaces=json_output['configuration']['interfaces']['interface']
+    int_vlan_dic={}
+    for inter in interfaces:
+        name=inter['name']
+        inter_vlans=inter['unit']['family']['ethernet-switching']['vlan']
+        int_vlan_dic[name]=inter_vlans
+
     vlans=json_output['configuration']['vlans']
-    return {'Interfaces':interfaces,'Vlans':vlans}
+    return {'Interfaces':interfaces,'Vlans':vlans, 'InterfaceVlan':int_vlan_dic}
+
+
+#{u'name': u'xe-0/0/0', u'unit': [{u'name': 0, u'family': {u'ethernet-switching': {u'vlan': {u'members': [u'190']}, u'interface-mode': u'access'}}}]}
