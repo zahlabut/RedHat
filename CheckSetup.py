@@ -69,4 +69,4 @@ interfaces_all=juniper_config_parser('/home/stack/jun_config.json')['Interfaces'
 interface_vlan=juniper_config_parser('/home/stack/jun_config.json')['InterfaceVlan']
 for k in interface_vlan.keys():
     print k,'-->',interface_vlan[k]
-print interface_vlan
+
