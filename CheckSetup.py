@@ -65,8 +65,11 @@ from Common import *
 #     ssh_object.ssh_close()
 
 
-interfaces_all=juniper_config_parser('/home/stack/jun_config.json')['Interfaces']
-interface_vlan=juniper_config_parser('/home/stack/jun_config.json')['InterfaceVlan']
+
+### Check Switch Vlans ###
+conf_data_file='sw_conf.json'
+exec_command_line_command(''''sshpass -p N3tAutomation! ssh ansible@10.9.95.25 'show configuration | display json' > '''+conf_data_file)
+interface_vlan=juniper_config_parser(conf_data_file)['InterfaceVlan']
 for k in interface_vlan.keys():
     print k,'-->',interface_vlan[k]
 
