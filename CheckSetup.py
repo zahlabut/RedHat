@@ -73,3 +73,5 @@ interface_vlan=juniper_config_parser(conf_data_file)['InterfaceVlan']
 for k in interface_vlan.keys():
     print k,'-->',interface_vlan[k]
 
+
+
