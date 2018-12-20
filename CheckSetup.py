@@ -1,6 +1,10 @@
 from Common import *
 import unittest
 
+### Parameters ###
+overclud_user='heat-admin'
+overcloud_ssh_key='/home/stack/.ssh/id_rsa'
+
 ### Get controllers IPs ###
 controllers = exec_command_line_command('source /home/stack/stackrc;openstack server list --name controller -f json')[
     'JsonOutput']
@@ -16,24 +20,24 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
     def test_ironic_in_catalog(self):
         #spec_print(['Check Ironic on Overcloud + ERRORs in logs'])
         catalog_output=exec_command_line_command('source /home/stack/overcloudrc;openstack catalog show ironic -f json')
-        self.assertEqual(catalog_output['JsonOutput']['name'], 'ironic___')
+        self.assertEqual(catalog_output['JsonOutput']['name'], 'ironic','Failed: ironic was not found in catalog output')
 
-
-        # for k in catalog_output['JsonOutput'].keys():
-        #     print k, '-->', catalog_output['JsonOutput'][k]
-        ironic_status= "for i in ironic_pxe_http ironic_pxe_tftp ironic_neutron_agent ironic_conductor ironic_api; do sudo docker ps|grep $i; done"
-        ironic_errors='grep -i error /var/log/containers/ironic/*'
-        commands_to_execute=[ironic_status,ironic_errors]
+    def test_ironic_dockers_status(self):
+        ironic_dockers=['ironic_pxe_http','ironic_pxe_tftp','ironic_neutron_agent','ironic_conductor','ironic_api']
         for ip in controller_ips:
             spec_print([ip])
-            ssh_object = SSH(ip,user='heat-admin',key_path='/home/stack/.ssh/id_rsa')
+            ssh_object = SSH(ip,user=overclud_user,key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
-            for com in commands_to_execute:
-                print '-->',com
-                com_output=ssh_object.ssh_command(com)
-                for k in com_output.keys():
-                    print k, '-->', com_output[k]
-            ssh_object.ssh_close()
+            for doc in ironic_dockers:
+                output=ssh_object.ssh_command('sudo docker ps | grep '+doc)['Stdout']
+                ssh_object.ssh_close()
+                self.assertIn('unhealthy', output, 'Failed: ' + doc + ' status is unhealthy')
+
+
+
+
+        #ironic_errors='grep -i error /var/log/containers/ironic/*'
+
 
     # # Check Network Ansible (neutron_api) + ERRORs in logs
     # spec_print(['Check Network Ansible (neutron_api) + ERRORs in logs'])
