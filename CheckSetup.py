@@ -32,8 +32,10 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
             for doc in ironic_dockers:
                 command='sudo docker ps | grep '+doc
                 output=ssh_object.ssh_command(command)['Stdout']
+                self.assertNotIn('unhealthy', output, 'Failed: ' + ip + ' ' + doc + ' status is unhealthy')
+                self.assertIn(doc, output, 'Failed: ' + doc + ' is not running')
             ssh_object.ssh_close()
-            self.assertNotIn('unhealthy', output, 'Failed: '+ip+' '+doc + ' status is unhealthy')
+
 
     def test_is_errors_in_ironic_logs(self):
         command='sudo grep -R ERROR /var/log/containers/ironic/*'
@@ -53,6 +55,7 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
             output=ssh_object.ssh_command(command)['Stdout']
             ssh_object.ssh_close()
             self.assertNotIn('unhealthy', output, 'Failed: '+ip+' '+'neutron_api status is unhealthy')
+            self.assertIn('neutron_api', output, 'Failed: neutron_api is not running')
 
 
 
