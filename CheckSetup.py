@@ -16,7 +16,7 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
     def test_ironic_in_catalog(self):
         #spec_print(['Check Ironic on Overcloud + ERRORs in logs'])
         catalog_output=exec_command_line_command('source /home/stack/overcloudrc;openstack catalog show ironic -f json')
-        self.assertEqual(catalog_output['name'], 'ironic')
+        self.assertEqual(catalog_output['JsonOutput']['name'], 'ironic')
 
 
         # for k in catalog_output['JsonOutput'].keys():
