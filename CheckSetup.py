@@ -13,11 +13,14 @@ cephs_ips = [item['networks'].split('=')[-1] for item in cephs]
 
 class AnsibleNetworkingRegressionTests(unittest.TestCase):
     # Check Ironic on Overcloud + ERRORs in logs #
-    def test_upper(self):
-        spec_print(['Check Ironic on Overcloud + ERRORs in logs'])
+    def test_ironic_in_catalog(self):
+        #spec_print(['Check Ironic on Overcloud + ERRORs in logs'])
         catalog_output=exec_command_line_command('source /home/stack/overcloudrc;openstack catalog show ironic -f json')
-        for k in catalog_output['JsonOutput'].keys():
-            print k, '-->', catalog_output['JsonOutput'][k]
+        self.assertEqual(catalog_output['name'], 'ironic')
+
+
+        # for k in catalog_output['JsonOutput'].keys():
+        #     print k, '-->', catalog_output['JsonOutput'][k]
         ironic_status= "for i in ironic_pxe_http ironic_pxe_tftp ironic_neutron_agent ironic_conductor ironic_api; do sudo docker ps|grep $i; done"
         ironic_errors='grep -i error /var/log/containers/ironic/*'
         commands_to_execute=[ironic_status,ironic_errors]
