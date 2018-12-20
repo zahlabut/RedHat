@@ -30,9 +30,7 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
             ssh_object.ssh_connect_key()
             for doc in ironic_dockers:
                 command='sudo docker ps | grep '+doc
-                print command
                 output=ssh_object.ssh_command(command)['Stdout']
-                print output
             ssh_object.ssh_close()
             self.assertNotIn('unhealthy', output, 'Failed: '+ip+' '+doc + ' status is unhealthy')
 
