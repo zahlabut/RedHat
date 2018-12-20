@@ -4,6 +4,8 @@ import unittest
 ### Parameters ###
 overclud_user='heat-admin'
 overcloud_ssh_key='/home/stack/.ssh/id_rsa'
+bare_metal_guest_ports=['006','007']
+
 
 ### Get controllers IPs ###
 controllers = exec_command_line_command('source /home/stack/stackrc;openstack server list --name controller -f json')[
@@ -43,11 +45,16 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
             self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in log\n'+output)
 
 
+    def test_dockers_neutron_api_status(self):
+        for ip in controller_ips:
+            ssh_object = SSH(ip,user=overclud_user,key_path=overcloud_ssh_key)
+            ssh_object.ssh_connect_key()
+            command='sudo docker ps | grep -i neutron_api'
+            output=ssh_object.ssh_command(command)['Stdout']
+            ssh_object.ssh_close()
+            self.assertNotIn('unhealthy', output, 'Failed: '+ip+' '+'neutron_api status is unhealthy')
 
 
-
-
-        #ironic_errors='grep -i error /var/log/containers/ironic/*'
 
 
     # # Check Network Ansible (neutron_api) + ERRORs in logs
