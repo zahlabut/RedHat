@@ -25,7 +25,6 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
     def test_ironic_dockers_status(self):
         ironic_dockers=['ironic_pxe_http','ironic_pxe_tftp','ironic_neutron_agent','ironic_conductor','ironic_api']
         for ip in controller_ips:
-            spec_print([ip])
             ssh_object = SSH(ip,user=overclud_user,key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
             for doc in ironic_dockers:
@@ -33,6 +32,17 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
                 output=ssh_object.ssh_command(command)['Stdout']
             ssh_object.ssh_close()
             self.assertNotIn('unhealthy', output, 'Failed: '+ip+' '+doc + ' status is unhealthy')
+
+    def test_is_errors_in_ironic_logs(self):
+        command='sudo grep -R ERROR /var/log/containers/ironic/*'
+        for ip in controller_ips:
+            ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
+            ssh_object.ssh_connect_key()
+            output = ssh_object.ssh_command(command)['Stdout']
+            ssh_object.ssh_close()
+            self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in log\n'+output)
+
+
 
 
 
