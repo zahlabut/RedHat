@@ -33,8 +33,8 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
                 print command
                 output=ssh_object.ssh_command(command)['Stdout']
                 print output
-                ssh_object.ssh_close()
-                #self.assertNotIn('unhealthy', output, 'Failed: '+ip+' '+doc + ' status is unhealthy')
+            ssh_object.ssh_close()
+            self.assertNotIn('unhealthy', output, 'Failed: '+ip+' '+doc + ' status is unhealthy')
 
 
 
