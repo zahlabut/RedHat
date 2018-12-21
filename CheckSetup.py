@@ -87,7 +87,7 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
         ceph_health_command='ceph health'
         ssh_object = SSH(controller_ips[0],user='heat-admin',key_path='/home/stack/.ssh/id_rsa')
         ssh_object.ssh_connect_key()
-        com_output=ssh_object.ssh_command(ceph_health_command)['CommandOutput']
+        com_output=ssh_object.ssh_command(ceph_health_command)['Stdout']
         ssh_object.ssh_close()
         self.assertIn('HEALTH_OK',com_output,'Failed: "HEALTH_OK" not found in output of \n'+ceph_status+' command')
 
