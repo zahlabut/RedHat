@@ -67,17 +67,17 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
     def test_net_ansible_indication_msg_in_log(self):
         commands=["grep 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep 'Ansible Host'"
                   "zgrep 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep 'Ansible Host'"]
-        output = ''
-        stderr = ''
+        output = []
+        stderr = []
         for ip in controller_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
             for com in commands:
                 out = ssh_object.ssh_command(com)
-                output += out['Stdout']
-                stderr += out['Stderr']
+                output.append(out['Stdout'])
+                stderr.append(out['Stderr'])
             ssh_object.ssh_close()
-            self.assertNotIn('', output, 'Failed: ' + ip + ' no indication for Ansible Networking configuration in log'
+            self.assertIn('Ansible Host', str(output), 'Failed: ' + ip + ' no indication for Ansible Networking configuration in log'
                              +'\n'+output+'\n'+stderr)
 
 
