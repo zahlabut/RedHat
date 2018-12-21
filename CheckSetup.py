@@ -68,13 +68,15 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
         commands=["grep 'networking_ansible.config' /var/log/containers/server.log*| grep 'Ansible Host'"
                   "zgrep 'networking_ansible.config' /var/log/containers/server.log.gz*| grep 'Ansible Host'"]
         for ip in controller_ips:
+            print ip
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
             output=''
             for com in commands:
                 output += ssh_object.ssh_command(com)['Stdout']
+            print output
             ssh_object.ssh_close()
-            self.assertNotIn('', output, 'Failed: ' + ip + ' no indication for Ansible Networking configuration in log\n'+output)
+            self.assertNotIn('', output, 'Failed: ' + ip + ' no indication for Ansible Networking configuration in log')
 
 
 
