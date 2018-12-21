@@ -65,8 +65,8 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
             self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in log\n'+output)
 
     def test_net_ansible_indication_msg_in_log(self):
-        commands=["grep 'networking_ansible.config' /var/log/containers/neutron/server.log*| grep 'Ansible Host'"
-                  "zgrep 'networking_ansible.config' /var/log/containers/neutron/server.log.gz*| grep 'Ansible Host'"]
+        commands=["grep 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep 'Ansible Host'"
+                  "zgrep 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep 'Ansible Host'"]
         for ip in controller_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
@@ -74,7 +74,6 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
             stderr=''
             for com in commands:
                 out = ssh_object.ssh_command(com)
-                print out
                 output += out['Stdout']
                 stderr += out['Stderr']
             ssh_object.ssh_close()
