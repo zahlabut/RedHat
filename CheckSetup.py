@@ -55,7 +55,7 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
             self.assertNotIn('unhealthy', output, 'Failed: '+ip+' '+'neutron_api status is unhealthy')
             self.assertIn('neutron_api', output, 'Failed: neutron_api is not running')
 
-    def test_errors_in_neutron_api(self0):
+    def test_errors_in_neutron_api(self):
         command='grep -i error /var/log/containers/neutron/server.log*'
         for ip in controller_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
@@ -63,6 +63,20 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
             output = ssh_object.ssh_command(command)['Stdout']
             ssh_object.ssh_close()
             self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in log\n'+output)
+
+    def test_net_ansible_indication_msg_in_log(self):
+        commands=["grep 'networking_ansible.config' /var/log/containers/server.log*| grep 'Ansible Host'"
+                  "zgrep 'networking_ansible.config' /var/log/containers/server.log.gz*| grep 'Ansible Host'"]
+        for ip in controller_ips:
+            ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
+            ssh_object.ssh_connect_key()
+            output=''
+            for com in commands:
+                output += ssh_object.ssh_command(com)['Stdout']
+            ssh_object.ssh_close()
+            self.assertNotIn('', output, 'Failed: ' + ip + ' no indication for Ansible Networking configuration in log\n'+output)
+
+
 
     # # Check Network Ansible (neutron_api) + ERRORs in logs
     # spec_print(['Check Network Ansible (neutron_api) + ERRORs in logs'])
