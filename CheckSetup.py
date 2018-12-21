@@ -36,8 +36,7 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
                 self.assertIn(doc, output, 'Failed: ' + doc + ' is not running')
             ssh_object.ssh_close()
 
-
-    def test_is_errors_in_ironic_logs(self):
+    def test_errors_in_ironic_logs(self):
         command='sudo grep -R ERROR /var/log/containers/ironic/*'
         for ip in controller_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
@@ -45,7 +44,6 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
             output = ssh_object.ssh_command(command)['Stdout']
             ssh_object.ssh_close()
             self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in log\n'+output)
-
 
     def test_dockers_neutron_api_status(self):
         for ip in controller_ips:
@@ -57,13 +55,19 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
             self.assertNotIn('unhealthy', output, 'Failed: '+ip+' '+'neutron_api status is unhealthy')
             self.assertIn('neutron_api', output, 'Failed: neutron_api is not running')
 
-
-
+    def test_errors_in_neutron_api(self0):
+        command='grep -i error /var/log/containers/neutron/server.log*'
+        for ip in controller_ips:
+            ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
+            ssh_object.ssh_connect_key()
+            output = ssh_object.ssh_command(command)['Stdout']
+            ssh_object.ssh_close()
+            self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in log\n'+output)
 
     # # Check Network Ansible (neutron_api) + ERRORs in logs
     # spec_print(['Check Network Ansible (neutron_api) + ERRORs in logs'])
     # net_ans_status= "sudo docker ps | grep -i neutron_api"
-    # net_ans_errors='grep -i error /var/log/containers/neutron/server.log*'
+    # net_ans_errors=
     # expected_message='cat /var/log/containers/neutron/server.log* | grep -i networking_ansible.config; ' \
     #                  'zcat /var/log/containers/neutron/server.log* | grep -i networking_ansible.config'
     # commands_to_execute=[net_ans_status,net_ans_errors,expected_message]
