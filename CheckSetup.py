@@ -75,6 +75,7 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
             for com in commands:
                 out = ssh_object.ssh_command(com)
                 print ip
+                print com
                 print out
                 output.append(out['Stdout'])
                 stderr.append(out['Stderr'])
