@@ -82,41 +82,24 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
 
 
 
-    # # Check Network Ansible (neutron_api) + ERRORs in logs
-    # spec_print(['Check Network Ansible (neutron_api) + ERRORs in logs'])
-    # net_ans_status= "sudo docker ps | grep -i neutron_api"
-    # net_ans_errors=
-    # expected_message='cat /var/log/containers/neutron/server.log* | grep -i networking_ansible.config; ' \
-    #                  'zcat /var/log/containers/neutron/server.log* | grep -i networking_ansible.config'
-    # commands_to_execute=[net_ans_status,net_ans_errors,expected_message]
-    # for ip in controller_ips:
-    #     spec_print([ip])
-    #     ssh_object = SSH(ip,user='heat-admin',key_path='/home/stack/.ssh/id_rsa')
-    #     ssh_object.ssh_connect_key()
-    #     for com in commands_to_execute:
-    #         print '-->',com
-    #         com_output=ssh_object.ssh_command(com)
-    #         for k in com_output.keys():
-    #             print k, '-->', com_output[k]
-    #     ssh_object.ssh_close()
-    #
-    #
-    # # Check Ceph Status + ERRORs in logs #
-    # spec_print(['Check Ceph Status + ERRORs in logs'])
-    # ceph_status= "source /home/stack/overcloudrc; cinder service-list | grep ceph"
-    # print exec_command_line_command(ceph_status)['CommandOutput']
-    # ceph_health_command='ceph health'
-    # commands_to_execute=[ceph_health_command]
-    # for ip in controller_ips:
-    #     spec_print([ip])
-    #     ssh_object = SSH(ip,user='heat-admin',key_path='/home/stack/.ssh/id_rsa')
-    #     ssh_object.ssh_connect_key()
-    #     for com in commands_to_execute:
-    #         print '-->',com
-    #         com_output=ssh_object.ssh_command(com)
-    #         for k in com_output.keys():
-    #             print k, '-->', com_output[k]
-    #     ssh_object.ssh_close()
+    def test_check_ceph_status(self):
+        ceph_status= "source /home/stack/overcloudrc; cinder service-list | grep ceph"
+        out = exec_command_line_command(ceph_status)['CommandOutput']
+        self.assertIn('ceph',out,'Failed: ceph is not running')
+
+
+        # ceph_health_command='ceph health'
+        # commands_to_execute=[ceph_health_command]
+        # for ip in controller_ips:
+        #     spec_print([ip])
+        #     ssh_object = SSH(ip,user='heat-admin',key_path='/home/stack/.ssh/id_rsa')
+        #     ssh_object.ssh_connect_key()
+        #     for com in commands_to_execute:
+        #         print '-->',com
+        #         com_output=ssh_object.ssh_command(com)
+        #         for k in com_output.keys():
+        #             print k, '-->', com_output[k]
+        #     ssh_object.ssh_close()
     #
     #
     #
