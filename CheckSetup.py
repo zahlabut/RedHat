@@ -67,11 +67,11 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
     def test_net_ansible_indication_msg_in_log(self):
         commands=["grep 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep 'Ansible Host'"
                   "zgrep 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep 'Ansible Host'"]
+        output = ''
+        stderr = ''
         for ip in controller_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
-            output=''
-            stderr=''
             for com in commands:
                 out = ssh_object.ssh_command(com)
                 output += out['Stdout']
