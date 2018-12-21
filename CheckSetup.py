@@ -73,9 +73,10 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
             output=''
             stderr=''
             for com in commands:
-                output = ssh_object.ssh_command(com)
-                output += output['Stdout']
-                stderr += output['Stderr']
+                out = ssh_object.ssh_command(com)
+                print out
+                output += out['Stdout']
+                stderr += out['Stderr']
             ssh_object.ssh_close()
             self.assertNotIn('', output, 'Failed: ' + ip + ' no indication for Ansible Networking configuration in log'
                              +'\n'+output+'\n'+stderr)
