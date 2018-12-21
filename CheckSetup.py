@@ -78,7 +78,7 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
                 stderr.append(out['Stderr'])
             ssh_object.ssh_close()
             self.assertIn('Ansible Host', str(output), 'Failed: ' + ip + ' no indication for Ansible Networking configuration in log'
-                             +'\n'+output+'\n'+stderr)
+                             +'\n'+str(output)+'\n'+str(stderr))
 
 
 
