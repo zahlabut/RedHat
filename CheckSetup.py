@@ -65,7 +65,7 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
             self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in log\n'+output)
 
     def test_net_ansible_indication_msg_in_log(self):
-        commands=["grep 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep 'Ansible Host'"
+        commands=["grep 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep 'Ansible Host'",
                   "zgrep 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep 'Ansible Host'"]
         output = []
         stderr = []
