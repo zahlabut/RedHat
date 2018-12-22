@@ -97,6 +97,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         interface_vlan=juniper_config_parser(conf_switch_file)['InterfaceVlan']
         for k in interface_vlan.keys():
             for port in bare_metal_guest_ports:
+                print interface_vlan[k],port
                 self.assertNotIn(interface_vlan[k],port,'Failed: '+port+' was found as configurd\n'+interface_vlan[k])
 
 if __name__ == '__main__':
