@@ -93,8 +93,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertIn('HEALTH_OK',com_output,'Failed: "HEALTH_OK" not found in output of \n'+ceph_status+' command')
 
     def test_switch_no_vlans_for_bm_ports(self):
-        exec_command_line_command("sshpass -p N3tAutomation! ssh ansible@10.9.95.25 'show configuration | display json' > "+conf_data_file)
-        interface_vlan=juniper_config_parser(conf_data_file)['InterfaceVlan']
+        exec_command_line_command("sshpass -p N3tAutomation! ssh ansible@10.9.95.25 'show configuration | display json' > "+conf_switch_file)
+        interface_vlan=juniper_config_parser(conf_switch_file)['InterfaceVlan']
         for k in interface_vlan.keys():
             for port in bare_metal_guest_ports:
                 self.assertNotIn(interface_vlan[k],port,'Failed: '+port+' was found as configurd\n'+interface_vlan[k])
