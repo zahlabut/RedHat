@@ -107,6 +107,5 @@ def juniper_config_parser(path_to_config_json):
             print e
         int_vlan_dic[name]=inter_vlans
     vlans=json_output['configuration']['vlans']
-    interfaces=[str(item) for item in interfaces]
     return {'Interfaces':interfaces,'Vlans':vlans, 'InterfaceVlan':int_vlan_dic}
 
