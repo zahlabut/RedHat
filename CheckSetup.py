@@ -4,7 +4,8 @@ import unittest
 ### Parameters ###
 overclud_user='heat-admin'
 overcloud_ssh_key='/home/stack/.ssh/id_rsa'
-bare_metal_guest_ports=['006','007']
+bare_metal_guest_ports=['xe-0/0/6','xe-0/0/7']
+
 
 
 ### Get controllers IPs ###
@@ -17,14 +18,16 @@ cephs = exec_command_line_command('source /home/stack/stackrc;openstack server l
     'JsonOutput']
 cephs_ips = [item['networks'].split('=')[-1] for item in cephs]
 
-class AnsibleNetworkingRegressionTests(unittest.TestCase):
+class Monolithic(unittest.TestCase):
     # Check Ironic on Overcloud + ERRORs in logs #
     def test_ironic_in_catalog(self):
+        print 1
         #spec_print(['Check Ironic on Overcloud + ERRORs in logs'])
         catalog_output=exec_command_line_command('source /home/stack/overcloudrc;openstack catalog show ironic -f json')
         self.assertEqual(catalog_output['JsonOutput']['name'], 'ironic','Failed: ironic was not found in catalog output')
 
     def test_ironic_dockers_status(self):
+        print 2
         ironic_dockers=['ironic_pxe_http','ironic_pxe_tftp','ironic_neutron_agent','ironic_conductor','ironic_api']
         for ip in controller_ips:
             ssh_object = SSH(ip,user=overclud_user,key_path=overcloud_ssh_key)
@@ -37,6 +40,7 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
             ssh_object.ssh_close()
 
     def test_errors_in_ironic_logs(self):
+        print 3
         command='sudo grep -R ERROR /var/log/containers/ironic/*'
         for ip in controller_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
@@ -46,6 +50,7 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
             self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in log\n'+output)
 
     def test_dockers_neutron_api_status(self):
+        print 4
         for ip in controller_ips:
             ssh_object = SSH(ip,user=overclud_user,key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
@@ -56,6 +61,7 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
             self.assertIn('neutron_api', output, 'Failed: neutron_api is not running')
 
     def test_errors_in_neutron_api(self):
+        print 5
         command='grep -i error /var/log/containers/neutron/server.log*'
         for ip in controller_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
@@ -65,6 +71,7 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
             self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in log\n'+output)
 
     def test_net_ansible_indication_msg_in_log(self):
+        print 6
         commands=["grep 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep 'Ansible Host'",
                   "zgrep 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep 'Ansible Host'"]
         output = []
@@ -81,6 +88,7 @@ class AnsibleNetworkingRegressionTests(unittest.TestCase):
                       ' no indication for Ansible Networking configuration in log'+'\n'+str(output)+'\n'+str(stderr))
 
     def test_check_ceph_status(self):
+        print 7
         ceph_status= "source /home/stack/overcloudrc; cinder service-list | grep ceph"
         out = exec_command_line_command(ceph_status)['CommandOutput']
         self.assertIn('ceph',out,'Failed: ceph is not running')
