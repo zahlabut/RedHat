@@ -103,7 +103,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         for port in bare_metal_guest_ports:
             print port,'----',interface_vlan.keys()
             self.assertNotIn(port,keys,
-                             'Failed: '+port+' was found as configured\n' + port+' --> '+keys[port])
+                             'Failed: '+port+' was found as configured\n' + port)
 
 if __name__ == '__main__':
     unittest.main()
