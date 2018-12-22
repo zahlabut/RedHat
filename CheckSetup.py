@@ -95,6 +95,10 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     def test_switch_no_vlans_for_bm_ports(self):
         exec_command_line_command("sshpass -p N3tAutomation! ssh ansible@10.9.95.25 'show configuration | display json' > "+conf_switch_file)
         interface_vlan=juniper_config_parser(conf_switch_file)['InterfaceVlan']
+
+        for k in interface_vlan.keys():
+            print k
+
         for port in bare_metal_guest_ports:
             print port,'----',interface_vlan.keys()
             self.assertNotIn(port,interface_vlan.keys(),
