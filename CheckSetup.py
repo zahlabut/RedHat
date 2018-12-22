@@ -98,7 +98,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         print interface_vlan.keys()
         for port in bare_metal_guest_ports:
             print port, interface_vlan.keys()[0],port in interface_vlan.keys()
-            self.assertIn(port,interface_vlan.keys(),'Failed: '+port+' was found as configured' + port+'\n'+str(interface_vlan[port]))
+            self.assertNotIn(port,interface_vlan.keys(),'Failed: '+port+' was found as configured' + port)
 
 if __name__ == '__main__':
     unittest.main()
