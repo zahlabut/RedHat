@@ -95,10 +95,9 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     def test_switch_no_vlans_for_bm_ports(self):
         exec_command_line_command("sshpass -p N3tAutomation! ssh ansible@10.9.95.25 'show configuration | display json' > "+conf_switch_file)
         interface_vlan=juniper_config_parser(conf_switch_file)['InterfaceVlan']
-        for k in interface_vlan.keys():
-            for port in bare_metal_guest_ports:
-                print port,'______',interface_vlan[k]
-                self.assertNotIn(port,str(interface_vlan[k]),'Failed: '+port+' was found as configurd\n'+str(interface_vlan[k]))
+        for port in bare_metal_guest_ports:
+            self.assertNotIn(port,interface_vlan.keys(),
+                             'Failed: '+port+' was found as configured\n'+ port+' --> '+str(interface_vlan[port]))
 
 if __name__ == '__main__':
     unittest.main()
