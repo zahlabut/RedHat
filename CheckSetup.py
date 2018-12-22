@@ -4,7 +4,7 @@ import unittest
 ### Parameters ###
 overclud_user='heat-admin'
 overcloud_ssh_key='/home/stack/.ssh/id_rsa'
-bare_metal_guest_ports=['xe-0/0/6','xe-0/0/7']
+bare_metal_guest_ports=['xe-0/0/11']
 conf_switch_file = 'sw_conf.json'
 
 
