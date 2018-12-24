@@ -15,6 +15,6 @@ if result['JsonOutput']!=None:
         else:
             to_import.append(True)
     print to_import
-if True in to_import:
+if True in to_import or to_import==[]:
     import_bm_nodes_command='source /home/stack/overcloudrc; openstack baremetal create bm_guests_env.yaml'
     print exec_command_line_command(import_bm_nodes_command)
