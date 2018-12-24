@@ -6,6 +6,9 @@ overclud_user='heat-admin'
 overcloud_ssh_key='/home/stack/.ssh/id_rsa'
 bare_metal_guest_ports=['xe-0/0/6','xe-0/0/7']
 conf_switch_file = 'sw_conf.json'
+switch_ip='10.9.95.25'
+switch_user='ansible'
+switch_password='N3tAutomation!'
 
 
 ### Get controllers IPs ###
@@ -93,7 +96,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertIn('HEALTH_OK',com_output,'Failed: "HEALTH_OK" not found in output of \n'+ceph_status+' command')
 
     def test_switch_no_vlans_for_bm_ports(self):
-        exec_command_line_command("sshpass -p N3tAutomation! ssh ansible@10.9.95.25 'show configuration | display json' > "+conf_switch_file)
+        exec_command_line_command("sshpass -p "+switch_password+" ssh "+switch_user+"@"+switch_ip+"'show configuration | display json' > "+conf_switch_file)
         interface_vlan=juniper_config_parser(conf_switch_file)['InterfaceVlan']
         for port in bare_metal_guest_ports:
             self.assertNotIn(port,interface_vlan.keys(),'Failed: '+port+' was found as configured' + port)
