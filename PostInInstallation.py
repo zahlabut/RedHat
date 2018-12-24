@@ -90,11 +90,11 @@ if 'small' not in existing_flavors:
 
 # Create bm-deploy-kernel image #
 if 'bm-deploy-kernel' not in existing_images:
-    kernel_id=exec_command_line_command(source_command+'openstack image create --container-format aki  --disk-format aki --public --file ./ironic-python-agent.kernel bm-deploy-kernel -f json')['JsonOutput']['id']
+    kernel_id=exec_command_line_command(source_command+'openstack image create --container-format aki  --disk-format aki --public --file /home/stack/ironic-python-agent.kernel bm-deploy-kernel -f json')['JsonOutput']['id']
 
 # Create bm-deploy-ramdisk image #
 if 'bm-deploy-ramdisk' not in existing_images:
-    ram_id=exec_command_line_command(source_command+'openstack image create --container-format ari  --disk-format ari --public  --file ./ironic-python-agent.initramfs bm-deploy-ramdisk -f json')['JsonOutput']['id']
+    ram_id=exec_command_line_command(source_command+'openstack image create --container-format ari  --disk-format ari --public  --file /home/stack/ironic-python-agent.initramfs bm-deploy-ramdisk -f json')['JsonOutput']['id']
 
 # Associate image per BM Guest #
 exec_command_line_command(source_command+'openstack baremetal node set ironic-0 --driver-info deploy_kernel='+kernel_id+' --driver-info deploy_ramdisk='+ram_id)
