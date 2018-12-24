@@ -99,7 +99,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         exec_command_line_command("sshpass -p "+switch_password+" ssh "+switch_user+"@"+switch_ip+" 'show configuration | display json' > "+conf_switch_file)
         interface_vlan=juniper_config_parser(conf_switch_file)['InterfaceVlan']
         for port in bare_metal_guest_ports:
-            self.assertNotIn(port,interface_vlan.keys(),'Failed: '+port+' was found as configured' + port+' '+str(interface_vlan.keys()))
+            self.assertNotIn(port,interface_vlan.keys(),'Failed: '+port+' was found as configured' + port+' '+str(interface_vlan.keys())+' '+str(interface_vlan[port]))
 
 if __name__ == '__main__':
     unittest.main()
