@@ -44,6 +44,79 @@ if 'ProvisionRouter'.lower() not in existing_routers:
     for com in commands:
         exec_command_line_command(source_command+com)
 
+# Create tenant-net network #
+if 'tenant-net' not in existing_networks:
+    exec_command_line_command(source_command+'openstack network create tenant-net')
+
+# Create tenant-net2 network #
+if 'tenant-net' not in existing_networks:
+    exec_command_line_command(source_command+'openstack network create tenant-net2')
+
+# Create external network #
+if 'tenant-net' not in existing_networks:
+    exec_command_line_command(source_command+'openstack network create --share --provider-network-type flat --provider-physical-network datacentre --external external')
+
+# Create tenant-subnet subnet #
+if 'tenant-subnet' not in existing_subnets:
+    exec_command_line_command(source_command+'openstack subnet create --network tenant-net --subnet-range 192.168.3.0/24 --allocation-pool start=192.168.3.10,end=192.168.3.20 tenant-subnet')
+
+# Create tenant-subnet2 subnet #
+if 'tenant-subnet2' not in existing_subnets:
+    exec_command_line_command(source_command+'openstack subnet create --network tenant-net2 --subnet-range 192.168.30.0/24 --allocation-pool start=192.168.30.10,end=192.168.30.20 tenant-subnet2')
+
+# Create external-subnet subnet #
+if 'external-subnet' not in existing_subnets:
+    exec_command_line_command(source_command+'openstack subnet create --network external --subnet-range 10.9.92.16/28 --gateway 10.9.92.30 --no-dhcp --allocation-pool start=10.9.92.17,end=10.9.92.22 external-subnet')
+
+# Create external router #
+if 'external' not in existing_routers:
+    exec_command_line_command(source_command+'openstack router create external')
+    exec_command_line_command(source_command+'openstack router add subnet external tenant-subnet')
+    exec_command_line_command(source_command+'openstack router set --external-gateway external external')
+
+# Create external2 router #
+if 'external2' not in existing_routers:
+    exec_command_line_command(source_command+'openstack router create external2')
+    exec_command_line_command(source_command+'openstack router add subnet external2 tenant-subnet2')
+    exec_command_line_command(source_command+'openstack router set --external-gateway external external2')
+
+# Create baremetal flavor #
+if 'baremetal' not in existing_flavors:
+    exec_command_line_command(source_command+'openstack flavor create --id auto --ram 4096 --vcpus 2 --disk 10 --property baremetal=true --property resources:VCPU=0 --property resources:MEMORY_MB=0 --property resources:DISK_GB=0 --property resources:CUSTOM_BAREMETAL=1 --public baremetal')
+
+# Create small flavor #
+if 'small' not in existing_flavors:
+    exec_command_line_command(source_command+'openstack flavor create --id auto --ram 2048 --vcpus 2 --disk 20 --public small')
+
+# Create bm-deploy-kernel image #
+if 'bm-deploy-kernel' not in existing_images:
+    kernel_id=exec_command_line_command(source_command+'openstack image create --container-format aki  --disk-format aki --public --file ./ironic-python-agent.kernel bm-deploy-kernel')['JsonOutput']['id']
+
+# Create bm-deploy-ramdisk image #
+if 'bm-deploy-ramdisk' not in existing_images:
+    ram_id=exec_command_line_command(source_command+'openstack image create --container-format ari  --disk-format ari --public  --file ./ironic-python-agent.initramfs bm-deploy-ramdisk')['JsonOutput']['id']
+
+# Associate image per BM Guest #
+exec_command_line_command(source_command+'openstack baremetal node set ironic-0 --driver-info deploy_kernel='+kernel_id+' --driver-info deploy_ramdisk='+ram_id)
+exec_command_line_command(source_command+'openstack baremetal node set ironic-1 --driver-info deploy_kernel='+kernel_id+' --driver-info deploy_ramdisk='+ram_id)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
