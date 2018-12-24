@@ -10,11 +10,9 @@ if result['JsonOutput']!=None:
     names=[]
     for item in result['JsonOutput']:
         print item['name']
-        if item['name'] in ironic_names:
-            to_import.append(False)
-        else:
+        if item['name'] not in ironic_names:
             to_import.append(True)
-    print to_import
-if True in to_import or to_import==[]:
-    import_bm_nodes_command='source /home/stack/overcloudrc; openstack baremetal create bm_guests_env.yaml'
-    print exec_command_line_command(import_bm_nodes_command)
+print to_import
+# if True in to_import or len(to_import) in [0,1]:
+#     import_bm_nodes_command='source /home/stack/overcloudrc; openstack baremetal create bm_guests_env.yaml'
+#     print exec_command_line_command(import_bm_nodes_command)
