@@ -9,6 +9,8 @@ conf_switch_file = 'sw_conf.json'
 switch_ip='10.9.95.25'
 switch_user='ansible'
 switch_password='N3tAutomation!'
+tenant_net_1_name='tenant_net'
+tenant_net_2_name='tenant_net2'
 
 
 ### Get controllers IPs ###
@@ -100,6 +102,13 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         interface_vlan=juniper_config_parser(conf_switch_file)['InterfaceVlan']
         for port in bare_metal_guest_ports:
             self.assertNotIn(port,interface_vlan.keys(),'Failed: '+port+' was found as configured' + port+' \n'+str(interface_vlan))
+
+    def create_and_delete_bm_guest(self):
+        create_command='openstack server create --flavor baremetal --image overcloud -full --key default --nic net-id=<ID> t1
+
+
+
+
 
 if __name__ == '__main__':
     unittest.main()
