@@ -9,6 +9,7 @@ result=exec_command_line_command(check_if_bm_exists)
 if result['JsonOutput']!=None:
     names=[]
     for item in result['JsonOutput']:
+        print item['name']
         if item['name'] in ironic_names:
             to_import.append(False)
         else:
