@@ -6,7 +6,7 @@ result=exec_command_line_command(check_if_bm_exists)
 if result['JsonOutput']!=None:
     names=[]
     for item in result['JsonOutput']:
-        names.append(result['JsonOutput']['name'])
+        names.append(item['name'])
     print names
 
 #import_bm_nodes_command='source /home/stack/overcloudrc; openstack baremetal create bm_guests_env.yaml'
