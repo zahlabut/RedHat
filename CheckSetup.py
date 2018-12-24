@@ -4,7 +4,7 @@ import unittest
 ### Parameters ###
 overclud_user='heat-admin'
 overcloud_ssh_key='/home/stack/.ssh/id_rsa'
-bare_metal_guest_ports=['xe-0/0/6','xe-0/0/7']
+bare_metal_guest_ports=['xe-0/0/6','xe-0/0/7','xe-0/0/11']
 conf_switch_file = 'sw_conf.json'
 switch_ip='10.9.95.25'
 switch_user='ansible'
@@ -99,7 +99,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         exec_command_line_command("sshpass -p "+switch_password+" ssh "+switch_user+"@"+switch_ip+" 'show configuration | display json' > "+conf_switch_file)
         interface_vlan=juniper_config_parser(conf_switch_file)['InterfaceVlan']
         for port in bare_metal_guest_ports:
-            self.assertNotIn(port,interface_vlan.keys(),'Failed: '+port+' was found as configured' + port)
+            self.assertNotIn(port,interface_vlan.keys(),'Failed: '+port+' was found as configured' + port+' '+interface_vlan.keys())
 
 if __name__ == '__main__':
     unittest.main()
