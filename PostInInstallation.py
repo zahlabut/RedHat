@@ -90,7 +90,9 @@ if 'small' not in existing_flavors:
 
 # Create bm-deploy-kernel image #
 if 'bm-deploy-kernel' not in existing_images:
-    kernel_id=exec_command_line_command(source_command+'openstack image create --container-format aki  --disk-format aki --public --file /home/stack/ironic-python-agent.kernel bm-deploy-kernel -f json')['JsonOutput']#['id']
+    command=source_command+'openstack image create --container-format aki  --disk-format aki --public --file /home/stack/ironic-python-agent.kernel bm-deploy-kernel -f json'
+    print command
+    kernel_id=exec_command_line_command(command)
 
 # Create bm-deploy-ramdisk image #
 if 'bm-deploy-ramdisk' not in existing_images:
