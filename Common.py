@@ -71,8 +71,6 @@ class SSH():
 
 def exec_command_line_command(command):
     try:
-        if to_print == True:
-            print ' --> ' + command
         command_as_list = command.split(' ')
         command_as_list = [item.replace(' ', '') for item in command_as_list if item != '']
         result = subprocess.check_output(command, shell=True)
