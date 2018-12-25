@@ -184,31 +184,26 @@ if 'baremetal-hosts' not in existing_aggregates:
     result=exec_command_line_command(source_command+'openstack aggregate create --property baremetal=true baremetal-hosts')
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
+    result=exec_command_line_command(source_command+'openstack aggregate add host baremetal-hosts overcloud-controller-0.localdomain')
+    if result['ReturnCode']!=0:
+        all_errors.append(result['CommandOutput'])
+    result=exec_command_line_command(source_command+'openstack aggregate add host baremetal-hosts overcloud-controller-1.localdomain')
+    if result['ReturnCode']!=0:
+        all_errors.append(result['CommandOutput'])
+    result=exec_command_line_command(source_command+'openstack aggregate add host baremetal-hosts overcloud-controller-2.localdomain')
+    if result['ReturnCode']!=0:
+        all_errors.append(result['CommandOutput'])
 
 if 'virtual-hosts' not in existing_aggregates:
     result=exec_command_line_command(source_command+'openstack aggregate create --property baremetal=false virtual-hosts')
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
-
-if 'virtual-hosts' not in str(existing_aggregates):
     result=exec_command_line_command(source_command+'for vm_host in $(openstack hypervisor list -f value -c "Hypervisor Hostname" | grep compute); do openstack aggregate add host virtual-hosts $vm_host ; done')
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
 
-if 'controller-0' not in str(existing_aggregates):
-    result=exec_command_line_command(source_command+'openstack aggregate add host baremetal-hosts overcloud-controller-0.localdomain')
-    if result['ReturnCode']!=0:
-        all_errors.append(result['CommandOutput'])
 
-if 'controller-1' not in str(existing_aggregates):
-    result=exec_command_line_command(source_command+'openstack aggregate add host baremetal-hosts overcloud-controller-1.localdomain')
-    if result['ReturnCode']!=0:
-        all_errors.append(result['CommandOutput'])
 
-if 'controller-2' not in str(existing_aggregates):
-    result=exec_command_line_command(source_command+'openstack aggregate add host baremetal-hosts overcloud-controller-2.localdomain')
-    if result['ReturnCode']!=0:
-        all_errors.append(result['CommandOutput'])
 
 # Add ICMP and SSH to the Default security group #
 if '22' not in exec_command_line_command(source_command+'openstack security group show '+default_security_group_id+' -f json')['JsonOutput']:
