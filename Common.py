@@ -82,7 +82,9 @@ def exec_command_line_command(command):
         return {'ReturnCode': 0, 'CommandOutput': result, 'JsonOutput': json_output}
     except subprocess.CalledProcessError as e:
         print e
-        return {'ReturnCode': 'Command:\n'+command+'\nfailed with\n'+str(e.returncode), 'CommandOutput': str(e)}
+        return {'ReturnCode': e.returncode, 'CommandOutput': 'Failed to execute: '+command+'with:\n'+str(e)}
+
+
 
 def spec_print(string_list):
     len_list=[]
