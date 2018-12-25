@@ -170,7 +170,8 @@ if 'controller-2' not in str(existing_aggregates):
 
 
 if list(set(all_return_codes))!=[0]:
-    print 'Failed commands has been detected!!!'
-    print list(set(all_return_codes))
+    print '\n\n\nFailed commands has been detected!!!'
+    for item in list(set(all_return_codes)):
+        print item
 
 
