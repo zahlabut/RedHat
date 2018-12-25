@@ -4,6 +4,7 @@ import time
 import subprocess
 import json
 
+
 class SSH():
     def __init__(self, host, user, password='', key_path=''):
         self.host=host
