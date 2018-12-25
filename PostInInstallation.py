@@ -15,6 +15,8 @@ existing_images=[item['name'] for item in exec_command_line_command(source_comma
 print 'images --> ',existing_images
 existing_flavors=[item['name'] for item in exec_command_line_command(source_command+'openstack flavor list -f json')['JsonOutput']]
 print 'Flavors --> ',existing_flavors
+existing_aggregates=[item['name'] for item in exec_command_line_command(source_command+'openstack aggregate list -f json')['JsonOutput']]
+print existing_aggregates
 
 
 # Import BM nodes #
@@ -102,25 +104,23 @@ if 'bm-deploy-ramdisk' not in existing_images:
     exec_command_line_command(source_command+'openstack baremetal node set ironic-1 --driver-info deploy_kernel='+kernel_id+' --driver-info deploy_ramdisk='+ram_id)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Create image from qcow2 file #
+if 'overcloud-full.vmlinuz' not in existing_images:
+    id1=exec_command_line_command(source_command+'openstack image create --file overcloud-full.vmlinuz --public --container-format aki --disk-format aki -f value -c id  overcloud-full.vmlinuz')
+if 'id overcloud-full.initrd' not in existing_images:
+    id2=exec_command_line_command(source_command+'openstack image create --file overcloud-full.initrd --public --container-format ari --disk-format ari -f value -c id overcloud-full.initrd')
+if 'overcloud-full' not in existing_images:
+    exec_command_line_command(source_command+'openstack image create --file overcloud-full.qcow2 --public --container-format bare --disk-format qcow2 --property kernel_id='+id1+' --property ramdisk_id='+id2+' overcloud-full')
+if 'baremetal-hosts' not in existing_aggregates:
+    exec_command_line_command(source_command+'openstack aggregate create --property baremetal=true baremetal-hosts')
+if 'virtual-hosts' not in existing_aggregates:
+    exec_command_line_command(source_command+'openstack aggregate create --property baremetal=false virtual-hosts')
+if 'compute' not in str(existing_aggregates):
+    exec_command_line_command(source_command+'for vm_host in $(openstack hypervisor list -f value -c "Hypervisor Hostname" | grep compute); do openstack aggregate add host virtual-hosts $vm_host ; done')
+if 'controller-0' not in str(existing_aggregates):
+    exec_command_line_command(source_command+'openstack aggregate add host baremetal-hosts overcloud-controller-0.localdomain')
+if 'controller-1' not in str(existing_aggregates):
+    exec_command_line_command(source_command+'openstack aggregate add host baremetal-hosts overcloud-controller-1.localdomain')
+if 'controller-2' not in str(existing_aggregates):
+    exec_command_line_command(source_command+'openstack aggregate add host baremetal-hosts overcloud-controller-2.localdomain')
 
