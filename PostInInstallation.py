@@ -17,7 +17,11 @@ print 'images --> ',existing_images
 existing_flavors=[item['name'] for item in exec_command_line_command(source_command+'openstack flavor list -f json')['JsonOutput']]
 print 'Flavors --> ',existing_flavors
 existing_aggregates=[item['name'] for item in exec_command_line_command(source_command+'openstack aggregate list -f json')['JsonOutput']]
-print existing_aggregates
+print 'Aggregates --> ',existing_aggregates
+default_security_group_id=[item['id'] for item in exec_command_line_command(source_command+'openstack security group list -f json')['JsonOutput'] if len(item)['project']!=0][0]
+print 'Security Group ID --> ',default_security_group_id
+existing_key_pairs=[item['name'] for item in exec_command_line_command(source_command+'openstack keypair list -f json')['JsonOutput']]
+print 'Keypairs --> ',existing_key_pairs
 
 
 
@@ -206,6 +210,22 @@ if 'controller-2' not in str(existing_aggregates):
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
 
+# Add ICMP and SSH to the Default security group #
+if '22' not in exec_command_line_command(source_command+'openstack security group show '+default_security_group_id+' -f json')['JsonOutput']:
+    result=exec_command_line_command(source_command+'openstack security group rule create --dst-port 22 '+default_security_group_id)
+    if result['ReturnCode']!=0:
+        all_errors.append(result['CommandOutput'])
+
+if 'icmp' not in exec_command_line_command(source_command+'openstack security group show '+default_security_group_id+' -f json')['JsonOutput']:
+    result=exec_command_line_command(source_command+'openstack security group rule create --protocol icmp '+default_security_group_id)
+    if result['ReturnCode']!=0:
+        all_errors.append(result['CommandOutput'])
+
+# Create key pair #
+if 'default' not in existing_key_pairs:
+    result=exec_command_line_command(source_command+'openstack keypair create --public -key ~/.ssh/id_rsa.pub default')
+    if result['ReturnCode']!=0:
+        all_errors.append(result['CommandOutput'])
 
 if len(all_errors)!=0:
     print '\n\n\nFailed commands has been detected!!!'
