@@ -81,12 +81,12 @@ def exec_command_line_command(command, to_print=True):
         except:
             pass
         if to_print==True:
-            print {'ReturnCode': 0, 'CommandOutput': result, 'JsonOutput': json_output}
+            print {'ReturnCode': 0, 'JsonOutput': json_output}
         return {'ReturnCode': 0, 'CommandOutput': result, 'JsonOutput': json_output}
     except subprocess.CalledProcessError as e:
         print e
         if to_print==True:
-            print {'ReturnCode': 0, 'CommandOutput': result, 'JsonOutput': json_output}
+            print {'ReturnCode': 0,'JsonOutput': json_output}
         return {'ReturnCode': e.returncode, 'CommandOutput': str(e)}
 
 def spec_print(string_list):
