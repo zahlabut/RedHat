@@ -206,19 +206,19 @@ if 'virtual-hosts' not in existing_aggregates:
 
 
 # Add ICMP and SSH to the Default security group #
-if '22' not in exec_command_line_command(source_command+'openstack security group show '+default_security_group_id+' -f json')['JsonOutput']:
+if '22' not in str(exec_command_line_command(source_command+'openstack security group show '+default_security_group_id+' -f json')['JsonOutput']):
     result=exec_command_line_command(source_command+'openstack security group rule create --dst-port 22 '+default_security_group_id)
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
 
-if 'icmp' not in exec_command_line_command(source_command+'openstack security group show '+default_security_group_id+' -f json')['JsonOutput']:
+if 'icmp' not in str(exec_command_line_command(source_command+'openstack security group show '+default_security_group_id+' -f json')['JsonOutput']):
     result=exec_command_line_command(source_command+'openstack security group rule create --protocol icmp '+default_security_group_id)
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
 
 # Create key pair #
 if 'default' not in existing_key_pairs:
-    result=exec_command_line_command(source_command+'openstack keypair create --public -key ~/.ssh/id_rsa.pub default')
+    result=exec_command_line_command(source_command+'openstack keypair create --public-key ~/.ssh/id_rsa.pub default')
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
 
