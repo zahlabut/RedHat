@@ -1,3 +1,5 @@
+### To delete all related to openstack project purge --project admin ###
+
 from Common import *
 source_command='source /home/stack/overcloudrc;'
 

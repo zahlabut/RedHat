@@ -68,8 +68,10 @@ class SSH():
     def ssh_close(self):
         self.client.close()
 
-def exec_command_line_command(command):
+def exec_command_line_command(command, to_print=True):
     try:
+        if to_print == True:
+            print '-->' + command
         command_as_list = command.split(' ')
         command_as_list = [item.replace(' ', '') for item in command_as_list if item != '']
         result = subprocess.check_output(command, shell=True)
@@ -78,9 +80,13 @@ def exec_command_line_command(command):
             json_output = json.loads(result.lower())
         except:
             pass
+        if to_print==True:
+            print {'ReturnCode': 0, 'CommandOutput': result, 'JsonOutput': json_output}
         return {'ReturnCode': 0, 'CommandOutput': result, 'JsonOutput': json_output}
     except subprocess.CalledProcessError as e:
         print e
+        if to_print==True:
+            print {'ReturnCode': 0, 'CommandOutput': result, 'JsonOutput': json_output}
         return {'ReturnCode': e.returncode, 'CommandOutput': str(e)}
 
 def spec_print(string_list):
