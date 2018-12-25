@@ -202,9 +202,6 @@ if 'virtual-hosts' not in existing_aggregates:
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
 
-
-
-
 # Add ICMP and SSH to the Default security group #
 if '22' not in str(exec_command_line_command(source_command+'openstack security group show '+default_security_group_id+' -f json')['JsonOutput']):
     result=exec_command_line_command(source_command+'openstack security group rule create --dst-port 22 '+default_security_group_id)
@@ -227,5 +224,7 @@ if len(all_errors)!=0:
     for item in list(set(all_errors)):
         print item
         print '-'*100
+else:
+    print "SUCCESS"
 
 
