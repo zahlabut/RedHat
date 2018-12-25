@@ -106,9 +106,9 @@ if 'bm-deploy-ramdisk' not in existing_images:
 
 # Create image from qcow2 file #
 if 'overcloud-full.vmlinuz' not in existing_images:
-    id1=exec_command_line_command(source_command+'openstack image create --file overcloud-full.vmlinuz --public --container-format aki --disk-format aki -f value -c id  overcloud-full.vmlinuz')
+    id1=exec_command_line_command(source_command+'openstack image create --file overcloud-full.vmlinuz --public --container-format aki --disk-format aki -f value -c id  /home/stack/overcloud-full.vmlinuz')
 if 'id overcloud-full.initrd' not in existing_images:
-    id2=exec_command_line_command(source_command+'openstack image create --file overcloud-full.initrd --public --container-format ari --disk-format ari -f value -c id overcloud-full.initrd')
+    id2=exec_command_line_command(source_command+'openstack image create --file overcloud-full.initrd --public --container-format ari --disk-format ari -f value -c id /home/stack/overcloud-full.initrd')
 if 'overcloud-full' not in existing_images:
     exec_command_line_command(source_command+'openstack image create --file overcloud-full.qcow2 --public --container-format bare --disk-format qcow2 --property kernel_id='+id1+' --property ramdisk_id='+id2+' overcloud-full')
 if 'baremetal-hosts' not in existing_aggregates:
