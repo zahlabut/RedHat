@@ -207,5 +207,6 @@ if len(all_errors)!=0:
     print '\n\n\nFailed commands has been detected!!!'
     for item in list(set(all_errors)):
         print item
+        print '-'*100
 
 
