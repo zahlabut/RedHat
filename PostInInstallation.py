@@ -19,6 +19,9 @@ print 'Flavors --> ',existing_flavors
 existing_aggregates=[item['name'] for item in exec_command_line_command(source_command+'openstack aggregate list -f json')['JsonOutput']]
 print existing_aggregates
 
+
+
+
 all_errors=[]
 # Import BM nodes #
 if len(existing_baremetal_nodes)!=2:
@@ -183,7 +186,7 @@ if 'virtual-hosts' not in existing_aggregates:
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
 
-if 'compute' not in str(existing_aggregates):
+if 'virtual-hosts' not in str(existing_aggregates):
     result=exec_command_line_command(source_command+'for vm_host in $(openstack hypervisor list -f value -c "Hypervisor Hostname" | grep compute); do openstack aggregate add host virtual-hosts $vm_host ; done')
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
