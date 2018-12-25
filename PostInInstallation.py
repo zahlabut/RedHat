@@ -110,7 +110,7 @@ if 'overcloud-full.vmlinuz' not in existing_images:
 if 'id overcloud-full.initrd' not in existing_images:
     id2=exec_command_line_command(source_command+'openstack image create --file /home/stack/overcloud-full.initrd --public --container-format ari --disk-format ari -f value -c id overcloud-full.initrd')['CommandOutput']
 if 'overcloud-full' not in existing_images:
-    exec_command_line_command(source_command+'openstack image create --file overcloud-full.qcow2 --public --container-format bare --disk-format qcow2 --property kernel_id='+id1+' --property ramdisk_id='+id2+' overcloud-full')
+    exec_command_line_command(source_command+'openstack image create --file /home/stack/overcloud-full.qcow2 --public --container-format bare --disk-format qcow2 --property kernel_id='+id1+' --property ramdisk_id='+id2+' overcloud-full')
 if 'baremetal-hosts' not in existing_aggregates:
     exec_command_line_command(source_command+'openstack aggregate create --property baremetal=true baremetal-hosts')
 if 'virtual-hosts' not in existing_aggregates:
