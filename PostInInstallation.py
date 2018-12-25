@@ -18,7 +18,7 @@ existing_flavors=[item['name'] for item in exec_command_line_command(source_comm
 print 'Flavors --> ',existing_flavors
 existing_aggregates=[item['name'] for item in exec_command_line_command(source_command+'openstack aggregate list -f json')['JsonOutput']]
 print 'Aggregates --> ',existing_aggregates
-default_security_group_id=[item['id'] for item in exec_command_line_command(source_command+'openstack security group list -f json')['JsonOutput'] if len(item)['project']!=0][0]
+default_security_group_id=[item['id'] for item in exec_command_line_command(source_command+'openstack security group list -f json')['JsonOutput'] if len(item['project'])!=0][0]
 print 'Security Group ID --> ',default_security_group_id
 existing_key_pairs=[item['name'] for item in exec_command_line_command(source_command+'openstack keypair list -f json')['JsonOutput']]
 print 'Keypairs --> ',existing_key_pairs
