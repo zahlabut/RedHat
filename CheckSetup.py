@@ -26,13 +26,13 @@ cephs_ips = [item['networks'].split('=')[-1] for item in cephs]
 class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     # Check Ironic on Overcloud + ERRORs in logs #
     def test_001_ironic_in_catalog(self):
-        print '\ntest_001_ironic_in_catalog\n'
+        print '\ntest_001_ironic_in_catalog'
         #spec_print(['Check Ironic on Overcloud + ERRORs in logs'])
         catalog_output=exec_command_line_command('source /home/stack/overcloudrc;openstack catalog show ironic -f json')
         self.assertEqual(catalog_output['JsonOutput']['name'], 'ironic','Failed: ironic was not found in catalog output')
 
     def test_002_ironic_dockers_status(self):
-        print '\ntest_002_ironic_dockers_status\n'
+        print '\ntest_002_ironic_dockers_status'
         ironic_dockers=['ironic_pxe_http','ironic_pxe_tftp','ironic_neutron_agent','ironic_conductor','ironic_api']
         for ip in controller_ips:
             ssh_object = SSH(ip,user=overclud_user,key_path=overcloud_ssh_key)
@@ -45,7 +45,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             ssh_object.ssh_close()
 
     def test_003_errors_in_ironic_logs(self):
-        print '\ntest_003_errors_in_ironic_logs\n'
+        print '\ntest_003_errors_in_ironic_logs'
         command='sudo grep -R ERROR /var/log/containers/ironic/*'
         for ip in controller_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
@@ -55,7 +55,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in log\n'+output)
 
     def test_004_dockers_neutron_api_status(self):
-        print '\ntest_004_dockers_neutron_api_status\n'
+        print '\ntest_004_dockers_neutron_api_status'
         for ip in controller_ips:
             ssh_object = SSH(ip,user=overclud_user,key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
@@ -66,7 +66,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             self.assertIn('neutron_api', output, 'Failed: neutron_api is not running')
 
     def test_005_errors_in_neutron_api(self):
-        print '\ntest_005_errors_in_neutron_api\n'
+        print '\ntest_005_errors_in_neutron_api'
         command='grep -i error /var/log/containers/neutron/server.log*'
         for ip in controller_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
@@ -76,7 +76,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in log\n'+output)
 
     def test_006_net_ansible_indication_msg_in_log(self):
-        print '\ntest_006_net_ansible_indication_msg_in_log\n'
+        print '\ntest_006_net_ansible_indication_msg_in_log'
         commands=["grep 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep 'Ansible Host'",
                   "zgrep 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep 'Ansible Host'"]
         output = []
@@ -93,7 +93,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                       ' no indication for Ansible Networking configuration in log'+'\n'+str(output)+'\n'+str(stderr))
 
     def test_007_check_ceph_status(self):
-        print '\ntest_007_check_ceph_status\n'
+        print '\ntest_007_check_ceph_status'
         ceph_status= "source /home/stack/overcloudrc; cinder service-list | grep ceph"
         out = exec_command_line_command(ceph_status)['CommandOutput']
         self.assertIn('ceph',out,'Failed: ceph is not running')
@@ -105,7 +105,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertIn('HEALTH_OK',com_output,'Failed: "HEALTH_OK" not found in output of \n'+ceph_status+' command')
 
     def test_008_switch_no_vlans_for_bm_ports(self):
-        print '\ntest_008_switch_no_vlans_for_bm_ports\n'
+        print '\ntest_008_switch_no_vlans_for_bm_ports'
         exec_command_line_command("sshpass -p "+switch_password+" ssh "+switch_user+"@"+switch_ip+" 'show configuration | display json' > "+conf_switch_file)
         interface_vlan=juniper_config_parser(conf_switch_file)['InterfaceVlan']
         for port in bare_metal_guest_ports:
