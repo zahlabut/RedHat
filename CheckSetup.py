@@ -25,12 +25,14 @@ cephs_ips = [item['networks'].split('=')[-1] for item in cephs]
 
 class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     # Check Ironic on Overcloud + ERRORs in logs #
-    def test_ironic_in_catalog(self):
+    def test_001_ironic_in_catalog(self):
+        print 'test_001_ironic_in_catalog'
         #spec_print(['Check Ironic on Overcloud + ERRORs in logs'])
         catalog_output=exec_command_line_command('source /home/stack/overcloudrc;openstack catalog show ironic -f json')
         self.assertEqual(catalog_output['JsonOutput']['name'], 'ironic','Failed: ironic was not found in catalog output')
 
-    def test_ironic_dockers_status(self):
+    def test_002_ironic_dockers_status(self):
+        print 'test_002_ironic_dockers_status'
         ironic_dockers=['ironic_pxe_http','ironic_pxe_tftp','ironic_neutron_agent','ironic_conductor','ironic_api']
         for ip in controller_ips:
             ssh_object = SSH(ip,user=overclud_user,key_path=overcloud_ssh_key)
@@ -42,7 +44,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                 self.assertIn(doc, output, 'Failed: ' + doc + ' is not running')
             ssh_object.ssh_close()
 
-    def test_errors_in_ironic_logs(self):
+    def test_003_errors_in_ironic_logs(self):
+        print 'test_003_errors_in_ironic_logs'
         command='sudo grep -R ERROR /var/log/containers/ironic/*'
         for ip in controller_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
@@ -51,7 +54,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             ssh_object.ssh_close()
             self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in log\n'+output)
 
-    def test_dockers_neutron_api_status(self):
+    def test_004_dockers_neutron_api_status(self):
+        print 'test_004_dockers_neutron_api_status'
         for ip in controller_ips:
             ssh_object = SSH(ip,user=overclud_user,key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
@@ -61,7 +65,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             self.assertNotIn('unhealthy', output, 'Failed: '+ip+' '+'neutron_api status is unhealthy')
             self.assertIn('neutron_api', output, 'Failed: neutron_api is not running')
 
-    def test_errors_in_neutron_api(self):
+    def test_005_errors_in_neutron_api(self):
+        print 'test_005_errors_in_neutron_api'
         command='grep -i error /var/log/containers/neutron/server.log*'
         for ip in controller_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
@@ -70,7 +75,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             ssh_object.ssh_close()
             self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in log\n'+output)
 
-    def test_net_ansible_indication_msg_in_log(self):
+    def test_006_net_ansible_indication_msg_in_log(self):
+        print 'test_006_net_ansible_indication_msg_in_log'
         commands=["grep 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep 'Ansible Host'",
                   "zgrep 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep 'Ansible Host'"]
         output = []
@@ -86,7 +92,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertIn('Ansible Host', str(output), 'Failed: ' + ip +
                       ' no indication for Ansible Networking configuration in log'+'\n'+str(output)+'\n'+str(stderr))
 
-    def test_check_ceph_status(self):
+    def test_007_check_ceph_status(self):
+        print 'test_007_check_ceph_status'
         ceph_status= "source /home/stack/overcloudrc; cinder service-list | grep ceph"
         out = exec_command_line_command(ceph_status)['CommandOutput']
         self.assertIn('ceph',out,'Failed: ceph is not running')
@@ -97,14 +104,15 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         ssh_object.ssh_close()
         self.assertIn('HEALTH_OK',com_output,'Failed: "HEALTH_OK" not found in output of \n'+ceph_status+' command')
 
-    def test_switch_no_vlans_for_bm_ports(self):
+    def test_008_switch_no_vlans_for_bm_ports(self):
+        print 'test_008_switch_no_vlans_for_bm_ports'
         exec_command_line_command("sshpass -p "+switch_password+" ssh "+switch_user+"@"+switch_ip+" 'show configuration | display json' > "+conf_switch_file)
         interface_vlan=juniper_config_parser(conf_switch_file)['InterfaceVlan']
         for port in bare_metal_guest_ports:
             self.assertNotIn(port,interface_vlan.keys(),'Failed: '+port+' was found as configured' + port+' \n'+str(interface_vlan))
 
-    def create_and_delete_bm_guest(self):
-        create_command='openstack server create --flavor baremetal --image overcloud -full --key default --nic net-id=<ID> t1'
+    # def create_and_delete_bm_guest(self):
+    #     create_command='openstack server create --flavor baremetal --image overcloud -full --key default --nic net-id=<ID> t1'
 
 
 
