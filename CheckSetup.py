@@ -104,7 +104,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             self.assertNotIn(port,interface_vlan.keys(),'Failed: '+port+' was found as configured' + port+' \n'+str(interface_vlan))
 
     def create_and_delete_bm_guest(self):
-        create_command='openstack server create --flavor baremetal --image overcloud -full --key default --nic net-id=<ID> t1
+        create_command='openstack server create --flavor baremetal --image overcloud -full --key default --nic net-id=<ID> t1'
 
 
 
