@@ -13,6 +13,9 @@ tenant_net_1_name='tenant_net'
 tenant_net_2_name='tenant_net2'
 source_overcloud='source /home/stack/overcloudrc;'
 souurce_undercloud='source /home/stack/stackrc;'
+manageable_timeout=300 #Test 009
+available_timeout=300 #Test 009
+
 
 ### Get controllers IPs ###
 controllers = exec_command_line_command(souurce_undercloud+'openstack server list --name controller -f json')[
@@ -124,7 +127,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             exec_command_line_command(source_overcloud+'openstack baremetal node provide '+id)
         start_time=time.time()
         to_stop=False
-        while to_stop==False or time.time()>(start_time+300):
+        while to_stop==False or time.time()>(start_time+manageable_timeout):
             time.sleep(5)
             exec_command_line_command("sshpass -p " + switch_password + " ssh " + switch_user + "@" + switch_ip + " 'show configuration | display json' > " + conf_switch_file)
             interface_vlans = juniper_config_parser(conf_switch_file)['InterfaceVlan']
@@ -137,7 +140,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertEqual(str(actual_vlans).count(str(baremetal_vlan_id)),2, 'Failed: baremetal ports are set to incorrect vlans:\n'+str(actual_vlans))
         start_time = time.time()
         to_stop=False
-        while to_stop==False or time.time()>(start_time+300):
+        while to_stop==False or time.time()>(start_time+available_timeout):
             states = [item['provisioning state'] for item in exec_command_line_command(source_overcloud + 'openstack baremetal node list -f json')['JsonOutput']]
             if states==['available','available']:
                 to_stop=True
