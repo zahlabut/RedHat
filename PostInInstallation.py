@@ -147,6 +147,8 @@ if 'bm-deploy-kernel' not in existing_images:
     kernel_id=result['JsonOutput']['id']
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
+else:
+    kernel_id=exec_command_line_command(source_command+'openstack image show bm-deploy-kernel -c id -f json')['JsonOutput']['id']
 
 # Create bm-deploy-ramdisk image #
 if 'bm-deploy-ramdisk' not in existing_images:
@@ -154,14 +156,16 @@ if 'bm-deploy-ramdisk' not in existing_images:
     ram_id=result['JsonOutput']['id']
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
+else:
+    ram_id=exec_command_line_command(source_command+'openstack image show bm-deploy-ramdisk -c id -f json')['JsonOutput']['id']
 
-if 'deploy_kernel' or 'deploy_ramdisk' not in str(exec_command_line_command(source_command+'openstack baremetal node show ironic-0 -f json')['JsonOutput']):
+if kernel_id or ram_id not in str(exec_command_line_command(source_command+'openstack baremetal node show ironic-0 -f json')['JsonOutput']):
     # Associate image per BM Guest #
     result=exec_command_line_command(source_command+'openstack baremetal node set ironic-0 --driver-info deploy_kernel='+kernel_id+' --driver-info deploy_ramdisk='+ram_id)
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
 
-if 'deploy_kernel' or 'deploy_ramdisk' not in str(exec_command_line_command(source_command + 'openstack baremetal node show ironic-1 -f json')['JsonOutput']):
+if kernel_id or ram_id not in str(exec_command_line_command(source_command + 'openstack baremetal node show ironic-1 -f json')['JsonOutput']):
     result=exec_command_line_command(source_command+'openstack baremetal node set ironic-1 --driver-info deploy_kernel='+kernel_id+' --driver-info deploy_ramdisk='+ram_id)
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
