@@ -141,13 +141,15 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         start_time = time.time()
         to_stop=False
         while to_stop==False or time.time()>(start_time+available_timeout):
+            time.sleep(5)
             states = [item['provisioning state'] for item in exec_command_line_command(source_overcloud + 'openstack baremetal node list -f json')['JsonOutput']]
             if states==['available','available']:
                 to_stop=True
             print states
         self.assertEqual(['available','available'], states, 'Failed: baremetal node states are: '+str(states)+' expected:available')
 
-
+    def test_010_create_bm_servers(self):
+        pass
 
     # def create_and_delete_bm_guest(self):
     #     create_command='openstack server create --flavor baremetal --image overcloud -full --key default --nic net-id=<ID> t1'
