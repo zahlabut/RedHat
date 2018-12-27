@@ -11,7 +11,7 @@ switch_user='ansible'
 switch_password='N3tAutomation!'
 tenant_net_1_name='tenant_net'
 tenant_net_2_name='tenant_net2'
-source_command='source /home/stack/stackrc;'
+source_command='source /home/stack/overcloudrc;'
 
 ### Get controllers IPs ###
 controllers = exec_command_line_command(source_command+'openstack server list --name controller -f json')[
