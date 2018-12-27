@@ -11,15 +11,16 @@ switch_user='ansible'
 switch_password='N3tAutomation!'
 tenant_net_1_name='tenant_net'
 tenant_net_2_name='tenant_net2'
-source_command='source /home/stack/overcloudrc;'
+source_overcloud='source /home/stack/overcloudrc;'
+souurce_undercloud='source /home/stack/stackrc;'
 
 ### Get controllers IPs ###
-controllers = exec_command_line_command(source_command+'openstack server list --name controller -f json')[
+controllers = exec_command_line_command(souurce_undercloud+'openstack server list --name controller -f json')[
     'JsonOutput']
 controller_ips = [item['networks'].split('=')[-1] for item in controllers]
 
 ### Get Ceph IPs ###
-cephs = exec_command_line_command(source_command+'openstack server list --name cephstorage -f json')[
+cephs = exec_command_line_command(souurce_undercloud+'openstack server list --name cephstorage -f json')[
     'JsonOutput']
 cephs_ips = [item['networks'].split('=')[-1] for item in cephs]
 
@@ -28,7 +29,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     def test_001_ironic_in_catalog(self):
         print '\ntest_001_ironic_in_catalog'
         #spec_print(['Check Ironic on Overcloud + ERRORs in logs'])
-        catalog_output=exec_command_line_command(source_command+'openstack catalog show ironic -f json')
+        catalog_output=exec_command_line_command(source_overcloud+'openstack catalog show ironic -f json')
         self.assertEqual(catalog_output['JsonOutput']['name'], 'ironic','Failed: ironic was not found in catalog output')
 
     def test_002_ironic_dockers_status(self):
@@ -94,7 +95,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
     def test_007_check_ceph_status(self):
         print '\ntest_007_check_ceph_status'
-        ceph_status= source_command+" cinder service-list | grep ceph"
+        ceph_status= source_overcloud+" cinder service-list | grep ceph"
         out = exec_command_line_command(ceph_status)['CommandOutput']
         self.assertIn('ceph',out,'Failed: ceph is not running')
         ceph_health_command='ceph health'
@@ -112,8 +113,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             self.assertNotIn(port,interface_vlan.keys(),'Failed: '+port+' was found as configured' + port+' \n'+str(interface_vlan))
 
     def test_009_clean_bm_guests_in_parallel(self):
-        baremetal_vlan_id=exec_command_line_command(source_command+'openstack network show baremetal -f json')['JsonOutput']['provider:segmentation_id']
-        baremetal_node_ids=[item['id'] for item in exec_command_line_command(source_command+'openstack baremetal node list -f json')['JsonOutput']]
+        baremetal_vlan_id=exec_command_line_command(source_overcloud+'openstack network show baremetal -f json')['JsonOutput']['provider:segmentation_id']
+        baremetal_node_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
         for id in baremetal_node_ids:
             exec_command_line_command(source_command+'openstack baremetal node manage '+id)
         for id in baremetal_node_ids:
