@@ -119,14 +119,14 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             exec_command_line_command(source_overcloud+'openstack baremetal node manage '+id)
         for id in baremetal_node_ids:
             states=[item['provisioning state'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
-        self.assertEqual(['manageable','manageable'], states, 'Failed: baremetal node states are: '+str(states))
+        self.assertEqual(['manageable','manageable'], states, 'Failed: baremetal node states are: '+str(states)+' expected:manageable')
         print states
         for id in baremetal_node_ids:
             exec_command_line_command(source_overcloud+'openstack baremetal node provide '+id)
         start_time=time.time()
         to_stop=False
         while to_stop==False or time.time()>(start_time+300):
-            time.sleep(3)
+            time.sleep(5)
             exec_command_line_command("sshpass -p " + switch_password + " ssh " + switch_user + "@" + switch_ip + " 'show configuration | display json' > " + conf_switch_file)
             interface_vlans = juniper_config_parser(conf_switch_file)['InterfaceVlan']
             actual_vlans=[]
@@ -136,6 +136,14 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             if len(actual_vlans)==2:
                 to_stop=True
         self.assertEqual(str(actual_vlans).count(str(baremetal_vlan_id)),2, 'Failed: baremetal ports are set to incorrect vlans:\n'+str(actual_vlans))
+        start_time = time.time()
+        to_stop=False
+        while to_stop==False or time.time()>(start_time+300):
+            states = [item['provisioning state'] for item in exec_command_line_command(source_overcloud + 'openstack baremetal node list -f json')['JsonOutput']]
+            if states==['available','available']:
+                to_stop=True
+        self.assertEqual(['available','available'], states, 'Failed: baremetal node states are: '+str(states)+' expected:available')
+
 
 
     # def create_and_delete_bm_guest(self):
