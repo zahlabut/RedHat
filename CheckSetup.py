@@ -107,7 +107,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
     def test_008_switch_no_vlans_for_bm_ports(self):
         print '\ntest_008_switch_no_vlans_for_bm_ports'
-        exec_command_line_command("sshpass -p "+switch_password+" ssh "+switch_user+"@"+switch_ip+" 'show configuration | display json' > "+conf_switch_file+'> /dev/null')
+        exec_command_line_command("sshpass -p "+switch_password+" ssh "+switch_user+"@"+switch_ip+" 'show configuration | display json' > "+conf_switch_file)
         interface_vlan=juniper_config_parser(conf_switch_file)['InterfaceVlan']
         for port in bare_metal_guest_ports:
             self.assertNotIn(port,interface_vlan.keys(),'Failed: '+port+' was found as configured' + port+' \n'+str(interface_vlan))
@@ -126,7 +126,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         to_stop=False
         while to_stop==False or time.time()>(start_time+300):
             all_valans=exec_command_line_command(
-                "sshpass -p " + switch_password + " ssh " + switch_user + "@" + switch_ip + " 'show configuration | display json' > " + conf_switch_file+'> /dev/null')
+                "sshpass -p " + switch_password + " ssh " + switch_user + "@" + switch_ip + " 'show configuration | display json' > " + conf_switch_file)
             interface_vlans = juniper_config_parser(conf_switch_file)['InterfaceVlan']
             actual_vlans=[]
             for port in bare_metal_guest_ports:
