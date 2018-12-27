@@ -125,8 +125,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         start_time=time.time()
         to_stop=False
         while to_stop==False or time.time()>(start_time+300):
-            all_valans=exec_command_line_command(
-                "sshpass -p " + switch_password + " ssh " + switch_user + "@" + switch_ip + " 'show configuration | display json' > " + conf_switch_file)
+            time.sleep(3)
+            exec_command_line_command("sshpass -p " + switch_password + " ssh " + switch_user + "@" + switch_ip + " 'show configuration | display json' > " + conf_switch_file)
             interface_vlans = juniper_config_parser(conf_switch_file)['InterfaceVlan']
             actual_vlans=[]
             for port in bare_metal_guest_ports:
@@ -134,8 +134,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                     actual_vlans.append(interface_vlans[port]['members'])
             if len(actual_vlans)==2:
                 to_stop=True
-            time.sleep(3)
-        self.assertEqual(str(actual_vlans).count(baremetal_vlan_id),2, 'Failed: baremetal ports are set to incorrect vlans:\n'+str(actual_vlans))
+        self.assertEqual(str(actual_vlans).count(baremetal_vlan_id), 'Failed: baremetal ports are set to incorrect vlans:\n'+str(actual_vlans))
 
 
     # def create_and_delete_bm_guest(self):
