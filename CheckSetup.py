@@ -134,7 +134,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                     actual_vlans.append(interface_vlans[port])
             if len(actual_vlans)==2:
                 to_stop=True
-        self.assertEquual(actual_vlans,[baremetal_vlan_id,baremetal_vlan_id], 'Failed: baremetal ports are set to incorrect vlans:\n'+str(actual_vlans))
+        self.assertEqual(actual_vlans,[baremetal_vlan_id,baremetal_vlan_id], 'Failed: baremetal ports are set to incorrect vlans:\n'+str(actual_vlans))
 
 
     # def create_and_delete_bm_guest(self):
