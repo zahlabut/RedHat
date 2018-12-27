@@ -116,9 +116,9 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         baremetal_vlan_id=exec_command_line_command(source_overcloud+'openstack network show baremetal -f json')['JsonOutput']['provider:segmentation_id']
         baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
         for id in baremetal_node_ids:
-            exec_command_line_command(source_command+'openstack baremetal node manage '+id)
+            exec_command_line_command(source_overcloud+'openstack baremetal node manage '+id)
         for id in baremetal_node_ids:
-            states=[item['provisioning state'] for item in exec_command_line_command(source_command+'openstack baremetal node list -f json')['JsonOutput']]
+            states=[item['provisioning state'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
         self.assertEqual(['manageable','manageable'], states, 'Failed: baremetal node states are: '+str(states))
 
 
