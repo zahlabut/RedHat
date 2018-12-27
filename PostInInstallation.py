@@ -169,73 +169,68 @@ if kernel_id or ram_id not in str(exec_command_line_command(source_command + 'op
     result=exec_command_line_command(source_command+'openstack baremetal node set ironic-1 --driver-info deploy_kernel='+kernel_id+' --driver-info deploy_ramdisk='+ram_id)
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
-#
-# # Create image from qcow2 file #
-# if 'overcloud-full.vmlinuz' not in existing_images:
-#     result=exec_command_line_command(source_command+'openstack image create --file /home/stack/overcloud-full.vmlinuz --public --container-format aki --disk-format aki -f value -c id  overcloud-full.vmlinuz')
-#     id1=result['CommandOutput'].strip()
-#     if result['ReturnCode']!=0:
-#         all_errors.append(result['CommandOutput'])
-#
-# if 'id overcloud-full.initrd' not in existing_images:
-#     result=exec_command_line_command(source_command+'openstack image create --file /home/stack/overcloud-full.initrd --public --container-format ari --disk-format ari -f value -c id overcloud-full.initrd')
-#     id2=result['CommandOutput'].strip()
-#     if result['ReturnCode']!=0:
-#         all_errors.append(result['CommandOutput'])
-#
-# if 'overcloud-full' not in existing_images:
-#     result=exec_command_line_command(source_command+'openstack image create --file /home/stack/overcloud-full.qcow2 --public --container-format bare --disk-format qcow2 --property kernel_id='+id1+' --property ramdisk_id='+id2+' overcloud-full')
-#     if result['ReturnCode']!=0:
-#         all_errors.append(result['CommandOutput'])
-#
-# if 'baremetal-hosts' not in existing_aggregates:
-#     result=exec_command_line_command(source_command+'openstack aggregate create --property baremetal=true baremetal-hosts')
-#     if result['ReturnCode']!=0:
-#         all_errors.append(result['CommandOutput'])
-#     result=exec_command_line_command(source_command+'openstack aggregate add host baremetal-hosts overcloud-controller-0.localdomain')
-#     if result['ReturnCode']!=0:
-#         all_errors.append(result['CommandOutput'])
-#     result=exec_command_line_command(source_command+'openstack aggregate add host baremetal-hosts overcloud-controller-1.localdomain')
-#     if result['ReturnCode']!=0:
-#         all_errors.append(result['CommandOutput'])
-#     result=exec_command_line_command(source_command+'openstack aggregate add host baremetal-hosts overcloud-controller-2.localdomain')
-#     if result['ReturnCode']!=0:
-#         all_errors.append(result['CommandOutput'])
-#
-# if 'virtual-hosts' not in existing_aggregates:
-#     result=exec_command_line_command(source_command+'openstack aggregate create --property baremetal=false virtual-hosts')
-#     if result['ReturnCode']!=0:
-#         all_errors.append(result['CommandOutput'])
-#     result=exec_command_line_command(source_command+'for vm_host in $(openstack hypervisor list -f value -c "Hypervisor Hostname" | grep compute); do openstack aggregate add host virtual-hosts $vm_host ; done')
-#     if result['ReturnCode']!=0:
-#         all_errors.append(result['CommandOutput'])
-#
-# # Add ICMP and SSH to the Default security group #
-# if '22' not in str(exec_command_line_command(source_command+'openstack security group show '+default_security_group_id+' -f json')['JsonOutput']):
-#     result=exec_command_line_command(source_command+'openstack security group rule create --dst-port 22 '+default_security_group_id)
-#     if result['ReturnCode']!=0:
-#         all_errors.append(result['CommandOutput'])
-#
-# if 'icmp' not in str(exec_command_line_command(source_command+'openstack security group show '+default_security_group_id+' -f json')['JsonOutput']):
-#     result=exec_command_line_command(source_command+'openstack security group rule create --protocol icmp '+default_security_group_id)
-#     if result['ReturnCode']!=0:
-#         all_errors.append(result['CommandOutput'])
-#
-# # Create key pair #
-# if 'default' not in existing_key_pairs:
-#     result=exec_command_line_command(source_command+'openstack keypair create --public-key ~/.ssh/id_rsa.pub default')
-#     if result['ReturnCode']!=0:
-#         all_errors.append(result['CommandOutput'])
-#
-# if len(all_errors)!=0:
-#     print '\n\n\nFailed commands has been detected!!!'
-#     for item in list(set(all_errors)):
-#         print item
-#         print '-'*100
-# else:
-#     print "SUCCESS"
-#
-#
-#
-#
-#
+
+# Create image from qcow2 file #
+if 'overcloud-full.vmlinuz' not in existing_images:
+    result=exec_command_line_command(source_command+'openstack image create --file /home/stack/overcloud-full.vmlinuz --public --container-format aki --disk-format aki -f value -c id  overcloud-full.vmlinuz')
+    id1=result['CommandOutput'].strip()
+    if result['ReturnCode']!=0:
+        all_errors.append(result['CommandOutput'])
+
+if 'id overcloud-full.initrd' not in existing_images:
+    result=exec_command_line_command(source_command+'openstack image create --file /home/stack/overcloud-full.initrd --public --container-format ari --disk-format ari -f value -c id overcloud-full.initrd')
+    id2=result['CommandOutput'].strip()
+    if result['ReturnCode']!=0:
+        all_errors.append(result['CommandOutput'])
+
+if 'overcloud-full' not in existing_images:
+    result=exec_command_line_command(source_command+'openstack image create --file /home/stack/overcloud-full.qcow2 --public --container-format bare --disk-format qcow2 --property kernel_id='+id1+' --property ramdisk_id='+id2+' overcloud-full')
+    if result['ReturnCode']!=0:
+        all_errors.append(result['CommandOutput'])
+
+if 'baremetal-hosts' not in existing_aggregates:
+    result=exec_command_line_command(source_command+'openstack aggregate create --property baremetal=true baremetal-hosts')
+    if result['ReturnCode']!=0:
+        all_errors.append(result['CommandOutput'])
+    result=exec_command_line_command(source_command+'openstack aggregate add host baremetal-hosts overcloud-controller-0.localdomain')
+    if result['ReturnCode']!=0:
+        all_errors.append(result['CommandOutput'])
+    result=exec_command_line_command(source_command+'openstack aggregate add host baremetal-hosts overcloud-controller-1.localdomain')
+    if result['ReturnCode']!=0:
+        all_errors.append(result['CommandOutput'])
+    result=exec_command_line_command(source_command+'openstack aggregate add host baremetal-hosts overcloud-controller-2.localdomain')
+    if result['ReturnCode']!=0:
+        all_errors.append(result['CommandOutput'])
+
+if 'virtual-hosts' not in existing_aggregates:
+    result=exec_command_line_command(source_command+'openstack aggregate create --property baremetal=false virtual-hosts')
+    if result['ReturnCode']!=0:
+        all_errors.append(result['CommandOutput'])
+    result=exec_command_line_command(source_command+'for vm_host in $(openstack hypervisor list -f value -c "Hypervisor Hostname" | grep compute); do openstack aggregate add host virtual-hosts $vm_host ; done')
+    if result['ReturnCode']!=0:
+        all_errors.append(result['CommandOutput'])
+
+# Add ICMP and SSH to the Default security group #
+if '22' not in str(exec_command_line_command(source_command+'openstack security group show '+default_security_group_id+' -f json')['JsonOutput']):
+    result=exec_command_line_command(source_command+'openstack security group rule create --dst-port 22 '+default_security_group_id)
+    if result['ReturnCode']!=0:
+        all_errors.append(result['CommandOutput'])
+
+if 'icmp' not in str(exec_command_line_command(source_command+'openstack security group show '+default_security_group_id+' -f json')['JsonOutput']):
+    result=exec_command_line_command(source_command+'openstack security group rule create --protocol icmp '+default_security_group_id)
+    if result['ReturnCode']!=0:
+        all_errors.append(result['CommandOutput'])
+
+# Create key pair #
+if 'default' not in existing_key_pairs:
+    result=exec_command_line_command(source_command+'openstack keypair create --public-key ~/.ssh/id_rsa.pub default')
+    if result['ReturnCode']!=0:
+        all_errors.append(result['CommandOutput'])
+
+if len(all_errors)!=0:
+    print '\n\n\nFailed commands has been detected!!!'
+    for item in list(set(all_errors)):
+        print item
+        print '-'*100
+else:
+    print "SUCCESS"
