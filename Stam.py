@@ -6,10 +6,12 @@ switch_password='N3tAutomation!'
 ssh_object=SSH(switch_ip,switch_user,switch_password)
 ssh_object.ssh_connect_password()
 out= ssh_object.ssh_command('show configuration | display json')
-ssh_object.ssh_close()
-
+print out
 f=open('stam','w')
 f.write(out)
 f.close()
+
+ssh_object.ssh_close()
+
 
 print juniper_config_parser_string('stam')
