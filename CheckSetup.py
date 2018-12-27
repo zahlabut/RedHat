@@ -120,7 +120,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         for id in baremetal_node_ids:
             states=[item['provisioning state'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
         self.assertEqual(['manageable','manageable'], states, 'Failed: baremetal node states are: '+str(states)+' expected:manageable')
-        print states
         for id in baremetal_node_ids:
             exec_command_line_command(source_overcloud+'openstack baremetal node provide '+id)
         start_time=time.time()
@@ -142,6 +141,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             states = [item['provisioning state'] for item in exec_command_line_command(source_overcloud + 'openstack baremetal node list -f json')['JsonOutput']]
             if states==['available','available']:
                 to_stop=True
+            print states
         self.assertEqual(['available','available'], states, 'Failed: baremetal node states are: '+str(states)+' expected:available')
 
 
