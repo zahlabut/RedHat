@@ -8,4 +8,4 @@ ssh_object.ssh_connect_password()
 out= ssh_object.ssh_command('show configuration | display json')
 ssh_object.ssh_close()
 
-print juniper_config_parser(out)
+print juniper_config_parser_string(out)
