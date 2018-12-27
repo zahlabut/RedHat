@@ -42,7 +42,7 @@ if 'baremetal' not in existing_networks:
 
 # Create dummy network #
 if 'dummy' not in existing_networks:
-    result=exec_command_line_command(source_command+'openstack network create --provider-network-type vlan --provider-physical-network baremetal dummy')
+    result=exec_command_line_command(source_command+'openstack network create --provider-network-type flat --provider-physical-network baremetal dummy')
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
 
