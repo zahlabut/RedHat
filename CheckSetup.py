@@ -134,6 +134,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                     actual_vlans.append(interface_vlans[port]['members'])
             if len(actual_vlans)==2:
                 to_stop=True
+            time.sleep(3)
         self.assertEqual(actual_vlans,[[baremetal_vlan_id],[baremetal_vlan_id]], 'Failed: baremetal ports are set to incorrect vlans:\n'+str(actual_vlans))
 
 
