@@ -52,7 +52,7 @@ class SSH():
         #     self.output+=line+'\n'
         # for line in stderr.read().splitlines():
         #     self.stderr+=line+'\n'
-        return {'Stdout':self.stdout, 'Stderr':self.stderr}
+        return {'Stdout':self.stdout.read(), 'Stderr':self.stderr.read()}
 
     def scp_upload(self, src_abs_path, dst_abs_path):
         try:
