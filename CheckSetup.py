@@ -150,6 +150,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
     def test_010_base_test(self):
         # Get VLAN tag per tenant network
+        print source_overcloud+'openstack network show '+tenant_net_1_name+' -f json'
         tenant_net1_vlan=exec_command_line_command(source_overcloud+'openstack network show '+tenant_net_1_name+' -f json')['JsonOutput']['provider:segmentation_id']
         tenant_net2_vlan=exec_command_line_command(source_overcloud+'openstack network show '+tenant_net_2_name+' -f json')['JsonOutput']['provider:segmentation_id']
         # Create BM Guests
