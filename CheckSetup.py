@@ -110,7 +110,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
     def test_008_switch_no_vlans_for_bm_ports(self):
         print '\ntest_008_switch_no_vlans_for_bm_ports'
-        exec_command_line_command("sshpass -p "+switch_password+" ssh "+switch_user+"@"+switch_ip+" 'show configuration | display json' > "+conf_switch_file)
         interface_vlan=get_juniper_switch_json(switch_ip,switch_user,switch_password)['InterfaceVlan']
         for port in bare_metal_guest_ports:
             self.assertNotIn(port,interface_vlan.keys(),'Failed: '+port+' was found as configured' + port+' \n'+str(interface_vlan))
@@ -129,11 +128,11 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         to_stop=False
         while to_stop==False or time.time()>(start_time+manageable_timeout):
             time.sleep(5)
-            interface_vlans = get_juniper_switch_json(switch_ip, switch_user, switch_password)['InterfaceVlan']
+            interface_vlan = get_juniper_switch_json(switch_ip, switch_user, switch_password)['InterfaceVlan']
             actual_vlans=[]
             for port in bare_metal_guest_ports:
                 if port in interface_vlans.keys():
-                    actual_vlans.append(interface_vlans[port]['members'])
+                    actual_vlans.append(interface_vlan[port]['members'])
             if len(actual_vlans)==2:
                 to_stop=True
         self.assertEqual(str(actual_vlans).count(str(baremetal_vlan_id)),2, 'Failed: baremetal ports are set to incorrect vlans:\n'+str(actual_vlans))
