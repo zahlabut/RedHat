@@ -5,7 +5,7 @@ switch_password='N3tAutomation!'
 
 ssh_object=SSH(switch_ip,switch_user,switch_password)
 ssh_object.ssh_connect_password()
-out= str(ssh_object.ssh_command_only('show configuration | display json'))['Stdout']
+out= ssh_object.ssh_command_only('show configuration | display json')['Stdout']
 print out
 f=open('stam','w')
 f.write(out)
