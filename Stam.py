@@ -7,7 +7,7 @@ ssh_object=SSH(switch_ip,switch_user,switch_password)
 ssh_object.ssh_connect_password()
 out= ssh_object.ssh_command_only('show configuration | display json')['Stdout']
 
+print out
 
 
-
-print juniper_config_parser_string(out)
+#print juniper_config_parser_string(out)
