@@ -136,3 +136,11 @@ def juniper_config_parser_string(string):
         int_vlan_dic[name]=inter_vlans
     vlans=json_output['configuration']['vlans']
     return {'Interfaces':interfaces,'Vlans':vlans, 'InterfaceVlan':int_vlan_dic}
+
+
+def get_juniper_switch_json(ip,user,password,command='show configuration | display json'):
+    ssh_object=SSH(ip,user,password)
+    ssh_object.ssh_connect_password()
+    out= ssh_object.ssh_command_only(command)['Stdout']
+    ssh.close()
+    return juniper_config_parser_string(out)
