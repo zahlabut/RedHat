@@ -131,7 +131,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             interface_vlan = get_juniper_switch_json(switch_ip, switch_user, switch_password)['InterfaceVlan']
             actual_vlans=[]
             for port in bare_metal_guest_ports:
-                if port in interface_vlans.keys():
+                if port in interface_vlan.keys():
                     actual_vlans.append(interface_vlan[port]['members'])
             if len(actual_vlans)==2:
                 to_stop=True
