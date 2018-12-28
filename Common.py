@@ -43,6 +43,16 @@ class SSH():
             self.stderr+=line+'\n'
         return {'Stdout':self.output, 'Stderr':self.stderr}
 
+    def ssh_command_only(self, command):
+        self.stdin,self.stdout,self.stderr=self.client.exec_command(command)
+        # #stdin.close()
+        # self.output=''
+        # self.stderr=''
+        # for line in stdout.read().splitlines():
+        #     self.output+=line+'\n'
+        # for line in stderr.read().splitlines():
+        #     self.stderr+=line+'\n'
+        return {'Stdout':self.output, 'Stderr':self.stderr}
 
     def scp_upload(self, src_abs_path, dst_abs_path):
         try:
