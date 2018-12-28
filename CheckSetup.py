@@ -129,8 +129,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         to_stop=False
         while to_stop==False or time.time()>(start_time+manageable_timeout):
             time.sleep(5)
-            exec_command_line_command("sshpass -p " + switch_password + " ssh " + switch_user + "@" + switch_ip + " 'show configuration | display json' > " + conf_switch_file)
-            interface_vlans = juniper_config_parser(conf_switch_file)['InterfaceVlan']
+            interface_vlans = get_juniper_switch_json(switch_ip, switch_user, switch_password)['InterfaceVlan']
             actual_vlans=[]
             for port in bare_metal_guest_ports:
                 if port in interface_vlans.keys():
