@@ -144,3 +144,5 @@ def get_juniper_switch_json(ip,user,password,command='show configuration | displ
     out= ssh_object.ssh_command_only(command)['Stdout']
     ssh_object.ssh_close()
     return juniper_config_parser_string(out)
+
+
