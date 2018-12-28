@@ -13,8 +13,10 @@ tenant_net_1_name='tenant_net'
 tenant_net_2_name='tenant_net2'
 source_overcloud='source /home/stack/overcloudrc;'
 souurce_undercloud='source /home/stack/stackrc;'
-manageable_timeout=300 #Test 009
-available_timeout=300 #Test 009
+manageable_timeout=300 #Test 009 "Clean"
+available_timeout=300 #Test 009 "Clean"
+create_bm_server_timeout=300
+
 
 
 ### Get controllers IPs ###
@@ -114,43 +116,56 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         for port in bare_metal_guest_ports:
             self.assertNotIn(port,interface_vlan.keys(),'Failed: '+port+' was found as configured' + port+' \n'+str(interface_vlan))
 
-    def test_009_clean_bm_guests_in_parallel(self):
-        baremetal_vlan_id=exec_command_line_command(source_overcloud+'openstack network show baremetal -f json')['JsonOutput']['provider:segmentation_id']
-        baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
-        for id in baremetal_node_ids:
-            exec_command_line_command(source_overcloud+'openstack baremetal node manage '+id)
-        for id in baremetal_node_ids:
-            states=[item['provisioning state'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
-        self.assertEqual(['manageable','manageable'], states, 'Failed: baremetal node states are: '+str(states)+' expected:manageable')
-        for id in baremetal_node_ids:
-            exec_command_line_command(source_overcloud+'openstack baremetal node provide '+id)
+    # def test_009_clean_bm_guests_in_parallel(self):
+    #     baremetal_vlan_id=exec_command_line_command(source_overcloud+'openstack network show baremetal -f json')['JsonOutput']['provider:segmentation_id']
+    #     baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
+    #     for id in baremetal_node_ids:
+    #         exec_command_line_command(source_overcloud+'openstack baremetal node manage '+id)
+    #     for id in baremetal_node_ids:
+    #         states=[item['provisioning state'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
+    #     self.assertEqual(['manageable','manageable'], states, 'Failed: baremetal node states are: '+str(states)+' expected:manageable')
+    #     for id in baremetal_node_ids:
+    #         exec_command_line_command(source_overcloud+'openstack baremetal node provide '+id)
+    #     start_time=time.time()
+    #     to_stop=False
+    #     while to_stop==False or time.time()>(start_time+manageable_timeout):
+    #         time.sleep(5)
+    #         interface_vlan = get_juniper_switch_json(switch_ip, switch_user, switch_password)['InterfaceVlan']
+    #         actual_vlans=[]
+    #         for port in bare_metal_guest_ports:
+    #             if port in interface_vlan.keys():
+    #                 actual_vlans.append(interface_vlan[port]['members'])
+    #         if len(actual_vlans)==2:
+    #             to_stop=True
+    #     self.assertEqual(str(actual_vlans).count(str(baremetal_vlan_id)),2, 'Failed: baremetal ports are set to incorrect vlans:\n'+str(actual_vlans))
+    #     start_time = time.time()
+    #     to_stop=False
+    #     while to_stop==False or time.time()>(start_time+available_timeout):
+    #         time.sleep(5)
+    #         states = [item['provisioning state'] for item in exec_command_line_command(source_overcloud + 'openstack baremetal node list -f json')['JsonOutput']]
+    #         if states==['available','available']:
+    #             to_stop=True
+    #         print states
+    #     self.assertEqual(['available','available'], states, 'Failed: baremetal node states are: '+str(states)+' expected:available')
+
+    def test_010_base_test(self):
+        # Get VLAN tag per tenant network
+        tenant_net1_vlan=exec_command_line_command(source_overcloud+'openstack network show '+tenant_net_1_name+' -f json')['JsonOutput']['provider:segmentation_id']
+        tenant_net2_vlan=exec_command_line_command(source_overcloud+'openstack network show '+tenant_net_2_name+' -f json')['JsonOutput']['provider:segmentation_id']
+        # Create BM Guests
+        create_bm1_command='openstack server create --flavor baremetal --image overcloud -full --key default --nic net-id='+tenant_net_1_name+' t1'
+        create_bm2_command='openstack server create --flavor baremetal --image overcloud -full --key default --nic net-id='+tenant_net_2_name+' t2'
+        exec_command_line_command(source_overcloud+create_bm1_command)
+        exec_command_line_command(source_overcloud+create_bm2_command)
         start_time=time.time()
         to_stop=False
-        while to_stop==False or time.time()>(start_time+manageable_timeout):
+        while to_stop == False or time.time() > (start_time + create_bm_server_timeout):
             time.sleep(5)
-            interface_vlan = get_juniper_switch_json(switch_ip, switch_user, switch_password)['InterfaceVlan']
-            actual_vlans=[]
-            for port in bare_metal_guest_ports:
-                if port in interface_vlan.keys():
-                    actual_vlans.append(interface_vlan[port]['members'])
-            if len(actual_vlans)==2:
+            list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
+            if 't1' and 't2' in str(list_servers_result):
                 to_stop=True
-        self.assertEqual(str(actual_vlans).count(str(baremetal_vlan_id)),2, 'Failed: baremetal ports are set to incorrect vlans:\n'+str(actual_vlans))
-        start_time = time.time()
-        to_stop=False
-        while to_stop==False or time.time()>(start_time+available_timeout):
-            time.sleep(5)
-            states = [item['provisioning state'] for item in exec_command_line_command(source_overcloud + 'openstack baremetal node list -f json')['JsonOutput']]
-            if states==['available','available']:
-                to_stop=True
-            print states
-        self.assertEqual(['available','available'], states, 'Failed: baremetal node states are: '+str(states)+' expected:available')
+        self.assertEqual(to_stop,True,'Failed: No BM servers detected, "openstack server list" result is:\n'+list_servers_result)
 
-    def test_010_create_bm_servers(self):
-        pass
-
-    # def create_and_delete_bm_guest(self):
-    #     create_command='openstack server create --flavor baremetal --image overcloud -full --key default --nic net-id=<ID> t1'
 
 
 
