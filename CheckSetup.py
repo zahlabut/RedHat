@@ -117,6 +117,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             self.assertNotIn(port,interface_vlan.keys(),'Failed: '+port+' was found as configured' + port+' \n'+str(interface_vlan))
 
     # def test_009_clean_bm_guests_in_parallel(self):
+    #     print '\ntest_009_clean_bm_guests_in_parallel'
     #     baremetal_vlan_id=exec_command_line_command(source_overcloud+'openstack network show baremetal -f json')['JsonOutput']['provider:segmentation_id']
     #     baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
     #     for id in baremetal_node_ids:
@@ -149,6 +150,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     #     self.assertEqual(['available','available'], states, 'Failed: baremetal node states are: '+str(states)+' expected:available')
 
     def test_010_create_bm_guests_in_parallel(self):
+        print '\ntest_010_create_bm_guests_in_parallel'
         # Get VLAN tag per tenant network
         tenant_net1_vlan=exec_command_line_command(source_overcloud+'openstack network show '+tenant_net_1_name+' -f json')['JsonOutput']['provider:segmentation_id']
         tenant_net2_vlan=exec_command_line_command(source_overcloud+'openstack network show '+tenant_net_2_name+' -f json')['JsonOutput']['provider:segmentation_id']
@@ -162,8 +164,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         while to_stop == False or time.time() > (start_time + create_bm_server_timeout):
             time.sleep(5)
             list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
-            names=[item['name'] for item in list_servers_result]
-            statuses=[item['status'] for item in list_servers_result]
+            names=sort([item['name'] for item in list_servers_result])
+            statuses=sort([item['status'] for item in list_servers_result])
             print names
             print statuses
             if names==['t1','t2'] and statuses==['active','active']:
