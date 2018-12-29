@@ -150,13 +150,11 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
     def test_010_create_bm_guests_in_parallel(self):
         # Get VLAN tag per tenant network
-        print source_overcloud+'openstack network show '+tenant_net_1_name+' -f json'
-        print source_overcloud+'openstack network show '+tenant_net_2_name+' -f json'
         tenant_net1_vlan=exec_command_line_command(source_overcloud+'openstack network show '+tenant_net_1_name+' -f json')['JsonOutput']['provider:segmentation_id']
         tenant_net2_vlan=exec_command_line_command(source_overcloud+'openstack network show '+tenant_net_2_name+' -f json')['JsonOutput']['provider:segmentation_id']
         # Create BM Guests
-        create_bm1_command=source_overcloud+'openstack server create --flavor baremetal --image overcloud -full --key default --nic net-id='+tenant_net_1_name+' t1'
-        create_bm2_command=source_overcloud+'openstack server create --flavor baremetal --image overcloud -full --key default --nic net-id='+tenant_net_2_name+' t2'
+        create_bm1_command='openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+tenant_net_1_name+' t1'
+        create_bm2_command='openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+tenant_net_2_name+' t2'
         exec_command_line_command(source_overcloud+create_bm1_command)
         exec_command_line_command(source_overcloud+create_bm2_command)
         start_time=time.time()
