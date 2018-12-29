@@ -148,28 +148,25 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     #         print states
     #     self.assertEqual(['available','available'], states, 'Failed: baremetal node states are: '+str(states)+' expected:available')
 
-    def test_010_base_test(self):
+    def test_010_create_bm_guests_in_parallel(self):
         # Get VLAN tag per tenant network
         print source_overcloud+'openstack network show '+tenant_net_1_name+' -f json'
         print source_overcloud+'openstack network show '+tenant_net_2_name+' -f json'
         tenant_net1_vlan=exec_command_line_command(source_overcloud+'openstack network show '+tenant_net_1_name+' -f json')['JsonOutput']['provider:segmentation_id']
         tenant_net2_vlan=exec_command_line_command(source_overcloud+'openstack network show '+tenant_net_2_name+' -f json')['JsonOutput']['provider:segmentation_id']
-
-        print tenant_net1_vlan
-        print tenant_net2_vlan
-        # # Create BM Guests
-        # create_bm1_command='openstack server create --flavor baremetal --image overcloud -full --key default --nic net-id='+tenant_net_1_name+' t1'
-        # create_bm2_command='openstack server create --flavor baremetal --image overcloud -full --key default --nic net-id='+tenant_net_2_name+' t2'
-        # exec_command_line_command(source_overcloud+create_bm1_command)
-        # exec_command_line_command(source_overcloud+create_bm2_command)
-        # start_time=time.time()
-        # to_stop=False
-        # while to_stop == False or time.time() > (start_time + create_bm_server_timeout):
-        #     time.sleep(5)
-        #     list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
-        #     if 't1' and 't2' in str(list_servers_result):
-        #         to_stop=True
-        # self.assertEqual(to_stop,True,'Failed: No BM servers detected, "openstack server list" result is:\n'+list_servers_result)
+        # Create BM Guests
+        create_bm1_command=source_overcloud+'openstack server create --flavor baremetal --image overcloud -full --key default --nic net-id='+tenant_net_1_name+' t1'
+        create_bm2_command=source_overcloud+'openstack server create --flavor baremetal --image overcloud -full --key default --nic net-id='+tenant_net_2_name+' t2'
+        exec_command_line_command(source_overcloud+create_bm1_command)
+        exec_command_line_command(source_overcloud+create_bm2_command)
+        start_time=time.time()
+        to_stop=False
+        while to_stop == False or time.time() > (start_time + create_bm_server_timeout):
+            time.sleep(5)
+            list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
+            if 't1' and 't2' in str(list_servers_result):
+                to_stop=True
+        self.assertEqual(to_stop,True,'Failed: No BM servers detected, "openstack server list" result is:\n'+list_servers_result)
 
 
 
