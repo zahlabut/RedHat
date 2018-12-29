@@ -164,6 +164,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
             names=[item['name'] for item in list_servers_result]
             statuses=[item['status'] for item in list_servers_result]
+            print names
+            print statuses
             if names==['t1','t2'] and statuses==['active','active']:
                 to_stop=True
         self.assertEqual(to_stop,True,'Failed: No BM servers detected, "openstack server list" result is:\n'+str(list_servers_result))
