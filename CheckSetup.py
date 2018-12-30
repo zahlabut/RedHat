@@ -74,7 +74,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
     def test_003_errors_in_ironic_logs(self):
         print '\ntest_003_errors_in_ironic_logs'
-        command='sudo grep -R ERROR /var/log/containers/ironic/*'
+        command="sudo grep -R ' ERROR ' /var/log/containers/ironic/*"
         for ip in controller_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
@@ -105,8 +105,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
     def test_006_net_ansible_indication_msg_in_log(self):
         print '\ntest_006_net_ansible_indication_msg_in_log'
-        commands=["grep 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep 'Ansible Host'",
-                  "zgrep 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep 'Ansible Host'"]
+        commands=["grep -i 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep -i 'ansible host'",
+                  "zgrep -i 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep -i 'ansible host'"]
         output = []
         stderr = []
         for ip in controller_ips:
