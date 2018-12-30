@@ -159,7 +159,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             time.sleep(5)
             interface_vlan = get_switch_conf_as_json(setup_params['switch_ip'], setup_params['switch_user'],setup_params['switch_password'],setup_params['switch_type'])['InterfaceVlan']
             actual_vlans=[]
-            for port in bare_metal_guest_ports:
+            for port in setup_params['bare_metal_guest_ports']:
                 if port in interface_vlan.keys():
                     actual_vlans.append(interface_vlan[port]['members'])
             if len(actual_vlans)==2:
