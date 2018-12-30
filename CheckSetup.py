@@ -4,13 +4,22 @@ import unittest
 ### Parameters ###
 overclud_user='heat-admin'
 overcloud_ssh_key='/home/stack/.ssh/id_rsa'
-bare_metal_guest_ports=['xe-0/0/6','xe-0/0/7']
-conf_switch_file = 'sw_conf.json'
-switch_ip='10.9.95.25'
-switch_user='ansible'
-switch_password='N3tAutomation!'
-tenant_net_1_name='tenant-net'
-tenant_net_2_name='tenant-net2'
+
+baremetal_guest_ports=['xe-0/0/6', 'xe-0/0/7'] #QE
+
+switch_ip='10.9.95.25' #QE
+switch_user='ansible' #QE
+switch_password='N3tAutomation!' #QE
+
+switch_ip='172.16.0.18' #VIRT
+switch_user='ansible' #VIRT
+switch_password='Juniper' #VIRT
+
+
+tenant_nets=['tenant-net','tenant-net2'] # QA
+tenant_nets=['tempest-shared'] # VIRT
+
+
 source_overcloud='source /home/stack/overcloudrc;'
 souurce_undercloud='source /home/stack/stackrc;'
 manageable_timeout=300 #Test 009 "Clean"
@@ -113,7 +122,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     def test_008_switch_no_vlans_for_bm_ports(self):
         print '\ntest_008_switch_no_vlans_for_bm_ports'
         interface_vlan=get_juniper_switch_json(switch_ip,switch_user,switch_password)['InterfaceVlan']
-        for port in bare_metal_guest_ports:
+        for port in baremetal_guest_ports:
             self.assertNotIn(port,interface_vlan.keys(),'Failed: '+port+' was found as configured' + port+' \n'+str(interface_vlan))
 
     # def test_009_clean_bm_guests_in_parallel(self):
@@ -155,20 +164,21 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         tenant_net1_vlan=exec_command_line_command(source_overcloud+'openstack network show '+tenant_net_1_name+' -f json')['JsonOutput']['provider:segmentation_id']
         tenant_net2_vlan=exec_command_line_command(source_overcloud+'openstack network show '+tenant_net_2_name+' -f json')['JsonOutput']['provider:segmentation_id']
         # Create BM Guests
-        create_bm1_command='openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+tenant_net_1_name+' t1'
-        create_bm2_command='openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+tenant_net_2_name+' t2'
-        exec_command_line_command(source_overcloud+create_bm1_command)
-        exec_command_line_command(source_overcloud+create_bm2_command)
+        for net in tenant_nets:
+            create_bm1_command='openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+net+' t'+net
+            create_bm2_command='openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+net+' t'+net
+            exec_command_line_command(source_overcloud+create_bm1_command)
+            exec_command_line_command(source_overcloud+create_bm2_command)
         start_time=time.time()
         to_stop=False
         while to_stop == False or time.time() > (start_time + create_bm_server_timeout):
             time.sleep(5)
             list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
-            names=sort([item['name'] for item in list_servers_result])
+            ids=sort([item['id'] for item in list_servers_result])
             statuses=sort([item['status'] for item in list_servers_result])
             print names
             print statuses
-            if names==['t1','t2'] and statuses==['active','active']:
+            if names==len(ids)==2 and statuses==['active','active']:
                 to_stop=True
         self.assertEqual(to_stop,True,'Failed: No BM servers detected, "openstack server list" result is:\n'+str(list_servers_result))
 
