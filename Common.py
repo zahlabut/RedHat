@@ -126,7 +126,7 @@ def get_switch_conf_as_json(ip,user,password,sw_type=None):
     #types: juniper_physical_sw juniper_emulator_sw
     print ip,user, password, sw_type
     if sw_type=='juniper_physical_sw':
-        print 'here'*100
+        print 'phys'*100
         command = 'show configuration | display json'
         ssh_object = SSH(ip, user, password)
         ssh_object.ssh_connect_password()
@@ -151,6 +151,7 @@ def get_switch_conf_as_json(ip,user,password,sw_type=None):
         return {'Interfaces':interfaces,'Vlans':vlans, 'InterfaceVlan':int_vlan_dic}
 
     if sw_type=='juniper_emulator_sw':
+        print 'emul'*100
         command = 'show configuration | display json'
         ssh_object = SSH(ip, user, password)
         ssh_object.ssh_connect_password()
