@@ -45,7 +45,6 @@ class SSH():
 
     def ssh_command_only(self, command):
         self.stdin,self.stdout,self.stderr=self.client.exec_command(command)
-        print 'here'*100
         # #stdin.close()
         # self.output=''
         # self.stderr=''
@@ -53,7 +52,7 @@ class SSH():
         #     self.output+=line+'\n'
         # for line in stderr.read().splitlines():
         #     self.stderr+=line+'\n'
-        return {'Stdout':self.stdout.read(), 'Stderr':self.stderr.read()}
+        return {'Stdout':self.stdout.read()}#, 'Stderr':self.stderr.read()}
 
     def scp_upload(self, src_abs_path, dst_abs_path):
         try:
