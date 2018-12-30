@@ -4,8 +4,6 @@ import time
 import subprocess
 import json
 
-paramiko.util.log_to_file("Paramiko.log")
-
 class SSH():
     def __init__(self, host, user, password='', key_path=''):
         self.host=host
@@ -53,7 +51,7 @@ class SSH():
         #     self.output+=line+'\n'
         # for line in stderr.read().splitlines():
         #     self.stderr+=line+'\n'
-        return {'Stdout':self.stdout.read()}#, 'Stderr':self.stderr.read()}
+        return {'Stdout':self.stdout.read(),'Stderr':self.stderr.read()}
 
     def scp_upload(self, src_abs_path, dst_abs_path):
         try:

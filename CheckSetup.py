@@ -17,7 +17,7 @@ qe_setup_parameters={
     'switch_type':'juniper_physical_sw',
     'switch_ip':'10.9.95.25',
     'switch_user':'ansible',
-    'switch_password':'N3tAuomation!',
+    'switch_password':'N3tAutomation!',
     'tenant_nets':['tenant-net','tenant-net2']
 }
 
