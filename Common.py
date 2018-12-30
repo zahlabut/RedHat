@@ -158,7 +158,7 @@ def get_switch_conf_as_json(ip,user,password,sw_type=None):
         out = ssh_object.ssh_command_only(command)['Stdout']
         ssh_object.ssh_close()
         print str(out)[0:100] * 100
-        if type == 'juniper_emulator_sw':
+        if sw_type == 'juniper_emulator_sw':
             json_output = json.loads(str(out))
             vlans = json_output['configuration'][0]['vlans']
             interfaces = json_output['configuration'][0]['interfaces'][0]['interface']
