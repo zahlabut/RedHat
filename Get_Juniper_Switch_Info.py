@@ -1,14 +1,14 @@
 from Common import *
 
-# Virtual Setup #
-virt_setup_parameters={
-    'baremetal_guest_ports':['xe-0/0/7', 'xe-0/0/8'],
-    'switch_type':'juniper_emulator_sw',
-    'switch_ip':'172.16.0.18',
+# QE Setup #
+qe_setup_parameters={
+    'baremetal_guest_ports':['xe-0/0/6', 'xe-0/0/7'],
+    'switch_type':'juniper_physical_sw',
+    'switch_ip':'10.9.95.25',
     'switch_user':'ansible',
-    'switch_password':'Juniper',
-    'tenant_nets':['tempest-shared'],
-    'setup':'Virtual_Setup'
+    'switch_password':'N3tAutomation!',
+    'tenant_nets':['tenant-net','tenant-net2'],
+    'setup':'QE_Setup'
 }
 
 json=get_switch_conf_as_json(virt_setup_parameters['switch_ip'],
