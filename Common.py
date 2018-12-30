@@ -131,7 +131,6 @@ def get_switch_conf_as_json(ip,user,password,sw_type=None):
         ssh_object = SSH(ip, user, password)
         ssh_object.ssh_connect_password()
         out = ssh_object.ssh_command_only(command)['Stdout']
-        ssh_object.ssh_close()
         json_output=json.loads(str(out))
         interfaces=json_output['configuration']['interfaces']['interface']
         int_vlan_dic={}
@@ -144,6 +143,7 @@ def get_switch_conf_as_json(ip,user,password,sw_type=None):
                 print e
             int_vlan_dic[name]=inter_vlans
         vlans=json_output['configuration']['vlans']
+        ssh_object.ssh_close()
         return {'Interfaces':interfaces,'Vlans':vlans, 'InterfaceVlan':int_vlan_dic}
 
     if sw_type=='juniper_emulator_sw':
@@ -151,7 +151,6 @@ def get_switch_conf_as_json(ip,user,password,sw_type=None):
         ssh_object = SSH(ip, user, password)
         ssh_object.ssh_connect_password()
         out = ssh_object.ssh_command_only(command)['Stdout']
-        ssh_object.ssh_close()
         if type == 'physical_sw':
             json_output = json.loads(str(out))
             interfaces = json_output['configuration'][0]['interfaces'][0]['interface']
@@ -165,4 +164,5 @@ def get_switch_conf_as_json(ip,user,password,sw_type=None):
                     print e
                 int_vlan_dic[name] = inter_vlans
         vlans = json_output['configuration'][0]['vlans']
+        ssh_object.ssh_close()
         return {'Interfaces': interfaces,'Vlans':vlans,'InterfaceVlan':int_vlan_dic}
