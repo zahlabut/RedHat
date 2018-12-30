@@ -116,7 +116,6 @@ def juniper_config_parser(path_to_config_json):
 
 def get_switch_conf_as_json(ip,user,password,sw_type=None):
     #types: juniper_physical_sw juniper_emulator_sw
-    print ip,user, password, sw_type
     if sw_type=='juniper_physical_sw':
         command = 'show configuration | display json'
         ssh_object = SSH(ip, user, password)
@@ -143,17 +142,16 @@ def get_switch_conf_as_json(ip,user,password,sw_type=None):
         ssh_object.ssh_connect_password()
         out = ssh_object.ssh_command_only(command)['Stdout']
         ssh_object.ssh_close()
-        if sw_type == 'juniper_emulator_sw':
-            json_output = json.loads(str(out))
-            vlans = json_output['configuration'][0]['vlans']
-            interfaces = json_output['configuration'][0]['interfaces'][0]['interface']
-            int_vlan_dic = {}
-            for inter in interfaces:
-                inter_vlans = None
-                name = inter['name']['data']
-                try:
-                    inter_vlans = inter['unit'][0]['family']['ethernet-switching']['vlan']
-                except Exception, e:
-                    print e
-                int_vlan_dic[name] = inter_vlans
-        return {'Interfaces': interfaces,'Vlans':vlans,'InterfaceVlan':int_vlan_dic}
+        json_output = json.loads(str(out))
+        vlans = json_output['configuration'][0]['vlans']
+        interfaces = json_output['configuration'][0]['interfaces'][0]['interface']
+        int_vlan_dic = {}
+        for inter in interfaces:
+            inter_vlans = None
+            name = inter['name']['data']
+            try:
+                inter_vlans = inter['unit'][0]['family']['ethernet-switching']['vlan']
+            except Exception, e:
+                print e
+            int_vlan_dic[name] = inter_vlans
+    return {'Interfaces': interfaces,'Vlans':vlans,'InterfaceVlan':int_vlan_dic}
