@@ -1,7 +1,7 @@
 from Common import *
 
 # Virtual Setup #
-virt_setup_parameters={
+setup_parameters={
     'baremetal_guest_ports':['xe-0/0/7', 'xe-0/0/8'],
     'switch_type':'juniper_emulator_sw',
     'switch_ip':'172.16.0.18',
@@ -11,10 +11,10 @@ virt_setup_parameters={
     'setup':'Virtual_Setup'
 }
 
-json=get_switch_conf_as_json(virt_setup_parameters['switch_ip'],
-                        virt_setup_parameters['switch_user'],
-                        virt_setup_parameters['switch_password'],
-                        virt_setup_parameters['switch_type'])
+json=get_switch_conf_as_json(setup_parameters['switch_ip'],
+                        setup_parameters['switch_user'],
+                        setup_parameters['switch_password'],
+                        setup_parameters['switch_type'])
 
 print json.keys()
 

@@ -1,7 +1,7 @@
 from Common import *
 
 # QE Setup #
-qe_setup_parameters={
+setup_parameters={
     'baremetal_guest_ports':['xe-0/0/6', 'xe-0/0/7'],
     'switch_type':'juniper_physical_sw',
     'switch_ip':'10.9.95.25',
@@ -11,10 +11,10 @@ qe_setup_parameters={
     'setup':'QE_Setup'
 }
 
-json=get_switch_conf_as_json(virt_setup_parameters['switch_ip'],
-                        virt_setup_parameters['switch_user'],
-                        virt_setup_parameters['switch_password'],
-                        virt_setup_parameters['switch_type'])
+json=get_switch_conf_as_json(setup_parameters['switch_ip'],
+                        setup_parameters['switch_user'],
+                        setup_parameters['switch_password'],
+                        setup_parameters['switch_type'])
 
 print json.keys()
 
