@@ -131,7 +131,7 @@ def get_switch_conf_as_json(ip,user,password,sw_type=None):
         ssh_object = SSH(ip, user, password)
         ssh_object.ssh_connect_password()
 
-        print ssh_object.ssh_command_only()['Stdout']
+        print ssh_object.ssh_command_only('ksjdhfksdjhfskdjfh')['Stdout']
 
         out = ssh_object.ssh_command_only(command)['Stdout']
         ssh_object.ssh_close()
