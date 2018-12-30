@@ -4,39 +4,54 @@ import unittest
 ### Parameters ###
 overclud_user='heat-admin'
 overcloud_ssh_key='/home/stack/.ssh/id_rsa'
-
-baremetal_guest_ports=['xe-0/0/6', 'xe-0/0/7'] #QE
-
-switch_ip='10.9.95.25' #QE
-switch_user='ansible' #QE
-switch_password='N3tAutomation!' #QE
-
-switch_ip='172.16.0.18' #VIRT
-switch_user='ansible' #VIRT
-switch_password='Juniper' #VIRT
-
-
-tenant_nets=['tenant-net','tenant-net2'] # QA
-tenant_nets=['tempest-shared'] # VIRT
-
-
 source_overcloud='source /home/stack/overcloudrc;'
-souurce_undercloud='source /home/stack/stackrc;'
+source_undercloud='source /home/stack/stackrc;'
 manageable_timeout=300 #Test 009 "Clean"
 available_timeout=300 #Test 009 "Clean"
 create_bm_server_timeout=300
 
 
+# QE Setup #
+qe_setup_parameters={
+    'baremetal_guest_ports':['xe-0/0/6', 'xe-0/0/7'],
+    'switch_type':'juniper_physical_sw',
+    'switch_ip':'10.9.95.25',
+    'switch_user':'ansible',
+    'switch_password':'N3tAuomation!',
+    'tenant_nets':['tenant-net','tenant-net2']
+}
+
+
+# Virtual Setup #
+virt_setup_parameters={
+    'baremetal_guest_ports':['xe-0/0/0', 'xe-0/0/6'],
+    'switch_type':'juniper_emulator_sw',
+    'switch_ip':'172.16.0.18',
+    'switch_user':'ansible',
+    'switch_password':'Juniper',
+    'tenant_nets':['tempest-shared']
+}
+
+
+print virt_setup_parameters
+
 
 ### Get controllers IPs ###
-controllers = exec_command_line_command(souurce_undercloud+'openstack server list --name controller -f json')[
+controllers = exec_command_line_command(source_undercloud+'openstack server list --name controller -f json')[
     'JsonOutput']
 controller_ips = [item['networks'].split('=')[-1] for item in controllers]
 
 ### Get Ceph IPs ###
-cephs = exec_command_line_command(souurce_undercloud+'openstack server list --name cephstorage -f json')[
+cephs = exec_command_line_command(source_undercloud+'openstack server list --name cephstorage -f json')[
     'JsonOutput']
 cephs_ips = [item['networks'].split('=')[-1] for item in cephs]
+
+### No Ceph = Virt Setup ###
+if cephs==[]:
+    setup_params=virt_setup_parameters
+else:
+    setup_params=qe_setup_parameters
+
 
 class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     # Check Ironic on Overcloud + ERRORs in logs #
@@ -109,54 +124,55 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
     def test_007_check_ceph_status(self):
         print '\ntest_007_check_ceph_status'
-        ceph_status= source_overcloud+" cinder service-list | grep ceph"
-        out = exec_command_line_command(ceph_status)['CommandOutput']
-        self.assertIn('ceph',out,'Failed: ceph is not running')
-        ceph_health_command='ceph health'
-        ssh_object = SSH(controller_ips[0],user='heat-admin',key_path='/home/stack/.ssh/id_rsa')
-        ssh_object.ssh_connect_key()
-        com_output=ssh_object.ssh_command(ceph_health_command)['Stdout']
-        ssh_object.ssh_close()
-        self.assertIn('HEALTH_OK',com_output,'Failed: "HEALTH_OK" not found in output of \n'+ceph_status+' command')
+        if cephs!=[]:
+            ceph_status= source_overcloud+" cinder service-list | grep ceph"
+            out = exec_command_line_command(ceph_status)['CommandOutput']
+            self.assertIn('ceph',out,'Failed: ceph is not running')
+            ceph_health_command='ceph health'
+            ssh_object = SSH(controller_ips[0],user='heat-admin',key_path='/home/stack/.ssh/id_rsa')
+            ssh_object.ssh_connect_key()
+            com_output=ssh_object.ssh_command(ceph_health_command)['Stdout']
+            ssh_object.ssh_close()
+            self.assertIn('HEALTH_OK',com_output,'Failed: "HEALTH_OK" not found in output of \n'+ceph_status+' command')
 
     def test_008_switch_no_vlans_for_bm_ports(self):
         print '\ntest_008_switch_no_vlans_for_bm_ports'
-        interface_vlan=get_juniper_switch_json(switch_ip,switch_user,switch_password)['InterfaceVlan']
-        for port in baremetal_guest_ports:
+        interface_vlan=get_switch_conf_as_json(setup_params['switch_ip'],setup_params['switch_user'],setup_params['switch_password'])['InterfaceVlan']
+        for port in setup_params['baremetal_guest_ports']:
             self.assertNotIn(port,interface_vlan.keys(),'Failed: '+port+' was found as configured' + port+' \n'+str(interface_vlan))
 
-    # def test_009_clean_bm_guests_in_parallel(self):
-    #     print '\ntest_009_clean_bm_guests_in_parallel'
-    #     baremetal_vlan_id=exec_command_line_command(source_overcloud+'openstack network show baremetal -f json')['JsonOutput']['provider:segmentation_id']
-    #     baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
-    #     for id in baremetal_node_ids:
-    #         exec_command_line_command(source_overcloud+'openstack baremetal node manage '+id)
-    #     for id in baremetal_node_ids:
-    #         states=[item['provisioning state'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
-    #     self.assertEqual(['manageable','manageable'], states, 'Failed: baremetal node states are: '+str(states)+' expected:manageable')
-    #     for id in baremetal_node_ids:
-    #         exec_command_line_command(source_overcloud+'openstack baremetal node provide '+id)
-    #     start_time=time.time()
-    #     to_stop=False
-    #     while to_stop==False or time.time()>(start_time+manageable_timeout):
-    #         time.sleep(5)
-    #         interface_vlan = get_juniper_switch_json(switch_ip, switch_user, switch_password)['InterfaceVlan']
-    #         actual_vlans=[]
-    #         for port in bare_metal_guest_ports:
-    #             if port in interface_vlan.keys():
-    #                 actual_vlans.append(interface_vlan[port]['members'])
-    #         if len(actual_vlans)==2:
-    #             to_stop=True
-    #     self.assertEqual(str(actual_vlans).count(str(baremetal_vlan_id)),2, 'Failed: baremetal ports are set to incorrect vlans:\n'+str(actual_vlans))
-    #     start_time = time.time()
-    #     to_stop=False
-    #     while to_stop==False or time.time()>(start_time+available_timeout):
-    #         time.sleep(5)
-    #         states = [item['provisioning state'] for item in exec_command_line_command(source_overcloud + 'openstack baremetal node list -f json')['JsonOutput']]
-    #         if states==['available','available']:
-    #             to_stop=True
-    #         print states
-    #     self.assertEqual(['available','available'], states, 'Failed: baremetal node states are: '+str(states)+' expected:available')
+    def test_009_clean_bm_guests_in_parallel(self):
+        print '\ntest_009_clean_bm_guests_in_parallel'
+        baremetal_vlan_id=exec_command_line_command(source_overcloud+'openstack network show baremetal -f json')['JsonOutput']['provider:segmentation_id']
+        baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
+        for id in baremetal_node_ids:
+            exec_command_line_command(source_overcloud+'openstack baremetal node manage '+id)
+        for id in baremetal_node_ids:
+            states=[item['provisioning state'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
+        self.assertEqual(['manageable','manageable'], states, 'Failed: baremetal node states are: '+str(states)+' expected:manageable')
+        for id in baremetal_node_ids:
+            exec_command_line_command(source_overcloud+'openstack baremetal node provide '+id)
+        start_time=time.time()
+        to_stop=False
+        while to_stop==False or time.time()>(start_time+manageable_timeout):
+            time.sleep(5)
+            interface_vlan = get_switch_conf_as_json(setup_params['switch_ip'], setup_params['switch_user'],setup_params['switch_password'])['InterfaceVlan']
+            actual_vlans=[]
+            for port in bare_metal_guest_ports:
+                if port in interface_vlan.keys():
+                    actual_vlans.append(interface_vlan[port]['members'])
+            if len(actual_vlans)==2:
+                to_stop=True
+        self.assertEqual(str(actual_vlans).count(str(baremetal_vlan_id)),2, 'Failed: baremetal ports are set to incorrect vlans:\n'+str(actual_vlans))
+        start_time = time.time()
+        to_stop=False
+        while to_stop==False or time.time()>(start_time+available_timeout):
+            time.sleep(5)
+            states = [item['provisioning state'] for item in exec_command_line_command(source_overcloud + 'openstack baremetal node list -f json')['JsonOutput']]
+            if states==['available','available']:
+                to_stop=True
+            print states
+        self.assertEqual(['available','available'], states, 'Failed: baremetal node states are: '+str(states)+' expected:available')
 
     def test_010_create_bm_guests_in_parallel(self):
         print '\ntest_010_create_bm_guests_in_parallel'

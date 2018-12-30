@@ -122,27 +122,42 @@ def juniper_config_parser(path_to_config_json):
     vlans=json_output['configuration']['vlans']
     return {'Interfaces':interfaces,'Vlans':vlans, 'InterfaceVlan':int_vlan_dic}
 
-def juniper_config_parser_string(string):
-    json_output=json.loads(str(string))
-    interfaces=json_output['configuration']['interfaces']['interface']
-    int_vlan_dic={}
-    for inter in interfaces:
-        inter_vlans=None
-        name=inter['name']
-        try:
-            inter_vlans=inter['unit'][0]['family']['ethernet-switching']['vlan']
-        except Exception, e:
-            print e
-        int_vlan_dic[name]=inter_vlans
-    vlans=json_output['configuration']['vlans']
-    return {'Interfaces':interfaces,'Vlans':vlans, 'InterfaceVlan':int_vlan_dic}
-
-
-def get_juniper_switch_json(ip,user,password,command='show configuration | display json'):
+def get_switch_conf_as_json(ip,user,password,sw_type=None):
+    #types: juniper_physical_sw juniper_emulator_sw
     ssh_object=SSH(ip,user,password)
     ssh_object.ssh_connect_password()
     out= ssh_object.ssh_command_only(command)['Stdout']
     ssh_object.ssh_close()
-    return juniper_config_parser_string(out)
 
+    if type=='juniper_physical_sw':
+        command = 'show configuration | display json'
+        json_output=json.loads(str(out))
+        interfaces=json_output['configuration']['interfaces']['interface']
+        int_vlan_dic={}
+        for inter in interfaces:
+            inter_vlans=None
+            name=inter['name']
+            try:
+                inter_vlans=inter['unit'][0]['family']['ethernet-switching']['vlan']
+            except Exception, e:
+                print e
+            int_vlan_dic[name]=inter_vlans
+        vlans=json_output['configuration']['vlans']
+        return {'Interfaces':interfaces,'Vlans':vlans, 'InterfaceVlan':int_vlan_dic}
 
+    if type=='juniper_emulator_sw':
+        command = 'show configuration | display json'
+        if type == 'physical_sw':
+            json_output = json.loads(str(out))
+            interfaces = json_output['configuration'][0]['interfaces'][0]['interface']
+            int_vlan_dic = {}
+            for inter in interfaces:
+                inter_vlans = None
+                name = inter['name']['data']
+                try:
+                    inter_vlans = inter['unit'][0]['family']['ethernet-switching']['vlan']
+                except Exception, e:
+                    print e
+                int_vlan_dic[name] = inter_vlans
+            vlans = json_output['configuration'][0]['vlans']
+            return {'Interfaces': interfaces, 'Vlans': vlans, 'InterfaceVlan': int_vlan_dic}
