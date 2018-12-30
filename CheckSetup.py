@@ -18,7 +18,8 @@ qe_setup_parameters={
     'switch_ip':'10.9.95.25',
     'switch_user':'ansible',
     'switch_password':'N3tAutomation!',
-    'tenant_nets':['tenant-net','tenant-net2']
+    'tenant_nets':['tenant-net','tenant-net2'],
+    'setup':'QE_Setup'
 }
 
 
@@ -29,7 +30,8 @@ virt_setup_parameters={
     'switch_ip':'172.16.0.18',
     'switch_user':'ansible',
     'switch_password':'Juniper',
-    'tenant_nets':['tempest-shared']
+    'tenant_nets':['tempest-shared'],
+    'setup':'Virtual_Setup'
 }
 
 
@@ -102,7 +104,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             ssh_object.ssh_close()
             self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in log\n'+output)
 
-    @unittest.skipIf(setup_params['juniper_emulator_sw'] == 'juniper_emulator_sw','No indication string on virtual setup!')
+    @unittest.skipIf(setup_params['setup'] == 'Virtual_Setup','No indication string on virtual setup!')
     def test_006_net_ansible_indication_msg_in_log(self):
         print '\ntest_006_net_ansible_indication_msg_in_log'
         commands=["grep -i 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep -i 'ansible host'",
@@ -120,7 +122,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertIn('Ansible Host', str(output), 'Failed: ' + ip +
                       ' no indication for Ansible Networking configuration in log'+'\n'+str(output)+'\n'+str(stderr))
 
-    @unittest.skipIf(setup_params['juniper_emulator_sw']=='juniper_emulator_sw','Ceph is not installed on virtual setup!')
+    @unittest.skipIf(setup_params['setup']=='Virtual_Setup','Ceph is not installed on virtual setup!')
     def test_007_check_ceph_status(self):
         print '\ntest_007_check_ceph_status'
         ceph_status= source_overcloud+" cinder service-list | grep ceph"
