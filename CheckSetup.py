@@ -48,6 +48,7 @@ if cephs==[]:
     setup_params=virt_setup_parameters
 else:
     setup_params=qe_setup_parameters
+print setup_params
 
 
 class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
