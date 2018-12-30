@@ -45,6 +45,7 @@ class SSH():
 
     def ssh_command_only(self, command):
         self.stdin,self.stdout,self.stderr=self.client.exec_command(command)
+        print 'here'*100
         # #stdin.close()
         # self.output=''
         # self.stderr=''
