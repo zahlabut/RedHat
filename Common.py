@@ -124,6 +124,7 @@ def juniper_config_parser(path_to_config_json):
 
 def get_switch_conf_as_json(ip,user,password,sw_type=None):
     #types: juniper_physical_sw juniper_emulator_sw
+    print ip,user, password, sw_type
     if type=='juniper_physical_sw':
         command = 'show configuration | display json'
         ssh_object = SSH(ip, user, password)
