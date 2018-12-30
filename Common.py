@@ -4,6 +4,7 @@ import time
 import subprocess
 import json
 
+paramiko.util.log_to_file("Paramiko.log")
 
 class SSH():
     def __init__(self, host, user, password='', key_path=''):
