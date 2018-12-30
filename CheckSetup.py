@@ -48,7 +48,6 @@ if cephs==[]:
     setup_params=virt_setup_parameters
 else:
     setup_params=qe_setup_parameters
-print setup_params
 
 
 class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
@@ -103,6 +102,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             ssh_object.ssh_close()
             self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in log\n'+output)
 
+    @unittest.skipIf(setup_params['juniper_emulator_sw'] == 'juniper_emulator_sw','No indication string on virtual setup!')
     def test_006_net_ansible_indication_msg_in_log(self):
         print '\ntest_006_net_ansible_indication_msg_in_log'
         commands=["grep -i 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep -i 'ansible host'",
@@ -120,18 +120,18 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertIn('Ansible Host', str(output), 'Failed: ' + ip +
                       ' no indication for Ansible Networking configuration in log'+'\n'+str(output)+'\n'+str(stderr))
 
+    @unittest.skipIf(setup_params['juniper_emulator_sw']=='juniper_emulator_sw','Ceph is not installed on virtual setup!')
     def test_007_check_ceph_status(self):
         print '\ntest_007_check_ceph_status'
-        if cephs!=[]:
-            ceph_status= source_overcloud+" cinder service-list | grep ceph"
-            out = exec_command_line_command(ceph_status)['CommandOutput']
-            self.assertIn('ceph',out,'Failed: ceph is not running')
-            ceph_health_command='ceph health'
-            ssh_object = SSH(controller_ips[0],user='heat-admin',key_path='/home/stack/.ssh/id_rsa')
-            ssh_object.ssh_connect_key()
-            com_output=ssh_object.ssh_command(ceph_health_command)['Stdout']
-            ssh_object.ssh_close()
-            self.assertIn('HEALTH_OK',com_output,'Failed: "HEALTH_OK" not found in output of \n'+ceph_status+' command')
+        ceph_status= source_overcloud+" cinder service-list | grep ceph"
+        out = exec_command_line_command(ceph_status)['CommandOutput']
+        self.assertIn('ceph',out,'Failed: ceph is not running')
+        ceph_health_command='ceph health'
+        ssh_object = SSH(controller_ips[0],user='heat-admin',key_path='/home/stack/.ssh/id_rsa')
+        ssh_object.ssh_connect_key()
+        com_output=ssh_object.ssh_command(ceph_health_command)['Stdout']
+        ssh_object.ssh_close()
+        self.assertIn('HEALTH_OK',com_output,'Failed: "HEALTH_OK" not found in output of \n'+ceph_status+' command')
 
     def test_008_switch_no_vlans_for_bm_ports(self):
         print '\ntest_008_switch_no_vlans_for_bm_ports'
