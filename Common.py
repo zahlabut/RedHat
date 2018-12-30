@@ -44,13 +44,6 @@ class SSH():
 
     def ssh_command_only(self, command):
         self.stdin,self.stdout,self.stderr=self.client.exec_command(command)
-        # #stdin.close()
-        # self.output=''
-        # self.stderr=''
-        # for line in stdout.read().splitlines():
-        #     self.output+=line+'\n'
-        # for line in stderr.read().splitlines():
-        #     self.stderr+=line+'\n'
         return {'Stdout':self.stdout.read(),'Stderr':self.stderr.read()}
 
     def scp_upload(self, src_abs_path, dst_abs_path):
@@ -125,16 +118,11 @@ def get_switch_conf_as_json(ip,user,password,sw_type=None):
     #types: juniper_physical_sw juniper_emulator_sw
     print ip,user, password, sw_type
     if sw_type=='juniper_physical_sw':
-        print 'phys'*100
         command = 'show configuration | display json'
         ssh_object = SSH(ip, user, password)
         ssh_object.ssh_connect_password()
-
-        print ssh_object.ssh_command_only('ksjdhfksdjhfskdjfh')['Stdout']
-
         out = ssh_object.ssh_command_only(command)['Stdout']
         ssh_object.ssh_close()
-        print str(out)[0:100]*100
         json_output=json.loads(str(out))
         vlans=json_output['configuration']['vlans']
         interfaces=json_output['configuration']['interfaces']['interface']
@@ -150,13 +138,11 @@ def get_switch_conf_as_json(ip,user,password,sw_type=None):
         return {'Interfaces':interfaces,'Vlans':vlans, 'InterfaceVlan':int_vlan_dic}
 
     if sw_type=='juniper_emulator_sw':
-        print 'emul'*100
         command = 'show configuration | display json'
         ssh_object = SSH(ip, user, password)
         ssh_object.ssh_connect_password()
         out = ssh_object.ssh_command_only(command)['Stdout']
         ssh_object.ssh_close()
-        print str(out)[0:100] * 100
         if sw_type == 'juniper_emulator_sw':
             json_output = json.loads(str(out))
             vlans = json_output['configuration'][0]['vlans']
