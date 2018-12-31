@@ -140,7 +140,7 @@ def get_switch_conf_as_json(ip,user,password,sw_type=None):
         command = 'show configuration | display json'
         ssh_object = SSH(ip, user, password)
         ssh_object.ssh_connect_password()
-        ssh_object.ssh_command_only('cli')
+        print ssh_object.ssh_command_only('cli')
         out = ssh_object.ssh_command_only(command)['Stdout']
         ssh_object.ssh_close()
         json_output = json.loads(str(out))
