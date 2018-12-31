@@ -28,7 +28,7 @@ virt_setup_parameters={
     'baremetal_guest_ports':['xe-0/0/7', 'xe-0/0/8'],
     'switch_type':'juniper_emulator_sw',
     'switch_ip':'172.16.0.92',
-    'switch_user':'root',
+    'switch_user':'ansible',
     'switch_password':'Juniper',
     'tenant_nets':['tempest-shared'],
     'setup':'Virtual_Setup'
