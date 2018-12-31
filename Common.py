@@ -142,6 +142,7 @@ def get_switch_conf_as_json(ip,user,password,sw_type=None):
         ssh_object.ssh_connect_password()
         out = ssh_object.ssh_command_only(command)['Stdout']
         ssh_object.ssh_close()
+        print out
         json_output = json.loads(str(out))
         vlans = json_output['configuration'][0]['vlans']
         interfaces = json_output['configuration'][0]['interfaces'][0]['interface']
