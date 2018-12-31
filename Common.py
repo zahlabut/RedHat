@@ -137,7 +137,7 @@ def get_switch_conf_as_json(ip,user,password,sw_type=None):
         return {'Interfaces':interfaces,'Vlans':vlans, 'InterfaceVlan':int_vlan_dic}
 
     if sw_type=='juniper_emulator_sw':
-        command = 'cli;show configuration | display json'
+        command = 'show configuration | display json'
         ssh_object = SSH(ip, user, password)
         ssh_object.ssh_connect_password()
         out = ssh_object.ssh_command_only(command)['Stdout']
