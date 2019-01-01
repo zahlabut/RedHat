@@ -166,7 +166,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertEqual(str(actual_vlans).count(str(baremetal_vlan_id)),2, 'Failed: baremetal ports are set to incorrect vlans:\n'+str(actual_vlans))
         start_time = time.time()
         to_stop=False
-        while to_stop==False or time.time()>(start_time+available_timeout):
+        while to_stop==False:# or time.time()>(start_time+available_timeout):
             print to_stop
             time.sleep(5)
             states = [item['provisioning state'] for item in exec_command_line_command(source_overcloud + 'openstack baremetal node list -f json')['JsonOutput']]
