@@ -173,6 +173,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             if states==['available','available']:
                 to_stop=True
             print states
+            print to_stop
+
         self.assertEqual(['available','available'], states, 'Failed: baremetal node states are: '+str(states)+' expected:available')
 
     # def test_010_create_bm_guests_in_parallel(self):
