@@ -11,6 +11,8 @@ available_timeout=3 #Test 009 "Clean"
 create_bm_server_timeout=3
 
 
+
+
 # QE Setup #
 qe_setup_parameters={
     'baremetal_guest_ports':['xe-0/0/6', 'xe-0/0/7'],
