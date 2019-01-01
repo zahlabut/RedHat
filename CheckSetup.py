@@ -6,9 +6,9 @@ overclud_user='heat-admin'
 overcloud_ssh_key='/home/stack/.ssh/id_rsa'
 source_overcloud='source /home/stack/overcloudrc;'
 source_undercloud='source /home/stack/stackrc;'
-manageable_timeout=300 #Test 009 "Clean"
-available_timeout=300 #Test 009 "Clean"
-create_bm_server_timeout=300
+manageable_timeout=30 #Test 009 "Clean"
+available_timeout=30 #Test 009 "Clean"
+create_bm_server_timeout=30
 
 
 # QE Setup #
@@ -154,7 +154,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             exec_command_line_command(source_overcloud+'openstack baremetal node provide '+id)
         start_time=time.time()
         to_stop=False
-        while to_stop==False or time.time()>(start_time+manageable_timeout):
+        while to_stop==False or (time.time()>(start_time+manageable_timeout)):
             time.sleep(5)
             interface_vlan = get_switch_conf_as_json(setup_params['switch_ip'], setup_params['switch_user'],setup_params['switch_password'],setup_params['switch_type'])['InterfaceVlan']
             actual_vlans=[]
@@ -166,7 +166,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertEqual(str(actual_vlans).count(str(baremetal_vlan_id)),2, 'Failed: baremetal ports are set to incorrect vlans:\n'+str(actual_vlans))
         start_time = time.time()
         to_stop=False
-        while to_stop==False:# or time.time()>(start_time+available_timeout):
+        while to_stop==False or (time.time()>(start_time+available_timeout)):
             print to_stop
             time.sleep(5)
             states = [item['provisioning state'] for item in exec_command_line_command(source_overcloud + 'openstack baremetal node list -f json')['JsonOutput']]
