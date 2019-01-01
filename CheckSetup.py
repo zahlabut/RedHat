@@ -6,11 +6,9 @@ overclud_user='heat-admin'
 overcloud_ssh_key='/home/stack/.ssh/id_rsa'
 source_overcloud='source /home/stack/overcloudrc;'
 source_undercloud='source /home/stack/stackrc;'
-manageable_timeout=3 #Test 009 "Clean"
-available_timeout=3 #Test 009 "Clean"
-create_bm_server_timeout=3
-
-
+manageable_timeout=300 #Test 009 "Clean"
+available_timeout=300 #Test 009 "Clean"
+create_bm_server_timeout=300
 
 
 # QE Setup #
