@@ -167,6 +167,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         start_time = time.time()
         to_stop=False
         while to_stop==False or time.time()>(start_time+available_timeout):
+            print to_stop
             time.sleep(5)
             states = [item['provisioning state'] for item in exec_command_line_command(source_overcloud + 'openstack baremetal node list -f json')['JsonOutput']]
             if states==['available','available']:
