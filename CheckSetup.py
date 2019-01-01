@@ -177,6 +177,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
         self.assertEqual(['available','available'], states, 'Failed: baremetal node states are: '+str(states)+' expected:available')
 
+
+
     # def test_010_create_bm_guests_in_parallel(self):
     #     print '\ntest_010_create_bm_guests_in_parallel'
     #     # Get VLAN tag per tenant network
