@@ -139,7 +139,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         print '\ntest_008_switch_no_vlans_for_bm_ports'
         interface_vlan=get_switch_conf_as_json(setup_params['switch_ip'],setup_params['switch_user'],setup_params['switch_password'],setup_params['switch_type'])['InterfaceVlan']
         for port in setup_params['baremetal_guest_ports']:
-            print port
             self.assertNotIn(port,interface_vlan.keys(),'Failed: '+port+' was found as configured' + port+'\n'+str(interface_vlan))
 
     def test_009_clean_bm_guests_in_parallel(self):

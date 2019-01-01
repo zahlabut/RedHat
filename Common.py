@@ -150,7 +150,7 @@ def get_switch_conf_as_json(ip,user,password,sw_type=None):
             inter_vlans = None
             name = inter['name']['data']
             try:
-                inter_vlans = inter['unit'][0]['family'][0]['ethernet-switching'][0]['vlan']
+                inter_vlans = inter['unit'][0]['family'][0]['ethernet-switching'][0]['vlan'][0]
             except Exception, e:
                 print e
             int_vlan_dic[name] = inter_vlans
