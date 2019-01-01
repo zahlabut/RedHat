@@ -149,9 +149,11 @@ def get_switch_conf_as_json(ip,user,password,sw_type=None):
         for inter in interfaces:
             inter_vlans = None
             name = inter['name']['data']
-            #try:
-            inter_vlans = inter['unit'][0]['family']['ethernet-switching']['vlan']
-            #except Exception, e:
-            #    print e
+            try:
+                inter_vlans = inter['unit'][0]['family'][0]['ethernet-switching'][0]['vlan']
+            except Exception, e:
+                print e
             int_vlan_dic[name] = inter_vlans
     return {'Interfaces': interfaces,'Vlans':vlans,'InterfaceVlan':int_vlan_dic}
+
+
