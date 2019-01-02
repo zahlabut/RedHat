@@ -15,5 +15,5 @@ vlan=get_juniper_sw_get_port_vlan(
     setup_parameters['switch_ip'],
     setup_parameters['switch_user'],
     setup_parameters['switch_password'],
-    'xe-0/0/11')
+    'xe-0/0/5.0')
 
