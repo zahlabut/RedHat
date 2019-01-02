@@ -163,6 +163,7 @@ def get_juniper_sw_get_port_vlan(ip, user, password, port):
     ssh_object.ssh_close()
     tag_start=out[0].find('TAG')
     mac_start=out[0].find('MAC')
+    print tag_start,mac_start
     vlan_tags=[line[tag_start:mac_start].replace(' ','') for line in out[1:]]
     print vlan_tags
 
