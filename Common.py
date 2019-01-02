@@ -166,7 +166,7 @@ def get_juniper_sw_get_port_vlan(ip, user, password, port):
         if port in line:
             print line
 
-    lines=[list(set(line.split(' '))).remove('') for line in out.split('\n') if port in line]
+    lines=[list(set(line.split(' '))) for line in out.split('\n') if port in line]
     print lines
 
 
