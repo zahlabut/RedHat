@@ -2,7 +2,7 @@ from Common import *
 
 # Virtual Setup #
 setup_parameters={
-    'baremetal_guest_ports':['xe-0/0/7', 'xe-0/0/8'],
+    'baremetal_guest_ports':['xe-0/0/7', 'xe-0/0/8', 'xe-0/0/11'],
     'switch_type':'juniper_emulator_sw',
     'switch_ip':'172.16.0.92',
     'switch_user':'ansible',
@@ -11,13 +11,9 @@ setup_parameters={
     'setup':'Virtual_Setup'
 }
 
-json=get_switch_conf_as_json(setup_parameters['switch_ip'],
-                        setup_parameters['switch_user'],
-                        setup_parameters['switch_password'],
-                        setup_parameters['switch_type'])
+vlan=get_juniper_sw_get_port_vlan(
+    setup_parameters['switch_ip'],
+    setup_parameters['switch_user'],
+    setup_parameters['switch_password'],
+    'xe-0/0/11')
 
-print json.keys()
-
-interface_vlan=json['InterfaceVlan']
-for k in interface_vlan.keys():
-    print k,'-->',interface_vlan[k]
