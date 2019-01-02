@@ -10,14 +10,10 @@ setup_parameters={
     'tenant_nets':['tenant-net','tenant-net2'],
     'setup':'QE_Setup'
 }
+vlans=get_juniper_sw_get_port_vlan(
+    setup_parameters['switch_ip'],
+    setup_parameters['switch_user'],
+    setup_parameters['switch_password'],
+    setup_parameters['baremetal_guest_ports'])
 
-json=get_switch_conf_as_json(setup_parameters['switch_ip'],
-                        setup_parameters['switch_user'],
-                        setup_parameters['switch_password'],
-                        setup_parameters['switch_type'])
-
-print json.keys()
-
-interface_vlan=json['InterfaceVlan']
-for k in interface_vlan.keys():
-    print k,'-->',interface_vlan[k]
+print vlans
