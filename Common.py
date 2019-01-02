@@ -156,18 +156,21 @@ def get_switch_conf_as_json(ip,user,password,sw_type=None):
             int_vlan_dic[name] = inter_vlans
     return {'Interfaces': interfaces,'Vlans':vlans,'InterfaceVlan':int_vlan_dic}
 
-def get_juniper_sw_get_port_vlan(ip, user, password, port):
+def get_juniper_sw_get_port_vlan(ip, user, password, ports):
     ssh_object = SSH(ip, user, password)
     ssh_object.ssh_connect_password()
     out = ssh_object.ssh_command_only('show ethernet-switching table')['Stdout']
     ssh_object.ssh_close()
-    lines=[list(set(line.split(' '))) for line in out.split('\n') if port in line]
-    vlans=[]
-    for lis in lines:
-        for item in lis:
-            if len(item)>1 and (port not in item) and (':' not in item):
-                vlans.append(item)
-    return vlans
+    result_dic={}
+    for port in ports:
+        lines=[list(set(line.split(' '))) for line in out.split('\n') if port in line]
+        vlans=[]
+        for lis in lines:
+            for item in lis:
+                if len(item)>1 and (port not in item) and (':' not in item):
+                    vlans.append(item)
+        result_dic[port]=vlans
+    return result_dic
 
 
 

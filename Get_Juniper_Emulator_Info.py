@@ -10,12 +10,12 @@ setup_parameters={
     'tenant_nets':['tempest-shared'],
     'setup':'Virtual_Setup'
 }
-for port in setup_parameters['baremetal_guest_ports']:
-    vlans=get_juniper_sw_get_port_vlan(
-        setup_parameters['switch_ip'],
-        setup_parameters['switch_user'],
-        setup_parameters['switch_password'],
-        port)
-    print port+'-->'+str(vlans)
+vlans=get_juniper_sw_get_port_vlan(
+    setup_parameters['switch_ip'],
+    setup_parameters['switch_user'],
+    setup_parameters['switch_password'],
+    setup_parameters['baremetal_guest_ports'])
+
+print vlans
 
 
