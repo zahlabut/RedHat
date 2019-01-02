@@ -160,6 +160,7 @@ def get_juniper_sw_get_port_vlan(ip, user, password, port):
     ssh_object = SSH(ip, user, password)
     ssh_object.ssh_connect_password()
     out = ssh_object.ssh_command_only('show ethernet-switching interface '+port)['Stdout'].split('\n')
+    print out
     ssh_object.ssh_close()
     print out[0]
     tag_start=out[0].find('TAG')
