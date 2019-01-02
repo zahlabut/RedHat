@@ -171,8 +171,12 @@ def get_juniper_sw_get_port_vlan(ip, user, password, port):
     for line in lines:
         print line
 
-    print '----------------------------------'
-    vlans=[item for item in lines if len(item)>1]
+    print '------------------------------------------'
+    vlans=[]
+    for item in lines:
+        if len(item)>1 and item!=port and ':' not in item:
+            vlans.append(item)
+
     for v in vlans:
         print v
 
