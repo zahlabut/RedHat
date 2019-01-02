@@ -159,10 +159,13 @@ def get_switch_conf_as_json(ip,user,password,sw_type=None):
 def get_juniper_sw_get_port_vlan(ip, user, password, port):
     ssh_object = SSH(ip, user, password)
     ssh_object.ssh_connect_password()
-    out = ssh_object.ssh_command_only('show ethernet-switching table')['Stdout']
+    out = ssh_object.ssh_command_only('show ethernet-switching interface '+port)['Stdout'].split('\n')
     ssh_object.ssh_close()
-    vlan=[line for line in out.split('\n') if port in line]
-    print vlan
+    tag_start=out[0].find('TAG')
+    mac_start=out[0].find('MAC')
+    vlan_tags=[line[tag_start:mac_start].replace(' ','') for line in out[1:]]
+    print vlan_tags
+
 
 
 
