@@ -162,6 +162,7 @@ def get_juniper_sw_get_port_vlan(ip, user, password, port):
     out = ssh_object.ssh_command_only('show ethernet-switching table')['Stdout']
     ssh_object.ssh_close()
     for line in out.split('\n'):
+        print '---'
         print line
     return 'sss'
 
