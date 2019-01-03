@@ -157,6 +157,10 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         while to_stop==False or (time.time()>(start_time+manageable_timeout)):
             time.sleep(5)
             actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
+            print actual_vlans
+            print str(actual_vlans).count(prms['baremetal_guest_ports'])
+            print len(prms['baremetal_guest_ports'])
+
             if str(actual_vlans).count(prms['baremetal_guest_ports'])==len(prms['baremetal_guest_ports']):
                 to_stop=True
             print actual_vlans
