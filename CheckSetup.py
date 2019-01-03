@@ -158,9 +158,11 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             print '----',to_stop or (time.time()>(start_time+manageable_timeout))
             time.sleep(5)
             actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
+            print actual_vlans
             actual_vlans=list(set([item[key] for key in actual_vlans.keys()]))
             if actual_vlans[0]==baremetal_vlan_id:
                 to_stop=True
+        print actual_vlans
         self.assertEqual(actual_vlans[0], baremetal_vlan_id, 'Failed: baremetal ports are set to incorrect vlans:\n' +
                          str(get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])))
         start_time = time.time()
