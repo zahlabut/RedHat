@@ -171,9 +171,10 @@ def get_juniper_sw_get_port_vlan(ip, user, password, ports):
 
 
             result_dic[port]=vlans
-            ssh_object.ssh_close()
+
         except:
             pass
+    ssh_object.ssh_close()
     return result_dic
 
 
