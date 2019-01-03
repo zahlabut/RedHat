@@ -164,7 +164,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             if str(actual_vlans).count(str(baremetal_vlan_id))==len(prms['baremetal_guest_ports']):
                 to_stop=True
             print actual_vlans
-        self.assertEqual(actual_vlans[0], baremetal_vlan_id, 'Failed: baremetal ports are set to incorrect vlans:\n' +str(actual_vlans))
+        self.assertIn(str(baremetal_vlan_id),str(actual_vlans), 'Failed: baremetal ports are not set to baremetal network vlan:\n' +str(actual_vlans))
         start_time = time.time()
         to_stop=False
         while to_stop == False or (time.time()>(start_time+available_timeout)):
