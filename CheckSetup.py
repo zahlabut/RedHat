@@ -135,11 +135,11 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     #     ssh_object.ssh_close()
     #     self.assertIn('HEALTH_OK',com_output,'Failed: "HEALTH_OK" not found in output of \n'+ceph_status+' command')
 
-    def test_008_switch_no_vlans_for_bm_ports(self):
-        print '\ntest_008_switch_no_vlans_for_bm_ports'
-        interface_vlan=get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
-        for port in prms['baremetal_guest_ports']:
-            self.assertEqual(interface_vlan[port],[],'Failed: '+port+' was found as configured' + port+'\n'+str(interface_vlan))
+    # def test_008_switch_no_vlans_for_bm_ports(self):
+    #     print '\ntest_008_switch_no_vlans_for_bm_ports'
+    #     interface_vlan=get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
+    #     for port in prms['baremetal_guest_ports']:
+    #         self.assertEqual(interface_vlan[port],[],'Failed: '+port+' was found as configured' + port+'\n'+str(interface_vlan))
 
     def test_009_clean_bm_guests_in_parallel(self):
         print '\ntest_009_clean_bm_guests_in_parallel'
