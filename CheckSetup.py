@@ -154,7 +154,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             exec_command_line_command(source_overcloud+'openstack baremetal node provide '+id)
         start_time=time.time()
         to_stop=False
-        while to_stop==False or (time.time()<(start_time+manageable_timeout)):
+        while to_stop==False or (time.time()<(start_time+manageable_timeout)==True):
             time.sleep(5)
             actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
             if str(actual_vlans).count(str(baremetal_vlan_id))==len(prms['baremetal_guest_ports']):
@@ -162,7 +162,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertIn(str(baremetal_vlan_id),str(actual_vlans), 'Failed: baremetal ports are not set to baremetal network vlan:\n' +str(actual_vlans))
         start_time = time.time()
         to_stop=False
-        while to_stop == False or (time.time()<(start_time+available_timeout)):
+        while to_stop == False or (time.time()<(start_time+available_timeout)==True):
             print '----', to_stop or (time.time() > (start_time + manageable_timeout))
             time.sleep(5)
             states = [item['provisioning state'] for item in exec_command_line_command(source_overcloud + 'openstack baremetal node list -f json')['JsonOutput']]
