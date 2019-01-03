@@ -164,9 +164,9 @@ def get_juniper_sw_get_port_vlan(ip, user, password, ports):
         command='show configuration interfaces '+port
         out=ssh_object.ssh_command_only(command)['Stdout']
         print out
-        vlans=[line.split('members')[1].strip(';').replace(']','').replace('[','') for line in out.split('\n') if 'members' in line]
-        print vlans
-        print eval(vlans)
+        # vlans=[line.split('members')[1].strip(';').replace(']','').replace('[','') for line in out.split('\n') if 'members' in line]
+        # print vlans
+        # print eval(vlans)
     #     print vlans[0]
     #     vlans=list(set(vlans))
     #     result_dic[port]=vlans
