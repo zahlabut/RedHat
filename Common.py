@@ -168,7 +168,7 @@ def get_juniper_sw_get_port_vlan(ip, user, password, ports):
             vlans=[item for item in vlans[0].split(' ') if item!='']
             result_dic[port]=vlans
         except:
-            result_dic[port]=[]
+            result_dic[port]=None
     ssh_object.ssh_close()
     return result_dic
 
