@@ -2,7 +2,7 @@ from Common import *
 
 # Virtual Setup #
 setup_parameters={
-    'baremetal_guest_ports':['xe-0/0/7', 'xe-0/0/8'],
+    'baremetal_guest_ports':['xe-0/0/7', 'xe-0/0/8','xe-0/0/0'],
     'switch_type':'juniper_emulator_sw',
     'switch_ip':'172.16.0.92',
     'switch_user':'ansible',
