@@ -6,9 +6,9 @@ overclud_user='heat-admin'
 overcloud_ssh_key='/home/stack/.ssh/id_rsa'
 source_overcloud='source /home/stack/overcloudrc;'
 source_undercloud='source /home/stack/stackrc;'
-manageable_timeout=3 #Test 009 "Clean"
-available_timeout=3 #Test 009 "Clean"
-create_bm_server_timeout=3
+manageable_timeout=300 #Test 009 "Clean"
+available_timeout=300 #Test 009 "Clean"
+create_bm_server_timeout=300
 
 
 # QE Setup #
@@ -167,8 +167,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             states = [item['provisioning state'] for item in exec_command_line_command(source_overcloud + 'openstack baremetal node list -f json')['JsonOutput']]
             if states==['available','available']:
                 to_stop=True
-            print states
-
         self.assertEqual(['available','available'], states, 'Failed: baremetal node states are: '+str(states)+' expected:available')
 
 
