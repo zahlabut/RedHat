@@ -47,9 +47,9 @@ cephs_ips = [item['networks'].split('=')[-1] for item in cephs]
 
 ### No Ceph = Virt Setup ###
 if cephs==[]:
-    setup_params=virt_setup_parameters
+    prms=virt_setup_parameters
 else:
-    setup_params=qe_setup_parameters
+    prms=qe_setup_parameters
 
 
 class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
@@ -137,8 +137,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
     def test_008_switch_no_vlans_for_bm_ports(self):
         print '\ntest_008_switch_no_vlans_for_bm_ports'
-        interface_vlan=get_juniper_sw_get_port_vlan(setup_params['switch_ip'],setup_params['switch_user'],setup_params['switch_password'],setup_params['baremetal_guest_ports'])
-        for port in setup_params['baremetal_guest_ports']:
+        interface_vlan=get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
+        for port in prms['baremetal_guest_ports']:
             self.assertEqual(interface_vlan[port],[],'Failed: '+port+' was found as configured' + port+'\n'+str(interface_vlan))
 
     def test_009_clean_bm_guests_in_parallel(self):
@@ -157,14 +157,12 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         while to_stop or (time.time()>(start_time+manageable_timeout)):
             print '----',to_stop or (time.time()>(start_time+manageable_timeout))
             time.sleep(5)
-            interface_vlan = get_juniper_sw_get_port_vlan(setup_params['switch_ip'], setup_params['switch_user'], setup_params['switch_password'], setup_params['baremetal_guest_ports'])
-            actual_vlans=[]
-            for port in setup_params['baremetal_guest_ports']:
-                if port in interface_vlan.keys():
-                    actual_vlans.append(interface_vlan[port]['members'])
-            if len(actual_vlans)==2:
+            actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
+            actual_vlans=list(set([item[key] for key in actual_vlans.keys()]))
+            if actual_vlans[0]==baremetal_vlan_id:
                 to_stop=True
-        self.assertEqual(str(actual_vlans).count(str(baremetal_vlan_id)),2, 'Failed: baremetal ports are set to incorrect vlans:\n'+str(actual_vlans))
+        self.assertEqual(actual_vlans[0], baremetal_vlan_id, 'Failed: baremetal ports are set to incorrect vlans:\n' +
+                         str(get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])))
         start_time = time.time()
         to_stop=False
         while to_stop or (time.time()>(start_time+available_timeout)):
