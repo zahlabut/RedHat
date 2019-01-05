@@ -179,6 +179,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         bm_name='BM_Guest_'
         bm_index=0
         created_bm=[]
+        tenant_nets=prms['tenant_nets']
         for net in tenant_nets:
             bm_index+=1
             vlan_id=exec_command_line_command(source_overcloud+'openstack network show '+net+' -f json')['JsonOutput']['provider:segmentation_id']
