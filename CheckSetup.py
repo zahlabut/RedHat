@@ -203,8 +203,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         # Make sure that each server was created on proper network, basing on VLAN id comparison
         actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
         actual_vlans=[actual_vlans[key][0] for key in actual_vlans.keys()]
-        print set(expected_vlans_on_switch)
-        print set(actual_vlans)
         self.assertEqual(set(expected_vlans_on_switch),set(actual_vlans),
                          'Failed, detected VLANs on swith are not as expected:''\n'+str(actual_vlans)+'\n'+str(expected_vlans_on_switch))
 
