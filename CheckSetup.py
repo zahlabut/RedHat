@@ -30,7 +30,7 @@ virt_setup_parameters={
     'switch_ip':'172.16.0.92',
     'switch_user':'ansible',
     'switch_password':'Juniper',
-    'tenant_nets':['tempest-shared','tempest-shared'], #Duplicated in order to create 2 BM in parallel in test 010
+    'tenant_nets':['tempest-shared'],#,'tempest-shared'], #Duplicated in order to create 2 BM in parallel in test 010
     'setup':'Virtual_Setup'
 }
 
