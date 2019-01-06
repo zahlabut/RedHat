@@ -102,7 +102,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             ssh_object.ssh_close()
             self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in log\n'+output)
 
-    @unittest.skipIf(setup_params['setup'] == 'Virtual_Setup','No indication string on virtual setup!')
+    @unittest.skipIf(prms['setup'] == 'Virtual_Setup','No indication string on virtual setup!')
     def test_006_net_ansible_indication_msg_in_log(self):
         print '\ntest_006_net_ansible_indication_msg_in_log'
         commands=["grep -i 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep -i 'ansible host'",
@@ -120,7 +120,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertIn('Ansible Host', str(output), 'Failed: ' + ip +
                       ' no indication for Ansible Networking configuration in log'+'\n'+str(output)+'\n'+str(stderr))
 
-    @unittest.skipIf(setup_params['setup']=='Virtual_Setup','Ceph is not installed on virtual setup!')
+    @unittest.skipIf(prms['setup']=='Virtual_Setup','Ceph is not installed on virtual setup!')
     def test_007_check_ceph_status(self):
         print '\ntest_007_check_ceph_status'
         ceph_status= source_overcloud+" cinder service-list | grep ceph"
