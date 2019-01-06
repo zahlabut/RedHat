@@ -204,6 +204,9 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertEqual(to_stop,True,'Failed: No BM servers detected as "active", "openstack server list" result is:\n'+str(list_servers_result))
         # Make sure that each server was created on proper network, basing on VLAN id comparison
         actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
+        actual_vlans=[dic(key) for dic in actual_vlans]
+        print expected_vlans_on_switch
+        print actual_vlans
         self.assertEqual(expected_vlans_on_switch.sort(),actual_vlans.sort(),'Failed, detected VLANs on swith are not as expected:'
                                                                              '\n'+str(actual_vlans)+'\n'+str(expected_vlans_on_switch))
 
