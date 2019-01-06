@@ -182,16 +182,17 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         bm_index=0
         created_bm=[]
         tenant_nets=prms['tenant_nets']
+        # Create servers
         for net in tenant_nets:
             bm_index+=1
             vlan_id=exec_command_line_command(source_overcloud+'openstack network show '+net+' -f json')['JsonOutput']['provider:segmentation_id']
-            create_bm_command='openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+net+' '+bm_name+str(bm_index)
+            create_bm_command=source_overcloud+'openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+net+' '+bm_name+str(bm_index)
             result=exec_command_line_command(source_overcloud+create_bm_command)
-            print result
             self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest command return non Zero status code\n'+result['CommandOutput'])
-            created_bm.append({vlan_id:bm_name+str(bm_index)})
+            created_bm.append({bm_name+str(bm_index):vlan_id})
         start_time=time.time()
         to_stop=False
+        # Wait tils all servers are getting into "active"
         while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
             time.sleep(5)
             list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
@@ -200,9 +201,11 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             if str(statuses).count('active')==len(tenant_nets):
                 to_stop=True
         self.assertEqual(to_stop,True,'Failed: No BM servers detected as "active", "openstack server list" result is:\n'+str(list_servers_result))
-
-
-
+        # Make sure that each server was created on proper network, basing on VLAN id comparison
+        actual_servers=[]
+        for server in created_bm.keys():
+            server_vlan=exec_command_line_command(source_overcloud+'openstack server show '+server+' -f json')['JsonOutput']['provider:segmentation_id']
+            self.assertEqual(created_bm[server],server_vlan,'Failed: '+server+' VLAN id is:'+server_vlan+' not as expected: '+created_bm[server])
 
 
 
