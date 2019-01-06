@@ -202,10 +202,10 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                 to_stop=True
         self.assertEqual(to_stop,True,'Failed: No BM servers detected as "active", "openstack server list" result is:\n'+str(list_servers_result))
         # Make sure that each server was created on proper network, basing on VLAN id comparison
-        actual_servers=[]
-        for server in created_bm.keys():
-            server_vlan=exec_command_line_command(source_overcloud+'openstack server show '+server+' -f json')['JsonOutput']['provider:segmentation_id']
-            self.assertEqual(created_bm[server],server_vlan,'Failed: '+server+' VLAN id is:'+server_vlan+' not as expected: '+created_bm[server])
+        for dic in created_bm:
+            for server in dic.keys():
+                server_vlan=exec_command_line_command(source_overcloud+'openstack server show '+server+' -f json')['JsonOutput']['provider:segmentation_id']
+                self.assertEqual(created_bm[server],server_vlan,'Failed: '+server+' VLAN id is:'+server_vlan+' not as expected: '+created_bm[server])
 
 
 
