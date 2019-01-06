@@ -192,7 +192,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             created_bm.append({vlan_id:bm_name+str(bm_index)})
         start_time=time.time()
         to_stop=False
-        while to_stop == False and time.time() > (start_time + create_bm_server_timeout):
+        while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
             time.sleep(5)
             list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
             statuses=[item['status'] for item in list_servers_result]
