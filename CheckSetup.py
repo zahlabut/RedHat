@@ -30,7 +30,7 @@ virt_setup_parameters={
     'switch_ip':'172.16.0.92',
     'switch_user':'ansible',
     'switch_password':'Juniper',
-    'tenant_nets':['tempest-shared'],#,'tempest-shared'], #Duplicated in order to create 2 BM in parallel in test 010
+    'tenant_nets':['tempest-shared','tempest-shared'], #Duplicated in order to create 2 BM in parallel in test 010
     'setup':'Virtual_Setup'
 }
 
@@ -182,15 +182,15 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         bm_index=0
         created_bm=[]
         tenant_nets=prms['tenant_nets']
+        expected_vlans_on_switch=[]
         # Create servers
         for net in tenant_nets:
             bm_index+=1
             vlan_id=exec_command_line_command(source_overcloud+'openstack network show '+net+' -f json')['JsonOutput']['provider:segmentation_id']
             create_bm_command=source_overcloud+'openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+net+' '+bm_name+str(bm_index)
-            print create_bm_command
             result=exec_command_line_command(source_overcloud+create_bm_command)
             self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest command return non Zero status code\n'+result['CommandOutput'])
-            created_bm.append({bm_name+str(bm_index):vlan_id})
+            expected_vlans_on_switch.append(vlan_id)
         start_time=time.time()
         to_stop=False
         # Wait tils all servers are getting into "active"
@@ -203,12 +203,9 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                 to_stop=True
         self.assertEqual(to_stop,True,'Failed: No BM servers detected as "active", "openstack server list" result is:\n'+str(list_servers_result))
         # Make sure that each server was created on proper network, basing on VLAN id comparison
-        for dic in created_bm:
-            for server in dic.keys():
-                server_vlan=exec_command_line_command(source_overcloud+'openstack server show '+server+' -f json')['JsonOutput']['provider:segmentation_id']
-                self.assertEqual(created_bm[server],server_vlan,'Failed: '+server+' VLAN id is:'+server_vlan+' not as expected: '+created_bm[server])
-
-
+        actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
+        self.assertEqual(expected_vlans_on_switch.sort(),actual_vlans.sort(),'Failed, detected VLANs on swith are not as expected:'
+                                                                             '\n'+str(actual_vlans)+'\n'+str(expected_vlans_on_switch))
 
 if __name__ == '__main__':
     unittest.main()
