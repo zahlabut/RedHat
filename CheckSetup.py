@@ -10,7 +10,6 @@ manageable_timeout=300 #Test 009 "Clean"
 available_timeout=600 #Test 009 "Clean"
 create_bm_server_timeout=800
 
-
 # QE Setup #
 qe_setup_parameters={
     'baremetal_guest_ports':['xe-0/0/6', 'xe-0/0/7'],
@@ -21,7 +20,6 @@ qe_setup_parameters={
     'tenant_nets':['tenant-net','tenant-net2'],
     'setup':'QE_Setup'
 }
-
 
 # Virtual Setup #
 virt_setup_parameters={
@@ -204,7 +202,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertEqual(to_stop,True,'Failed: No BM servers detected as "active", "openstack server list" result is:\n'+str(list_servers_result))
         # Make sure that each server was created on proper network, basing on VLAN id comparison
         actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
-        actual_vlans=[dic(key) for dic in actual_vlans]
+        actual_vlans=[dic(key) for dic in actual_vlans.keys()]
         print expected_vlans_on_switch
         print actual_vlans
         self.assertEqual(expected_vlans_on_switch.sort(),actual_vlans.sort(),'Failed, detected VLANs on swith are not as expected:'
