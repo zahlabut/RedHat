@@ -141,9 +141,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
     def test_009_clean_bm_guests_in_parallel(self):
         print '\ntest_009_clean_bm_guests_in_parallel'
-        existing_nodes=[node['id'] for node in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
-        print existing_nodes
-        self.assertEqual(0,len(existing_nodes),'Failed: existing nodes have been detected IDs:\n'+str(existing_nodes))
         baremetal_vlan_id=exec_command_line_command(source_overcloud+'openstack network show baremetal -f json')['JsonOutput']['provider:segmentation_id']
         baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
         for id in baremetal_node_ids:
@@ -179,6 +176,10 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         created_bm=[]
         tenant_nets=prms['tenant_nets']
         expected_vlans_on_switch=[]
+        # If servers exists, exit #
+        existing_servers_ids=[node['id'] for node in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
+        print existing_servers_ids
+        self.assertEqual(0,len(existing_servers_ids),'Failed: existing nodes have been detected IDs:\n'+str(existing_nodes))
         # Create servers
         for net in tenant_nets:
             bm_index+=1
