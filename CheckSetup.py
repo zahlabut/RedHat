@@ -179,7 +179,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         # If servers exists, exit #
         existing_servers_ids=[node['id'] for node in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
         print existing_servers_ids
-        self.assertEqual(0,len(existing_servers_ids),'Failed: existing nodes have been detected IDs:\n'+str(existing_nodes))
+        self.assertEqual(0,len(existing_servers_ids),'Failed: existing nodes have been detected IDs:\n'+str(existing_servers_ids))
         # Create servers
         for net in tenant_nets:
             bm_index+=1
