@@ -6,9 +6,11 @@ overclud_user='heat-admin'
 overcloud_ssh_key='/home/stack/.ssh/id_rsa'
 source_overcloud='source /home/stack/overcloudrc;'
 source_undercloud='source /home/stack/stackrc;'
+overcloud_log_path='/avr/log/containers'
 manageable_timeout=300 #Test 009 "Clean"
 available_timeout=600 #Test 009 "Clean"
 create_bm_server_timeout=800
+delete_server_timeouts=300
 
 # QE Setup #
 qe_setup_parameters={
@@ -42,6 +44,17 @@ controller_ips = [item['networks'].split('=')[-1] for item in controllers]
 cephs = exec_command_line_command(source_undercloud+'openstack server list --name cephstorage -f json')[
     'JsonOutput']
 cephs_ips = [item['networks'].split('=')[-1] for item in cephs]
+
+### Get Overcloud Node IPs ###
+nodes = exec_command_line_command(source_undercloud+'openstack server list -f json')['JsonOutput']
+nodes_ips = [item['networks'].split('=')[-1] for item in nodes]
+
+### Save last line index per Overcloud node ###
+#for ip in nodes_ips:
+
+
+
+
 
 ### No Ceph = Virt Setup ###
 if cephs==[]:
@@ -105,6 +118,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     @unittest.skipIf(prms['setup'] == 'Virtual_Setup','No indication string on virtual setup!')
     def test_006_net_ansible_indication_msg_in_log(self):
         print '\ntest_006_net_ansible_indication_msg_in_log'
+        output, stderr=[],[]
         commands=["grep -i 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep -i 'ansible host'",
                   "zgrep -i 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep -i 'ansible host'"]
         for ip in controller_ips:
@@ -188,7 +202,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             expected_vlans_on_switch.append(str(vlan_id))
         start_time=time.time()
         to_stop=False
-        # Wait tils all servers are getting into "active"
+        # Wait till all servers are getting into "active"
         while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
             time.sleep(5)
             list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
@@ -209,9 +223,16 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertNotEqual(len(existing_server_ids),0,'Failed: no existing servers detected')
         for id in existing_server_ids:
             exec_command_line_command(source_overcloud+'openstack server delete '+id)
-        existing_server_ids = [item['id'] for item in
-        exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
-        self.assertEqual(len(existing_server_ids), 0, 'Failed: existing servers detected, IDs:\n'+str(existing_server_ids))
+        existing_server_ids = [item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
+        start_time=time.time()
+        to_stop=False
+        # Wait till all servers are deleted "
+        while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
+            time.sleep(5)
+            list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
+            if len(list_servers_result)==0:
+                to_stop=True
+        self.assertEqual(len(list_servers_result), 0, 'Failed: existing servers detected, IDs:\n'+str(list_servers_result))
 
 
 
