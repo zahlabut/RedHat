@@ -211,7 +211,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             exec_command_line_command(source_overcloud+'openstack server delete '+id)
         existing_server_ids = [item['id'] for item in
         exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
-        self.assertEqual(len(existing_server_ids), 0, 'Failed: existing servers detected, IDs:\n'+existing_server_ids)
+        self.assertEqual(len(existing_server_ids), 0, 'Failed: existing servers detected, IDs:\n'+str(existing_server_ids))
 
 
 
