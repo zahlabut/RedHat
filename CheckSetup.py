@@ -107,8 +107,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         print '\ntest_006_net_ansible_indication_msg_in_log'
         commands=["grep -i 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep -i 'ansible host'",
                   "zgrep -i 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep -i 'ansible host'"]
-        output = []
-        stderr = []
         for ip in controller_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
@@ -204,6 +202,21 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         actual_vlans=[actual_vlans[key][0] for key in actual_vlans.keys()]
         self.assertEqual(set(expected_vlans_on_switch),set(actual_vlans),
                          'Failed, detected VLANs on swith are not as expected:''\n'+str(actual_vlans)+'\n'+str(expected_vlans_on_switch))
+
+    def test_011_delete_bm_guests_in_parallel(self):
+        print '\ntest_011_delete_bm_guests_in_parallel'
+        existing_server_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
+        self.assertNotEqual(len(existing_server_ids),0,'Failed: no existing servers detected')
+        for id in existing_server_ids:
+            exec_command_line_command(source_overcloud+'openstack server delete '+id)
+        existing_server_ids = [item['id'] for item in
+        exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
+        self.assertEqual(len(existing_server_ids), 0, 'Failed: existing servers detected, IDs:\n'+existing_server_ids)
+
+
+
+
+
 
 if __name__ == '__main__':
     unittest.main()
