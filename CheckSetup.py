@@ -1,10 +1,7 @@
 from Common import *
 import unittest
 import logging
-
-
 logging.basicConfig(level=logging.INFO,format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
 
 
 ### Parameters ###
@@ -86,12 +83,15 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     """ This test is planed to validate that Ironic service is in Catalog List (exists on Overcloud) """
     def test_001_ironic_in_catalog(self):
         print '\ntest_001_ironic_in_catalog'
+        logging.info('test_001_ironic_in_catalog')
         catalog_output=exec_command_line_command(source_overcloud+'openstack catalog show ironic -f json')
+        logging.debug(catalog_output)
         self.assertEqual(catalog_output['JsonOutput']['name'], 'ironic','Failed: ironic was not found in catalog output')
 
     """ This test is planed to validate that all Ironic's dockers on controllers are up and running """
     def test_002_ironic_dockers_status(self):
         print '\ntest_002_ironic_dockers_status'
+        logging.info('test_002_ironic_dockers_status')
         ironic_dockers=['ironic_pxe_http','ironic_pxe_tftp','ironic_neutron_agent','ironic_conductor','ironic_api']
         for ip in controller_ips:
             ssh_object = SSH(ip,user=overclud_user,key_path=overcloud_ssh_key)
@@ -106,6 +106,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     """ This test is planed to validate that no ERRORs exists in Ironic's logs on Overcloud """
     def test_003_errors_in_ironic_logs(self):
         print '\ntest_003_errors_in_ironic_logs'
+        logging.info('test_003_errors_in_ironic_logs')
         command="sudo grep -R ' ERROR ' /var/log/containers/ironic/*"
         for ip in controller_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
