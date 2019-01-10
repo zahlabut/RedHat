@@ -184,7 +184,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         start_time=time.time()
         to_stop=False
         while to_stop==False and (time.time()<(start_time+manageable_timeout)):
-            time.sleep(5)
+            time.sleep(10)
             actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
             if str(actual_vlans).count(str(baremetal_vlan_id))==len(prms['baremetal_guest_ports']):
                 to_stop=True
@@ -226,7 +226,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         to_stop=False
         # Wait till all servers are getting into "active"
         while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
-            time.sleep(5)
+            time.sleep(10)
             list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
             statuses=[item['status'] for item in list_servers_result]
             print '--> Servers statuses are: ',statuses
@@ -253,7 +253,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         to_stop=False
         # Wait till all servers are deleted "
         while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
-            time.sleep(5)
+            time.sleep(10)
             list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
             if len(list_servers_result)!=0:
                 names=[item['name'] for item in list_servers_result]
@@ -281,11 +281,11 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             ssh_object.ssh_close()
         test_failed=False
         for key in actual_errors.keys():
-            errors_file.write('-' * 50 + node_ip_name_dic[key] + '-' * 50)
+            errors_file.write('-' * 50 + node_ip_name_dic[key] + '-' * 50+'\n')
             for line in actual_errors[key]:
                 if line not in existing_errors[key]:
                     test_failed=True
-                    errors_file.write(line)
+                    errors_file.write(line+'\n')
         errors_file.close()
         self.assertEqual(test_failed,False,'Failed, see details in: '+error_file_name+' file.')
 
