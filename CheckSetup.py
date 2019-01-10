@@ -65,9 +65,7 @@ for ip in nodes_ips:
     ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
     ssh_object.ssh_connect_key()
     command = "sudo grep -Rn ' INFO ' "+overcloud_log_path
-    print command
     existing_errors[ip]=ssh_object.ssh_command_only(command)['Stdout'].split('\n')
-    print existing_errors
     ssh_object.ssh_close()
 
 class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
@@ -282,8 +280,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         for key in actual_errors.keys():
             print '-' * 50 + node_ip_name_dic[key] + '-' * 50
             for line in actual_errors[key]:
-                print line
-                print existing_errors[key][0:10]
                 if line not in existing_errors[key]:
                     test_failed=True
                     print line
