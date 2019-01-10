@@ -270,6 +270,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     """
     def test_012_no_errors_in_logs(self):
         print '\ntest_012_no_errors_in_logs'
+        error_file_name='Overcloud_Errors.log'
+        errors_file=open(error_file_name,'w')
         actual_errors={}
         for ip in nodes_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
@@ -279,12 +281,13 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             ssh_object.ssh_close()
         test_failed=False
         for key in actual_errors.keys():
-            print '-' * 50 + node_ip_name_dic[key] + '-' * 50
+            errors_file.write('-' * 50 + node_ip_name_dic[key] + '-' * 50)
             for line in actual_errors[key]:
                 if line not in existing_errors[key]:
                     test_failed=True
-                    print line
-        self.assertEqual(test_failed,False,'Failed, ERRORs detected while tests execution:\n')
+                    errors_file.write(line)
+        errors_file.close()
+        self.assertEqual(test_failed,False,'Failed, see details in: '+error_file_name+' file.')
 
 if __name__ == '__main__':
     unittest.main()
