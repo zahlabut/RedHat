@@ -7,10 +7,10 @@ overcloud_ssh_key='/home/stack/.ssh/id_rsa'
 source_overcloud='source /home/stack/overcloudrc;'
 source_undercloud='source /home/stack/stackrc;'
 overcloud_log_path='/avr/log/containers'
-manageable_timeout=30 #Test 009 "Clean"
-available_timeout=60 #Test 009 "Clean"
-create_bm_server_timeout=60
-delete_server_timeouts=30
+manageable_timeout=3 #Test 009 "Clean"
+available_timeout=6 #Test 009 "Clean"
+create_bm_server_timeout=6
+delete_server_timeouts=3
 
 # QE Setup #
 qe_setup_parameters={
@@ -281,6 +281,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         for key in actual_errors.keys():
             print '-' * 50 + node_ip_name_dic[key] + '-' * 50
             for line in actual_errors[key]:
+                print line
                 if line not in existing_errors[key]:
                     test_failed=True
                     print line
