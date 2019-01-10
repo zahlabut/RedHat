@@ -255,6 +255,9 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
             time.sleep(5)
             list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
+            if len(list_servers_result)!=0:
+                names=[item['name'] for item in list_servers_result]
+                print names
             if len(list_servers_result)==0:
                 to_stop=True
         self.assertEqual(len(list_servers_result), 0, 'Failed: existing servers detected, IDs:\n'+str(list_servers_result))
@@ -278,6 +281,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         for key in actual_errors.keys():
             print '-' * 50 + node_ip_name_dic[key] + '-' * 50
             for line in actual_errors[key]:
+                print line
                 if line not in existing_errors[key]:
                     print line
                     test_failed=True
