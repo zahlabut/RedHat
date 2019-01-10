@@ -1,7 +1,15 @@
 from Common import *
 import unittest
+import logging
+
+logging.setLoggerClass(logging.INFO)
+logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+
+
 
 ### Parameters ###
+logging.info('Set Parameters')
 overclud_user='heat-admin'
 overcloud_ssh_key='/home/stack/.ssh/id_rsa'
 source_overcloud='source /home/stack/overcloudrc;'
@@ -35,16 +43,19 @@ virt_setup_parameters={
 }
 
 ### Get controllers IPs ###
+logging.info('Get Controllers IPs')
 controllers = exec_command_line_command(source_undercloud+'openstack server list --name controller -f json')[
     'JsonOutput']
 controller_ips = [item['networks'].split('=')[-1] for item in controllers]
 
 ### Get Ceph IPs ###
+logging.info('Get Ceph IP')
 cephs = exec_command_line_command(source_undercloud+'openstack server list --name cephstorage -f json')[
     'JsonOutput']
 cephs_ips = [item['networks'].split('=')[-1] for item in cephs]
 
 ### Get Overcloud Node IPs ###
+logging.info('Get All Overcloud Nodes IPs')
 nodes = exec_command_line_command(source_undercloud+'openstack server list -f json')['JsonOutput']
 nodes_ips = [item['networks'].split('=')[-1] for item in nodes]
 node_ip_name_dic={}
@@ -55,11 +66,14 @@ for ip in nodes_ips:
 
 ### No Ceph = Virt Setup ###
 if cephs==[]:
+    logging.info('Virtual setup parameters will be used')
     prms=virt_setup_parameters
 else:
+    logging.info('QE Setup parameters will be used')
     prms=qe_setup_parameters
 
 ### Save all log ERRORs up untill now ###
+logging.info('Save all Overcloud ERRORs as dictionary, {IP:List of ERRORs}')
 existing_errors={}
 for ip in nodes_ips:
     ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
