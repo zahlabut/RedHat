@@ -82,6 +82,7 @@ for ip in nodes_ips:
     existing_errors[ip]=ssh_object.ssh_command_only(command)['Stdout'].split('\n')
     ssh_object.ssh_close()
 
+
 class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     """ This test is planed to validate that Ironic service is in Catalog List (exists on Overcloud) """
     def test_001_ironic_in_catalog(self):
