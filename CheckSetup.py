@@ -64,8 +64,7 @@ existing_errors={}
 for ip in nodes_ips:
     ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
     ssh_object.ssh_connect_key()
-    command = "sudo grep -Rn ' ERROR ' *"
-    command = "sudo grep -Rn ' INFO ' *"
+    command = "sudo grep -Rn ' ERROR ' "+overcloud_log_path
     existing_errors[ip]=ssh_object.ssh_command_only(command)['Stdout'].split('\n')
     ssh_object.ssh_close()
 
@@ -269,19 +268,18 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     In case when there is a bunch of ERRORs on Overcloud, this test will take some time to complete. 
     """
     def test_012_no_errors_in_logs(self):
+        print '\ntest_012_no_errors_in_logs'
         actual_errors={}
         for ip in nodes_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
-            command = "sudo grep -Rn ' ERROR ' *"
-            command = "sudo grep -Rn ' INFO ' *"
+            command = "sudo grep -Rn ' ERROR ' " + overcloud_log_path
             actual_errors[ip] = ssh_object.ssh_command_only(command)['Stdout'].split('\n')
             ssh_object.ssh_close()
         test_failed=False
         for key in actual_errors.keys():
             print '-' * 50 + node_ip_name_dic[key] + '-' * 50
             for line in actual_errors[key]:
-                print line
                 if line not in existing_errors[key]:
                     test_failed=True
                     print line
