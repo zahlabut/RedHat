@@ -7,10 +7,10 @@ overcloud_ssh_key='/home/stack/.ssh/id_rsa'
 source_overcloud='source /home/stack/overcloudrc;'
 source_undercloud='source /home/stack/stackrc;'
 overcloud_log_path='/var/log/containers'
-manageable_timeout=3 #Test 009 "Clean"
-available_timeout=6 #Test 009 "Clean"
-create_bm_server_timeout=6
-delete_server_timeouts=3
+manageable_timeout=300 #Test 009 "Clean"
+available_timeout=600 #Test 009 "Clean"
+create_bm_server_timeout=600
+delete_server_timeouts=300
 
 # QE Setup #
 qe_setup_parameters={
