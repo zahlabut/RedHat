@@ -48,6 +48,15 @@ cephs_ips = [item['networks'].split('=')[-1] for item in cephs]
 ### Get Overcloud Node IPs ###
 nodes = exec_command_line_command(source_undercloud+'openstack server list -f json')['JsonOutput']
 nodes_ips = [item['networks'].split('=')[-1] for item in nodes]
+node_ip_name_dic={}
+for ip in nodes_ips:
+    for node in nodes:
+        if ip in str(node):
+            node_ip_name_dic[ip] = node['name']
+print node_ip_name_dic
+sys.exit(1)
+
+
 
 ### No Ceph = Virt Setup ###
 if cephs==[]:
@@ -63,7 +72,7 @@ for ip in nodes_ips:
     for ip in nodes_ips:
         command = "sudo grep -Rn ' ERROR ' *"
         existing_errors[ip]=ssh_object.ssh_command_only(command)['Stdout'].split('\n')
-    print '--> All existing Overcloud ERRORs are now saved!'
+    print ip+'--> All existing Overcloud ERRORs are now saved!'
     ssh_object.ssh_close()
 
 
@@ -251,7 +260,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             for ip in nodes_ips:
                 command = "sudo grep -Rn ' ERROR ' *"
                 actual_errors[ip] = ssh_object.ssh_command_only(command)['Stdout'].split('\n')
-            print '--> All existing Overcloud ERRORs are now saved!'
+            print ip+'--> All existing Overcloud ERRORs are now saved!'
             ssh_object.ssh_close()
         test_failed=False
         for key in actual_errors.keys():
