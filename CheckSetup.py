@@ -253,16 +253,14 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                 actual_errors[ip] = ssh_object.ssh_command_only(command)['Stdout'].split('\n')
             print '--> All existing Overcloud ERRORs are now saved!'
             ssh_object.ssh_close()
-        new_errors=[]
-        for line in actual_errors:
-            if line not in existing_errors:
-                new_errors.append(line)
-        if len(new_errors)!=0:
-            lines_to_print='-'*100+'\n'
-            for line in new_errors:
-                lines_to_print+=line+'\n'
-        self.assertEqual(len(new_errors),0,'Failed, ERRORs have been detected while tests execution:\n'+'lines_to_print')
-
+        test_failed=False
+        for key in actual_errors.keys():
+            print '-' * 50 + ip + '-' * 50
+            for line in actual_errors[key]:
+                if line not in existing_errors[key]:
+                    print line
+                    test_failed=True
+        self.assertEqual(test_failed,False,'Failed, ERRORs detected while tests execution:\n')
 
 
 
