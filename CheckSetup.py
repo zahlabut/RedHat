@@ -1,11 +1,7 @@
 from Common import *
 import unittest
-import logging
-logging.basicConfig(level=logging.INFO,format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
 
 ### Parameters ###
-logging.info('Set Parameters')
 overclud_user='heat-admin'
 overcloud_ssh_key='/home/stack/.ssh/id_rsa'
 source_overcloud='source /home/stack/overcloudrc;'
@@ -39,19 +35,16 @@ virt_setup_parameters={
 }
 
 ### Get controllers IPs ###
-logging.info('Get Controllers IPs')
 controllers = exec_command_line_command(source_undercloud+'openstack server list --name controller -f json')[
     'JsonOutput']
 controller_ips = [item['networks'].split('=')[-1] for item in controllers]
 
 ### Get Ceph IPs ###
-logging.info('Get Ceph IP')
 cephs = exec_command_line_command(source_undercloud+'openstack server list --name cephstorage -f json')[
     'JsonOutput']
 cephs_ips = [item['networks'].split('=')[-1] for item in cephs]
 
 ### Get Overcloud Node IPs ###
-logging.info('Get All Overcloud Nodes IPs')
 nodes = exec_command_line_command(source_undercloud+'openstack server list -f json')['JsonOutput']
 nodes_ips = [item['networks'].split('=')[-1] for item in nodes]
 node_ip_name_dic={}
@@ -62,14 +55,11 @@ for ip in nodes_ips:
 
 ### No Ceph = Virt Setup ###
 if cephs==[]:
-    logging.info('Virtual setup parameters will be used')
     prms=virt_setup_parameters
 else:
-    logging.info('QE Setup parameters will be used')
     prms=qe_setup_parameters
 
 ### Save all log ERRORs up untill now ###
-logging.info('Save all Overcloud ERRORs as dictionary, {IP:List of ERRORs}')
 existing_errors={}
 for ip in nodes_ips:
     ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
@@ -83,15 +73,12 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     """ This test is planed to validate that Ironic service is in Catalog List (exists on Overcloud) """
     def test_001_ironic_in_catalog(self):
         print '\ntest_001_ironic_in_catalog'
-        logging.info('test_001_ironic_in_catalog')
         catalog_output=exec_command_line_command(source_overcloud+'openstack catalog show ironic -f json')
-        logging.debug(catalog_output)
         self.assertEqual(catalog_output['JsonOutput']['name'], 'ironic','Failed: ironic was not found in catalog output')
 
     """ This test is planed to validate that all Ironic's dockers on controllers are up and running """
     def test_002_ironic_dockers_status(self):
         print '\ntest_002_ironic_dockers_status'
-        logging.info('test_002_ironic_dockers_status')
         ironic_dockers=['ironic_pxe_http','ironic_pxe_tftp','ironic_neutron_agent','ironic_conductor','ironic_api']
         for ip in controller_ips:
             ssh_object = SSH(ip,user=overclud_user,key_path=overcloud_ssh_key)
@@ -106,7 +93,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     """ This test is planed to validate that no ERRORs exists in Ironic's logs on Overcloud """
     def test_003_errors_in_ironic_logs(self):
         print '\ntest_003_errors_in_ironic_logs'
-        logging.info('test_003_errors_in_ironic_logs')
         command="sudo grep -R ' ERROR ' /var/log/containers/ironic/*"
         for ip in controller_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
