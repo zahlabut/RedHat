@@ -7,10 +7,10 @@ overcloud_ssh_key='/home/stack/.ssh/id_rsa'
 source_overcloud='source /home/stack/overcloudrc;'
 source_undercloud='source /home/stack/stackrc;'
 overcloud_log_path='/avr/log/containers'
-manageable_timeout=300 #Test 009 "Clean"
-available_timeout=600 #Test 009 "Clean"
-create_bm_server_timeout=800
-delete_server_timeouts=300
+manageable_timeout=30 #Test 009 "Clean"
+available_timeout=60 #Test 009 "Clean"
+create_bm_server_timeout=60
+delete_server_timeouts=30
 
 # QE Setup #
 qe_setup_parameters={
@@ -34,7 +34,6 @@ virt_setup_parameters={
     'setup':'Virtual_Setup'
 }
 
-
 ### Get controllers IPs ###
 controllers = exec_command_line_command(source_undercloud+'openstack server list --name controller -f json')[
     'JsonOutput']
@@ -54,7 +53,6 @@ for ip in nodes_ips:
         if ip in str(node):
             node_ip_name_dic[ip] = node['name']
 
-
 ### No Ceph = Virt Setup ###
 if cephs==[]:
     prms=virt_setup_parameters
@@ -71,17 +69,14 @@ for ip in nodes_ips:
     print ip+'--> All existing Overcloud ERRORs are now saved!'
     ssh_object.ssh_close()
 
-
-
-
 class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
-    #Check Ironic on Overcloud + ERRORs in logs #
+    """ This test is planed to validate that Ironic service is in Catalog List (exists on Overcloud) """
     def test_001_ironic_in_catalog(self):
         print '\ntest_001_ironic_in_catalog'
-        #spec_print(['Check Ironic on Overcloud + ERRORs in logs'])
         catalog_output=exec_command_line_command(source_overcloud+'openstack catalog show ironic -f json')
         self.assertEqual(catalog_output['JsonOutput']['name'], 'ironic','Failed: ironic was not found in catalog output')
 
+    """ This test is planed to validate that all Ironic's dockers on controllers are up and running """
     def test_002_ironic_dockers_status(self):
         print '\ntest_002_ironic_dockers_status'
         ironic_dockers=['ironic_pxe_http','ironic_pxe_tftp','ironic_neutron_agent','ironic_conductor','ironic_api']
@@ -95,6 +90,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                 self.assertIn(doc, output, 'Failed: ' + doc + ' is not running')
             ssh_object.ssh_close()
 
+    """ This test is planed to validate that no ERRORs exists in Ironic's logs on Overcloud """
     def test_003_errors_in_ironic_logs(self):
         print '\ntest_003_errors_in_ironic_logs'
         command="sudo grep -R ' ERROR ' /var/log/containers/ironic/*"
@@ -105,6 +101,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             ssh_object.ssh_close()
             self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in log\n'+output)
 
+    """ This test is planed to validate that neutron_api docker is up and running on all Controllers """
     def test_004_dockers_neutron_api_status(self):
         print '\ntest_004_dockers_neutron_api_status'
         for ip in controller_ips:
@@ -116,6 +113,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             self.assertNotIn('unhealthy', output, 'Failed: '+ip+' '+'neutron_api status is unhealthy')
             self.assertIn('neutron_api', output, 'Failed: neutron_api is not running')
 
+    """ This test is planed to validate that no ERRORS exists in Neutron Server log on all Controllers """
     def test_005_errors_in_neutron_api(self):
         print '\ntest_005_errors_in_neutron_api'
         command='grep -i error /var/log/containers/neutron/server.log*'
@@ -126,7 +124,11 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             ssh_object.ssh_close()
             self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in log\n'+output)
 
-    @unittest.skipIf(prms['setup'] == 'Virtual_Setup','No indication string on virtual setup!')
+    """ This test is planed to validate that "indication string" which is indicates that 
+    Ansible Networking Feature configuration is done, exists in Controllers' logs
+    Note: this test may fail after log rotation is done, so this 'indication string'
+    won't be existing anymore.
+    """
     def test_006_net_ansible_indication_msg_in_log(self):
         print '\ntest_006_net_ansible_indication_msg_in_log'
         output, stderr=[],[]
@@ -143,6 +145,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertIn('Ansible Host', str(output), 'Failed: ' + ip +
                       ' no indication for Ansible Networking configuration in log'+'\n'+str(output)+'\n'+str(stderr))
 
+    """ Tis test is planed to validate that Ceph (once included in Setup) is OK (up and running) """
     @unittest.skipIf(prms['setup']=='Virtual_Setup','Ceph is not installed on virtual setup!')
     def test_007_check_ceph_status(self):
         print '\ntest_007_check_ceph_status'
@@ -156,12 +159,17 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         ssh_object.ssh_close()
         self.assertIn('HEALTH_OK',com_output,'Failed: "HEALTH_OK" not found in output of \n'+ceph_status+' command')
 
+    """ This test is planed to validate that the Bare Metal Ports on Switch are not set to any VLAN, either: Bremetal or Tenant """
     def test_008_switch_no_vlans_for_bm_ports(self):
         print '\ntest_008_switch_no_vlans_for_bm_ports'
         interface_vlan=get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
         for port in prms['baremetal_guest_ports']:
             self.assertEqual(interface_vlan[port],None,'Failed: '+port+' was found as configured' + port+'\n'+str(interface_vlan))
 
+    """ This test is planed to validate that "Clean" procedure is running as expected, in addition it will also
+    validate that the Bare Metal Ports on Switch are set to proper VLAN by Ansible Networking, while "Clean" procedure
+    Note: this test will clean all existing BM Guest in parallel.
+    """
     def test_009_clean_bm_guests_in_parallel(self):
         print '\ntest_009_clean_bm_guests_in_parallel'
         baremetal_vlan_id=exec_command_line_command(source_overcloud+'openstack network show baremetal -f json')['JsonOutput']['provider:segmentation_id']
@@ -190,7 +198,10 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                 to_stop=True
         self.assertEqual(['available','available'], states, 'Failed: baremetal node states are: '+str(states)+' expected:available')
 
-
+    """ This test is planed to validate that Bare Metal guests creation (as Servers on Overcloud) is successfully done and that
+    Ansible Networking feature sets proper VLAN on switch, depending on "network" which is used for creation.
+    Note: this test will try to create server per existing Tenant network in "tenant_nets" parameter.
+    """
     def test_010_create_bm_guests_in_parallel(self):
         print '\ntest_010_create_bm_guests_in_parallel'
         # Create BM Guests
@@ -228,6 +239,9 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertEqual(set(expected_vlans_on_switch),set(actual_vlans),
                          'Failed, detected VLANs on swith are not as expected:''\n'+str(actual_vlans)+'\n'+str(expected_vlans_on_switch))
 
+    """ This test is planed to validate that "Delete Bare Metal Guests" procedure is successfully completed. 
+    Note: it will try to delete all detected Servers on Overcloud.
+    """
     def test_011_delete_bm_guests_in_parallel(self):
         print '\ntest_011_delete_bm_guests_in_parallel'
         existing_server_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
@@ -245,9 +259,12 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                 to_stop=True
         self.assertEqual(len(list_servers_result), 0, 'Failed: existing servers detected, IDs:\n'+str(list_servers_result))
 
-
-
-
+    """ This test is planed to search for ERRORs messages in all Overcloud logs and will fail if NEW messages (ERRORS while
+    tests execution) will be detected
+    Note: current implementation is not efficient, it just saves all ERRORs before tests are being executed and then 
+    (once tests are completed) it does the same "saving" procedure again and prints NEW/DELTA messages.
+    In case when there is a bunch of ERRORs on Overcloud, this test will take some time to complete. 
+    """
     def test_012_no_errors_in_logs(self):
         actual_errors={}
         for ip in nodes_ips:
@@ -265,9 +282,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                     print line
                     test_failed=True
         self.assertEqual(test_failed,False,'Failed, ERRORs detected while tests execution:\n')
-
-
-
 
 if __name__ == '__main__':
     unittest.main()
