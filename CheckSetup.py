@@ -281,9 +281,9 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         for key in actual_errors.keys():
             print '-' * 50 + node_ip_name_dic[key] + '-' * 50
             for line in actual_errors[key]:
-                print line
                 if line not in existing_errors[key]:
                     test_failed=True
+                    print line
         self.assertEqual(test_failed,False,'Failed, ERRORs detected while tests execution:\n')
 
 if __name__ == '__main__':
