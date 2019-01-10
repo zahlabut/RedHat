@@ -259,7 +259,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             ssh_object.ssh_close()
         test_failed=False
         for key in actual_errors.keys():
-            print '-' * 50 + node_ip_name_dic[ip] + '-' * 50
+            print '-' * 50 + node_ip_name_dic[key] + '-' * 50
             for line in actual_errors[key]:
                 if line not in existing_errors[key]:
                     print line
