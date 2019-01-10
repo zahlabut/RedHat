@@ -65,8 +65,8 @@ for ip in nodes_ips:
     ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
     ssh_object.ssh_connect_key()
     command = "sudo grep -Rn ' ERROR ' *"
+    command = "sudo grep -Rn ' INFO ' *"
     existing_errors[ip]=ssh_object.ssh_command_only(command)['Stdout'].split('\n')
-    print ip+'--> All existing Overcloud ERRORs are now saved!'
     ssh_object.ssh_close()
 
 class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
@@ -229,7 +229,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             time.sleep(5)
             list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
             statuses=[item['status'] for item in list_servers_result]
-            print statuses
+            print '--> Servers statuses are: ',statuses
             if str(statuses).count('active')==len(tenant_nets):
                 to_stop=True
         self.assertEqual(to_stop,True,'Failed: No BM servers detected as "active", "openstack server list" result is:\n'+str(list_servers_result))
@@ -257,7 +257,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
             if len(list_servers_result)!=0:
                 names=[item['name'] for item in list_servers_result]
-                print names
+                print '-- Existing servers are: ',names
             if len(list_servers_result)==0:
                 to_stop=True
         self.assertEqual(len(list_servers_result), 0, 'Failed: existing servers detected, IDs:\n'+str(list_servers_result))
@@ -274,8 +274,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
             command = "sudo grep -Rn ' ERROR ' *"
+            command = "sudo grep -Rn ' INFO ' *"
             actual_errors[ip] = ssh_object.ssh_command_only(command)['Stdout'].split('\n')
-            print ip+'--> All existing Overcloud ERRORs are now saved!'
             ssh_object.ssh_close()
         test_failed=False
         for key in actual_errors.keys():
@@ -283,7 +283,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             for line in actual_errors[key]:
                 print line
                 if line not in existing_errors[key]:
-                    print line
                     test_failed=True
         self.assertEqual(test_failed,False,'Failed, ERRORs detected while tests execution:\n')
 
