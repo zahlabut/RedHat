@@ -2,9 +2,8 @@ from Common import *
 import unittest
 import logging
 
-logging.basicConfig(level=logging.INFO)
-logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
+logging.basicConfig(level=logging.INFO,format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 
 
