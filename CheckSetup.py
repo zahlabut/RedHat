@@ -60,7 +60,7 @@ existing_errors={}
 for ip in nodes_ips:
     ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
     ssh_object.ssh_connect_key()
-    for doc in ironic_dockers:
+    for ip in ironic_dockers:
         command = "sudo grep -Rn ' ERROR ' *"
         existing_errors[ip]=ssh_object.ssh_command_only(command)['Stdout'].split('\n')
     ssh_object.ssh_close()
