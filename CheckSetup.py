@@ -212,7 +212,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         expected_vlans_on_switch=[]
         # If servers exists, exit #
         existing_servers_ids=[node['id'] for node in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
-        print existing_servers_ids
+        print '--> Existing servers IDs: ',existing_servers_ids
         self.assertEqual(0,len(existing_servers_ids),'Failed: existing nodes have been detected IDs:\n'+str(existing_servers_ids))
         # Create servers
         for net in tenant_nets:
@@ -287,7 +287,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                     test_failed=True
                     errors_file.write(line+'\n')
         errors_file.close()
-        self.assertEqual(test_failed,False,'Failed, see details in: '+error_file_name+' file.')
+        self.assertEqual(test_failed,False,'Failed, see details in: \n'+open(error_file_name,'r').read())
 
 if __name__ == '__main__':
     unittest.main()
