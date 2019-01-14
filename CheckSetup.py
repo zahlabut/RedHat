@@ -244,6 +244,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     """
     def test_011_delete_bm_guests_in_parallel(self):
         print '\ntest_011_delete_bm_guests_in_parallel'
+        time.sleep(10)
         existing_server_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
         self.assertNotEqual(len(existing_server_ids),0,'Failed: no existing servers detected')
         for id in existing_server_ids:
