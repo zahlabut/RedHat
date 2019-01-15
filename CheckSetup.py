@@ -289,7 +289,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                     test_failed=True
                     errors_file.write(line+'\n')
         errors_file.close()
-        self.assertEqual(test_failed,False,'Failed, see details in: \n'+open(error_file_name,'r').read())
+        self.assertEqual(test_failed,False,'Failed, see details here: \n'+open(error_file_name,'r').read())
 
 if __name__ == '__main__':
     unittest.main()
