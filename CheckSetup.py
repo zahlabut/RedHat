@@ -238,7 +238,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         actual_vlans=[actual_vlans[key] for key in actual_vlans.keys()]
 
         print expected_vlans_on_switch
-        print expected_vlans_on_switch
+        print actual_vlans
 
         self.assertEqual(set(expected_vlans_on_switch),set(actual_vlans),
                          'Failed, detected VLANs on swith are not as expected:''\n'+str(actual_vlans)+'\n'+str(expected_vlans_on_switch))
