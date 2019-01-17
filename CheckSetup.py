@@ -1,6 +1,11 @@
 from Common import *
 import unittest
 
+
+
+print 'Start'*100
+
+
 ### Parameters ###
 overclud_user='heat-admin'
 overcloud_ssh_key='/home/stack/.ssh/id_rsa'
