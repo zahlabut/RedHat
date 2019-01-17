@@ -1,11 +1,6 @@
 from Common import *
 import unittest
 
-
-
-print 'Start'*100
-
-
 ### Parameters ###
 overclud_user='heat-admin'
 overcloud_ssh_key='/home/stack/.ssh/id_rsa'
@@ -191,6 +186,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         while to_stop==False and (time.time()<(start_time+manageable_timeout)):
             time.sleep(10)
             actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
+            print actual_vlans
             if str(actual_vlans).count(str(baremetal_vlan_id))==len(prms['baremetal_guest_ports']):
                 to_stop=True
         self.assertIn(str(baremetal_vlan_id),str(actual_vlans), 'Failed: baremetal ports are not set to baremetal network vlan:\n' +str(actual_vlans))
@@ -199,6 +195,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         while to_stop == False and (time.time()<(start_time+available_timeout)):
             time.sleep(5)
             states = [item['provisioning state'] for item in exec_command_line_command(source_overcloud + 'openstack baremetal node list -f json')['JsonOutput']]
+            print states
             if states==['available','available']:
                 to_stop=True
         self.assertEqual(['available','available'], states, 'Failed: baremetal node states are: '+str(states)+' expected:available')
@@ -262,6 +259,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
             time.sleep(10)
             list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
+            print list_servers_result
             if len(list_servers_result)!=0:
                 names=[item['name'] for item in list_servers_result]
                 print '-- Existing servers are: ',names
