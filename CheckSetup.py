@@ -9,7 +9,7 @@ source_undercloud='source /home/stack/stackrc;'
 overcloud_log_path='/var/log/containers'
 manageable_timeout=300 #Test 009 "Clean"
 available_timeout=600 #Test 009 "Clean"
-create_bm_server_timeout=900
+create_bm_server_timeout=1200
 delete_server_timeouts=300
 
 # QE Setup #
