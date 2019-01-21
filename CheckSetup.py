@@ -70,6 +70,7 @@ for ip in nodes_ips:
 
 
 class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
+
     """ This test is planed to validate that Ironic service is in Catalog List (exists on Overcloud) """
     def test_001_ironic_in_catalog(self):
         print '\ntest_001_ironic_in_catalog'
