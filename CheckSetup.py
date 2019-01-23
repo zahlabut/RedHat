@@ -268,11 +268,11 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     #             to_stop=True
     #     self.assertEqual(len(list_servers_result), 0, 'Failed: existing servers detected, IDs:\n'+str(list_servers_result))
     #
-    # """ This test is planed to search for ERRORs messages in all Overcloud logs and will fail if NEW messages (ERRORS while
-    # tests execution) will be detected
-    # Note: current implementation is not efficient, it just saves all ERRORs before tests are being executed and then
-    # (once tests are completed) it does the same "saving" procedure again and prints NEW/DELTA messages.
-    # In case when there is a bunch of ERRORs on Overcloud, this test will take some time to complete.
+    """ This test is planed to search for ERRORs messages in all Overcloud logs and will fail if NEW messages (ERRORS while
+    tests execution) will be detected
+    Note: current implementation is not efficient, it just saves all ERRORs before tests are being executed and then
+    (once tests are completed) it does the same "saving" procedure again and prints NEW/DELTA messages.
+    In case when there is a bunch of ERRORs on Overcloud, this test will take some time to complete.
     """
     def test_012_no_errors_in_logs(self):
         print '\ntest_012_no_errors_in_logs'
