@@ -223,7 +223,7 @@ if 'icmp' not in str(exec_command_line_command(source_command+'openstack securit
 
 # Create key pair #
 if 'default' not in existing_key_pairs:
-    result=exec_command_line_command(source_command+'openstack keypair create --public-key ~/.ssh/id_rsa.pub default')
+    result=exec_command_line_command(source_command+'openstack keypair create --public-key /home/stack/.ssh/id_rsa.pub default')
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
 
