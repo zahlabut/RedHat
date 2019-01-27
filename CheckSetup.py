@@ -27,7 +27,7 @@ qe_setup_parameters={
 virt_setup_parameters={
     'baremetal_guest_ports':['xe-0/0/7', 'xe-0/0/8'],
     'switch_type':'juniper_emulator_sw',
-    'switch_ip':'172.16.0.4',
+    'switch_ip':'172.16.0.99',
     'switch_user':'ansible',
     'switch_password':'Juniper',
     'tenant_nets':['tempest-shared','tempest-shared'], #Duplicated in order to create 2 BM in parallel in test 010
