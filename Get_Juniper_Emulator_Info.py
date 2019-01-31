@@ -18,4 +18,3 @@ vlans=get_juniper_sw_get_port_vlan(
 
 print vlans
 
-
