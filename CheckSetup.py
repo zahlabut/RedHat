@@ -27,12 +27,19 @@ qe_setup_parameters={
 virt_setup_parameters={
     'baremetal_guest_ports':['xe-0/0/7', 'xe-0/0/8'],
     'switch_type':'juniper_emulator_sw',
-    'switch_ip':'172.16.0.81',
+    'switch_ip':'172.16.0.24',
     'switch_user':'ansible',
     'switch_password':'Juniper',
     'tenant_nets':['tempest-shared','tempest-shared'], #Duplicated in order to create 2 BM in parallel in test 010
     'setup':'Virtual_Setup'
 }
+
+# Create key pair #
+source_command='source /home/stack/overcloudrc;'
+existing_key_pairs=[item['name'] for item in exec_command_line_command(source_command+'openstack keypair list -f json')['JsonOutput']]
+print 'Keypairs --> ',existing_key_pairs
+if 'default' not in existing_key_pairs:
+    result=exec_command_line_command(source_command+'openstack keypair create --public-key /home/stack/.ssh/id_rsa.pub default')
 
 ### Get controllers IPs ###
 controllers = exec_command_line_command(source_undercloud+'openstack server list --name controller -f json')[
