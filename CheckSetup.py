@@ -204,7 +204,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             time.sleep(5)
             states = [item['provisioning state'] for item in exec_command_line_command(source_overcloud + 'openstack baremetal node list -f json')['JsonOutput']]
             print states
-            if states==['available','available'] or 'error' in str(states).lower():
+            if states==['available','available']:
                 to_stop=True
         self.assertEqual(['available','available'], states, 'Failed: baremetal node states are: '+str(states)+' expected:available')
 
@@ -240,7 +240,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
             statuses=[item['status'] for item in list_servers_result]
             print '--> Servers statuses are: ',statuses
-            if str(statuses).count('active')==len(tenant_nets):
+            if str(statuses).count('active')==len(tenant_nets) or 'error' in str(statuses).lower():
                 to_stop=True
         self.assertEqual(to_stop,True,'Failed: No BM servers detected as "active", "openstack server list" result is:\n'+str(list_servers_result))
         # Make sure that each server was created on proper network, basing on VLAN id comparison
