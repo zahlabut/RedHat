@@ -204,7 +204,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             time.sleep(5)
             states = [item['provisioning state'] for item in exec_command_line_command(source_overcloud + 'openstack baremetal node list -f json')['JsonOutput']]
             print states
-            if states==['available','available']:
+            if states==['available','available'] or 'error' in str(states).lower():
                 to_stop=True
         self.assertEqual(['available','available'], states, 'Failed: baremetal node states are: '+str(states)+' expected:available')
 
