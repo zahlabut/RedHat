@@ -297,6 +297,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         test_failed=False
 
         time.sleep(60)
+        print 'sleep'
 
         for key in actual_errors.keys():
             errors_file.write('-' * 50 + node_ip_name_dic[key] + '-' * 50+'\n')
