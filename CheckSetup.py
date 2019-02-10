@@ -74,7 +74,6 @@ for ip in nodes_ips:
     ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
     ssh_object.ssh_connect_key()
     command = "sudo grep -Rn ' ERROR ' "+overcloud_log_path
-    print command
     existing_errors[ip]=ssh_object.ssh_command_only(command)['Stdout'].split('\n')
     ssh_object.ssh_close()
 
