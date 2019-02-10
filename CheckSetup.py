@@ -285,6 +285,10 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     In case when there is a bunch of ERRORs on Overcloud, this test will take some time to complete.
     """
     def test_012_no_errors_in_logs(self):
+
+        print 'sleep'
+        time.sleep(60)
+
         print '\ntest_012_no_errors_in_logs'
         error_file_name='Overcloud_Errors.log'
         errors_file=open(error_file_name,'w')
@@ -297,8 +301,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             ssh_object.ssh_close()
         test_failed=False
 
-        print 'sleep'
-        time.sleep(60)
+
 
 
         for ip in actual_errors.keys():
