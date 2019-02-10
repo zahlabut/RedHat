@@ -298,14 +298,16 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         test_failed=False
 
         print 'sleep'
-        #time.sleep(60)
+        time.sleep(60)
 
 
         for ip in actual_errors.keys():
             errors_file.write('-' * 50 + node_ip_name_dic[ip] + '-' * 50+'\n')
             for line in actual_errors[ip]:
+                if 'stam' in line:
+                    print line
                 if line not in existing_errors[ip]:
-                    #print line
+                    print line
                     test_failed=True
                     errors_file.write(line+'\n')
                 else:
