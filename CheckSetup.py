@@ -34,12 +34,6 @@ virt_setup_parameters={
     'setup':'Virtual_Setup'
 }
 
-# Create key pair #
-source_command='source /home/stack/overcloudrc;'
-existing_key_pairs=[item['name'] for item in exec_command_line_command(source_command+'openstack keypair list -f json')['JsonOutput']]
-print 'Keypairs --> ',existing_key_pairs
-if 'default' not in existing_key_pairs:
-    result=exec_command_line_command(source_command+'openstack keypair create --public-key /home/stack/.ssh/id_rsa.pub default')
 
 ### Get controllers IPs ###
 controllers = exec_command_line_command(source_undercloud+'openstack server list --name controller -f json')[
@@ -63,6 +57,14 @@ for ip in nodes_ips:
 ### No Ceph = Virt Setup ###
 if cephs==[]:
     prms=virt_setup_parameters
+    # Create key pair #
+    source_command = 'source /home/stack/overcloudrc;'
+    existing_key_pairs = [item['name'] for item in
+                          exec_command_line_command(source_command + 'openstack keypair list -f json')['JsonOutput']]
+    print 'Keypairs --> ', existing_key_pairs
+    if 'default' not in existing_key_pairs:
+        result = exec_command_line_command(
+            source_command + 'openstack keypair create --public-key /home/stack/.ssh/id_rsa.pub default')
 else:
     prms=qe_setup_parameters
 
