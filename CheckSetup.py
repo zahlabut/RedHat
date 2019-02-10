@@ -295,6 +295,9 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             actual_errors[ip] = ssh_object.ssh_command_only(command)['Stdout'].split('\n')
             ssh_object.ssh_close()
         test_failed=False
+
+        time.sleep(60)
+
         for key in actual_errors.keys():
             errors_file.write('-' * 50 + node_ip_name_dic[key] + '-' * 50+'\n')
             for line in actual_errors[key]:
