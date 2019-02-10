@@ -305,6 +305,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             errors_file.write('-' * 50 + node_ip_name_dic[key] + '-' * 50+'\n')
             for line in actual_errors[key]:
                 if line not in existing_errors[key]:
+                    print line
                     test_failed=True
                     errors_file.write(line+'\n')
         errors_file.close()
