@@ -301,10 +301,11 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         time.sleep(60)
 
 
-        for key in actual_errors.keys():
-            errors_file.write('-' * 50 + node_ip_name_dic[key] + '-' * 50+'\n')
-            for line in actual_errors[key]:
-                if line not in existing_errors[key]:
+        for ip in actual_errors.keys():
+            errors_file.write('-' * 50 + node_ip_name_dic[ip] + '-' * 50+'\n')
+            for line in actual_errors[ip]:
+                print line
+                if line not in existing_errors[ip]:
                     print line
                     test_failed=True
                     errors_file.write(line+'\n')
