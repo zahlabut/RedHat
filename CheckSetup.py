@@ -307,11 +307,11 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                 if 'stam' in line:
                     print line
                 if line not in existing_errors[ip]:
-                    print line
+                    #print line
                     test_failed=True
                     errors_file.write(line+'\n')
-                else:
-                    print line
+
+
 
         errors_file.close()
         self.assertEqual(test_failed,False,'Failed, see details here: \n'+open(error_file_name,'r').read())
