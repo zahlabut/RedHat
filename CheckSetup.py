@@ -77,7 +77,7 @@ for ip in nodes_ips:
     print command
     existing_errors[ip]=ssh_object.ssh_command_only(command)['Stdout'].split('\n')
     ssh_object.ssh_close()
-
+print existing_errors
 
 class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
