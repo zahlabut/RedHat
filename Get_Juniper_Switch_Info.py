@@ -18,3 +18,5 @@ vlans=get_juniper_sw_get_port_vlan(
     setup_parameters['baremetal_guest_ports'])
 
 print vlans
+for k in vlans.keys():
+    print k,' --> ', vlans[k]
