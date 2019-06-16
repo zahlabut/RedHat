@@ -209,7 +209,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             if list(set(states))==['available']:
                 to_stop=True
         self.assertEqual(['available'], list(set(states)), 'Failed: baremetal node states are: '+str(states)+' expected:available')
-        time.sleep(20) #needed for next test, create servers
+        time.sleep(30) #needed for next test, create servers
 
     """ This test is planed to validate that Bare Metal guests creation (as Servers on Overcloud) is successfully done and that
     Ansible Networking feature sets proper VLAN on switch, depending on "network" which is used for creation.
