@@ -234,7 +234,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         print '--> Existing servers IDs: ',existing_servers_ids
         self.assertEqual(0,len(existing_servers_ids),'Failed: existing nodes have been detected IDs:\n'+str(existing_servers_ids))
         # Create servers
-        for net in tenant_nets:
+        for net in tenant_net_ids:
             bm_index+=1
             vlan_id=exec_command_line_command(source_overcloud+'openstack network show '+net+' -f json')['JsonOutput']['provider:segmentation_id']
             create_bm_command=source_overcloud+'openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+net+' '+bm_name+str(bm_index)
