@@ -232,8 +232,9 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             vlan_id=exec_command_line_command(source_overcloud+'openstack network show '+net+' -f json')['JsonOutput']['provider:segmentation_id']
             create_bm_command=source_overcloud+'openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+net+' '+bm_name+str(bm_index)
             result=exec_command_line_command(source_overcloud+create_bm_command)
-            self.assertEqual(0, result['ReturnCode'],'Command to create server has failed with: '+str(result['ReturnCode']))
+            print create_bm_command
             self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest command return non Zero status code\n'+result['CommandOutput'])
+            print result['ReturnCode']
             expected_vlans_on_switch.append(str(vlan_id))
         start_time=time.time()
         to_stop=False
