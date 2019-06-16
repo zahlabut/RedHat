@@ -6,7 +6,7 @@ overclud_user='heat-admin'
 overcloud_ssh_key='/home/stack/.ssh/id_rsa'
 source_overcloud='source /home/stack/overcloudrc;'
 source_undercloud='source /home/stack/stackrc;'
-overcloud_log_path='/var/log/containers'
+overcloud_log_path='/var/log'
 manageable_timeout=600 #Test 009 "Clean"
 available_timeout=600 #Test 009 "Clean"
 create_bm_server_timeout=1200
@@ -208,6 +208,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             print states
             if list(set(states))==['available']:
                 to_stop=True
+        time.sleep(5) #needed for next test, create servers
         self.assertEqual(['available'], list(set(states)), 'Failed: baremetal node states are: '+str(states)+' expected:available')
 
     """ This test is planed to validate that Bare Metal guests creation (as Servers on Overcloud) is successfully done and that
