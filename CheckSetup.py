@@ -14,7 +14,7 @@ delete_server_timeouts=300
 
 # QE Setup #
 qe_setup_parameters={
-    'baremetal_guest_ports':['xe-0/0/6'],#, 'xe-0/0/7'],#,'xe-0/0/42','xe-0/0/43','xe-0/0/44','xe-0/0/45'],
+    'baremetal_guest_ports':['xe-0/0/6', 'xe-0/0/7'],#,'xe-0/0/42','xe-0/0/43','xe-0/0/44','xe-0/0/45'],
     'switch_type':'juniper_physical_sw',
     'switch_ip':'10.9.95.25',
     'switch_user':'ansible',
