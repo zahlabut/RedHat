@@ -270,7 +270,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
             time.sleep(10)
             list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
-            print list_servers_result
             if len(list_servers_result)!=0:
                 names=[item['name'] for item in list_servers_result]
                 print '-- Existing servers are: ',names
