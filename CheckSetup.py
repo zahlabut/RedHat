@@ -283,10 +283,10 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     on physical switches, so proper error message should be displayed to user"""
     def test_012_negative_create_vxlan_network(self):
         command=source_overcloud+"openstack network create --provider-network-type xvlan --provider-physical-network baremetal zababun_vxlan"
-        command_result=exec_command_line_command(command)['CommandOutput'].lower()
+        command_result=str(exec_command_line_command(command))
         print '----'
         print command_result
-
+        print '^^^^^^'
         self.assertIn("'xvlan' not supported",
                       command_result,"Failed, VXLAN network was successfully created, shouldn't be suported")
 
