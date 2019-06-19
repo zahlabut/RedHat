@@ -87,6 +87,7 @@ def exec_command_line_command(command):
     #     return {'ReturnCode': e.returncode, 'CommandOutput': 'Failed to execute: \n'+command+'with:\n'+str(e)}
 
 
+
 def collect_log_paths(log_root_path):
     logs=[]
     for root, dirs, files in os.walk(log_root_path):
