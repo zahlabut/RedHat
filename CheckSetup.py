@@ -284,9 +284,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     def test_012_negative_create_vxlan_network(self):
         command=source_overcloud+"openstack network create --provider-network-type xvlan --provider-physical-network baremetal zababun_vxlan"
         command_result=exec_command_line_command(command)['ReturnCode']
-        print '----'
-        print command_result
-        print '^^^^^^'
         self.assertNotEqual(0,command_result,"Failed, VXLAN network was successfully created, shouldn't be suported")
 
 
