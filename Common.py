@@ -72,7 +72,7 @@ class SSH():
         self.client.close()
 
 def exec_command_line_command(command):
-    try:
+    #try:
         command_as_list = command.split(' ')
         command_as_list = [item.replace(' ', '') for item in command_as_list if item != '']
         result = subprocess.check_output(command, stdin=True, stderr=True, shell=True)
@@ -82,9 +82,9 @@ def exec_command_line_command(command):
         except:
             pass
         return {'ReturnCode': 0, 'CommandOutput': result, 'JsonOutput': json_output}
-    except subprocess.CalledProcessError as e:
-        print e
-        return {'ReturnCode': e.returncode, 'CommandOutput': 'Failed to execute: \n'+command+'with:\n'+str(e)}
+    # except subprocess.CalledProcessError as e:
+    #     print e
+    #     return {'ReturnCode': e.returncode, 'CommandOutput': 'Failed to execute: \n'+command+'with:\n'+str(e)}
 
 
 def collect_log_paths(log_root_path):
