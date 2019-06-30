@@ -241,8 +241,8 @@ if 'default' not in existing_key_pairs:
 
 # Create new Overcloud users
 users=[
-    {'name':'new-user','project':'new-project','project_info':'new_project','user_password':'PASSWORD'},
-    {'name':'new-user1','project':'new-project1','project_info':'new_project_1','user_password':'PASSWORD1'}
+    {'name':'new-user','project':'new-project','project_info':'new_project','user_password':'PASSWORD','rc_file':'userrc'},
+    {'name':'new-user1','project':'new-project1','project_info':'new_project_1','user_password':'PASSWORD1','rc_file':'userrc1'}
 ]
 for user in users:
     if user['project'] not in existing_projects:
@@ -257,7 +257,7 @@ for user in users:
         for com in commands:
             result=exec_command_line_command(source_command+com)
     overcloudrc_content=open('/home/stack/overcloudrc','r').readlines()
-    empty_file_content('/home/stack/userrc')
+    empty_file_content('/home/stack/'+user['rc_file'])
     for line in overcloudrc_content:
         if "OS_USERNAME" in line:
             line='export OS_USERNAME='+user['name']+'\n'
@@ -265,7 +265,7 @@ for user in users:
             line='export OS_PASSWORD='+user['user_password']+'\n'
         if "OS_PROJECT_NAME" in line:
             line='export OS_PROJECT_NAME='+user['project']+'\n'
-        append_to_file('/home/stack/userrc',line)
+        append_to_file('/home/stack/'+user['rc_file'],line)
 
 
 
