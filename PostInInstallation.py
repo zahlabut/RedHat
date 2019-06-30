@@ -259,6 +259,8 @@ for line in overcloudrc_content:
         line='export OS_PASSWORD=PASSWORD'
     if "OS_PROJECT_NAME":
         line='export OS_PROJECT_NAME=new-project'
+    else:
+        line=line
     append_to_file('/home/stack/userrc',line+'\n')
 
 # Create new Overcloud user: new-user1
@@ -281,6 +283,8 @@ for line in overcloudrc_content:
         line='export OS_PASSWORD=PASSWORD1'
     if "OS_PROJECT_NAME":
         line='export OS_PROJECT_NAME=new-project1'
+    else:
+        line=line
     append_to_file('/home/stack/userrc1',line+'\n')
 
 
