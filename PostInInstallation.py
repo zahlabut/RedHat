@@ -23,9 +23,9 @@ print 'Security Group ID --> ',default_security_group_id
 existing_key_pairs=[item['name'] for item in exec_command_line_command(source_command+'openstack keypair list -f json')['JsonOutput']]
 print 'Keypairs --> ',existing_key_pairs
 existing_users=[item['name'] for item in exec_command_line_command(source_command+'openstack user list -f json')['JsonOutput']]
-print 'Users --> ',existing_key_pairs
+print 'Users --> ',existing_users
 existing_projects=[item['name'] for item in exec_command_line_command(source_command+'openstack project list -f json')['JsonOutput']]
-print 'Projects --> ',existing_key_pairs
+print 'Projects --> ',existing_projects
 
 
 
