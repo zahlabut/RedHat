@@ -256,9 +256,9 @@ for line in overcloudrc_content:
     print line
     if "OS_USERNAME" in line:
         line='export OS_USERNAME=new-user'
-    elif "OS_PASSWORD" in line:
+    if "OS_PASSWORD" in line:
         line='export OS_PASSWORD=PASSWORD'
-    elif "OS_PROJECT_NAME":
+    if "OS_PROJECT_NAME" in line:
         line='export OS_PROJECT_NAME=new-project'
     append_to_file('/home/stack/userrc',line+'\n')
 
