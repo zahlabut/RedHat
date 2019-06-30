@@ -28,7 +28,14 @@ existing_projects=[item['name'] for item in exec_command_line_command(source_com
 print 'Projects --> ',existing_projects
 
 
+def empty_file_content(log_file_name):
+    f = open(log_file_name, 'w')
+    f.write('')
+    f.close()
 
+def append_to_file(log_file, msg):
+    log_file = open(log_file, 'a')
+    log_file.write(msg)
 
 all_errors=[]
 # Import BM nodes #
@@ -232,7 +239,7 @@ if 'default' not in existing_key_pairs:
         all_errors.append(result['CommandOutput'])
 
 
-# Create new Overcloud users
+# Create new Overcloud user: new-user
 if 'new-project' not in existing_projects:
     result=exec_command_line_command(source_command+"openstack project create --description 'my new project' new-project --domain default")
     if result['ReturnCode']!=0:
@@ -243,7 +250,18 @@ if 'new-user' not in existing_users:
               "openstack network set --share tenant-net"]
     for com in commands:
         result=exec_command_line_command(source_command+com)
+overcloudrc_content=open('/home/stack/overcloudrc','r').readlines()
+empty_file_content('/home/stack/userrc')
+for line in overcloudrc_content:
+    if "OS_USERNAME" in line:
+        line='export OS_USERNAME=new-user'
+    if "OS_PASSWORD" in line:
+        line='export OS_PASSWORD=PASSWORD'
+    if "OS_PROJECT_NAME":
+        line='export OS_PROJECT_NAME=new-project'
+    append_to_file('/home/stack/userrc',line)
 
+# Create new Overcloud user: new-user1
 if 'new-project1' not in existing_projects:
     result=exec_command_line_command(source_command+"openstack project create --description 'my new project1' new-project1 --domain default")
     if result['ReturnCode']!=0:
@@ -254,7 +272,16 @@ if 'new-user' not in existing_users:
               "openstack network set --share tenant-net2"]
     for com in commands:
         result=exec_command_line_command(source_command+com)
-
+overcloudrc_content=open('/home/stack/overcloudrc','r').readlines()
+empty_file_content('/home/stack/userrc1')
+for line in overcloudrc_content:
+    if "OS_USERNAME" in line:
+        line='export OS_USERNAME=new-user1'
+    if "OS_PASSWORD" in line:
+        line='export OS_PASSWORD=PASSWORD1'
+    if "OS_PROJECT_NAME":
+        line='export OS_PROJECT_NAME=new-project1'
+    append_to_file('/home/stack/userrc1',line)
 
 
 
