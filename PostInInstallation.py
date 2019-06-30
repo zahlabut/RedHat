@@ -283,15 +283,7 @@ for line in overcloudrc_content:
         line='export OS_PASSWORD=PASSWORD1\n'
     if "OS_PROJECT_NAME" in line:
         line='export OS_PROJECT_NAME=new-project1\n'
-    else:
-        line=line
     append_to_file('/home/stack/userrc1',line)
-
-
-
-
-
-
 
 
 
