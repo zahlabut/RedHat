@@ -22,6 +22,10 @@ default_security_group_id=[item['id'] for item in exec_command_line_command(sour
 print 'Security Group ID --> ',default_security_group_id
 existing_key_pairs=[item['name'] for item in exec_command_line_command(source_command+'openstack keypair list -f json')['JsonOutput']]
 print 'Keypairs --> ',existing_key_pairs
+existing_users=[item['name'] for item in exec_command_line_command(source_command+'openstack user list -f json')['JsonOutput']]
+print 'Users --> ',existing_key_pairs
+existing_projects=[item['name'] for item in exec_command_line_command(source_command+'openstack project list -f json')['JsonOutput']]
+print 'Projects --> ',existing_key_pairs
 
 
 
@@ -226,6 +230,39 @@ if 'default' not in existing_key_pairs:
     result=exec_command_line_command(source_command+'openstack keypair create --public-key /home/stack/.ssh/id_rsa.pub default')
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
+
+
+# Create new Overcloud users
+if 'new-project' not in existing_projects:
+    result=exec_command_line_command(source_command+"openstack project create --description 'my new project' new-project --domain default")
+    if result['ReturnCode']!=0:
+        all_errors.append(result['CommandOutput'])
+if 'new-user' not in existing_users:
+    commands=["openstack user create --project new-project --password PASSWORD new-user",
+              "openstack role add --user new-user --project new-project admin",
+              "openstack network set --share tenant-net"]
+    for com in commands:
+        result=exec_command_line_command(source_command+com)
+
+if 'new-project1' not in existing_projects:
+    result=exec_command_line_command(source_command+"openstack project create --description 'my new project1' new-project1 --domain default")
+    if result['ReturnCode']!=0:
+        all_errors.append(result['CommandOutput'])
+if 'new-user' not in existing_users:
+    commands=["openstack user create --project new-project --password PASSWORD new-user1",
+              "openstack role add --user new-user1 --project new-project1 admin",
+              "openstack network set --share tenant-net2"]
+    for com in commands:
+        result=exec_command_line_command(source_command+com)
+
+
+
+
+
+
+
+
+
 
 if len(all_errors)!=0:
     print '\n\n\nFailed commands has been detected!!!'
