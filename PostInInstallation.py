@@ -253,14 +253,15 @@ if 'new-user' not in existing_users:
 overcloudrc_content=open('/home/stack/overcloudrc','r').readlines()
 empty_file_content('/home/stack/userrc')
 for line in overcloudrc_content:
-    print line
     if "OS_USERNAME" in line:
-        line='export OS_USERNAME=new-user'
+        line='export OS_USERNAME=new-user\n'
     if "OS_PASSWORD" in line:
-        line='export OS_PASSWORD=PASSWORD'
+        line='export OS_PASSWORD=PASSWORD\n'
     if "OS_PROJECT_NAME" in line:
-        line='export OS_PROJECT_NAME=new-project'
+        line='export OS_PROJECT_NAME=new-project\n'
     append_to_file('/home/stack/userrc',line)
+
+
 
 # Create new Overcloud user: new-user1
 if 'new-project1' not in existing_projects:
@@ -277,11 +278,11 @@ overcloudrc_content=open('/home/stack/overcloudrc','r').readlines()
 empty_file_content('/home/stack/userrc1')
 for line in overcloudrc_content:
     if "OS_USERNAME" in line:
-        line='export OS_USERNAME=new-user1'
+        line='export OS_USERNAME=new-user1\n'
     if "OS_PASSWORD" in line:
-        line='export OS_PASSWORD=PASSWORD1'
+        line='export OS_PASSWORD=PASSWORD1\n'
     if "OS_PROJECT_NAME" in line:
-        line='export OS_PROJECT_NAME=new-project1'
+        line='export OS_PROJECT_NAME=new-project1\n'
     else:
         line=line
     append_to_file('/home/stack/userrc1',line)
