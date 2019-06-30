@@ -239,51 +239,36 @@ if 'default' not in existing_key_pairs:
         all_errors.append(result['CommandOutput'])
 
 
-# Create new Overcloud user: new-user
-if 'new-project' not in existing_projects:
-    result=exec_command_line_command(source_command+"openstack project create --description 'my new project' new-project --domain default")
-    if result['ReturnCode']!=0:
-        all_errors.append(result['CommandOutput'])
-if 'new-user' not in existing_users:
-    commands=["openstack user create --project new-project --password PASSWORD new-user",
-              "openstack role add --user new-user --project new-project admin",
-              "openstack network set --share tenant-net"]
-    for com in commands:
-        result=exec_command_line_command(source_command+com)
-overcloudrc_content=open('/home/stack/overcloudrc','r').readlines()
-empty_file_content('/home/stack/userrc')
-for line in overcloudrc_content:
-    if "OS_USERNAME" in line:
-        line='export OS_USERNAME=new-user\n'
-    if "OS_PASSWORD" in line:
-        line='export OS_PASSWORD=PASSWORD\n'
-    if "OS_PROJECT_NAME" in line:
-        line='export OS_PROJECT_NAME=new-project\n'
-    append_to_file('/home/stack/userrc',line)
+# Create new Overcloud users
+users=[
+    {'name':'new-user','project':'new-project','project_info':'new_project','user_password':'PASSWORD'},
+    {'name':'new-user1','project':'new-project1','project_info':'new_project_1','user_password':'PASSWORD1'}
+]
+for user in users:
+    if user['project'] not in existing_projects:
+        result=exec_command_line_command(source_command+
+                                         "openstack project create --description "+user['project_info']+" "+user['project']+" --domain default")
+        if result['ReturnCode']!=0:
+            all_errors.append(result['CommandOutput'])
+    if user['name'] not in existing_users:
+        commands=["openstack user create --project "+user['project']+" --password "+user['user_password']+" "+user['name'],
+                  "openstack role add --user "+user['name']+" --project "+user['project']+" admin",
+                  "openstack network set --share tenant-net"]
+        for com in commands:
+            result=exec_command_line_command(source_command+com)
+    overcloudrc_content=open('/home/stack/overcloudrc','r').readlines()
+    empty_file_content('/home/stack/userrc')
+    for line in overcloudrc_content:
+        if "OS_USERNAME" in line:
+            line='export OS_USERNAME='+user['name']+'\n'
+        if "OS_PASSWORD" in line:
+            line='export OS_PASSWORD='+user['user_password']+'\n'
+        if "OS_PROJECT_NAME" in line:
+            line='export OS_PROJECT_NAME='+user['project']+'\n'
+        append_to_file('/home/stack/userrc',line)
 
 
 
-# Create new Overcloud user: new-user1
-if 'new-project1' not in existing_projects:
-    result=exec_command_line_command(source_command+"openstack project create --description 'my new project1' new-project1 --domain default")
-    if result['ReturnCode']!=0:
-        all_errors.append(result['CommandOutput'])
-if 'new-user' not in existing_users:
-    commands=["openstack user create --project new-project --password PASSWORD new-user1",
-              "openstack role add --user new-user1 --project new-project1 admin",
-              "openstack network set --share tenant-net2"]
-    for com in commands:
-        result=exec_command_line_command(source_command+com)
-overcloudrc_content=open('/home/stack/overcloudrc','r').readlines()
-empty_file_content('/home/stack/userrc1')
-for line in overcloudrc_content:
-    if "OS_USERNAME" in line:
-        line='export OS_USERNAME=new-user1\n'
-    if "OS_PASSWORD" in line:
-        line='export OS_PASSWORD=PASSWORD1\n'
-    if "OS_PROJECT_NAME" in line:
-        line='export OS_PROJECT_NAME=new-project1\n'
-    append_to_file('/home/stack/userrc1',line)
 
 
 
