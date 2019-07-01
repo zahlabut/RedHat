@@ -304,7 +304,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
         # Check if any server exists and delete if it does
         existing_server_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']]
-        if len(existing_server_ids)==0:
+        if len(existing_server_ids)>0:
             for id in existing_server_ids:
                 exec_command_line_command(source_overcloud+'openstack server delete '+id)
         #existing_server_ids = [item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']]
