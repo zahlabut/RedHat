@@ -296,7 +296,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         existing_users = [item['name'] for item in
                           exec_command_line_command(source_overcloud + 'openstack user list -f json')['JsonOutput']]
         self.assertIn('new-user',existing_users,'Failed, there is no existing tenant user: "new-user"')
-        self.assertEqual(os.path.exists(source_tenant_user.replace('source ','')),True,'Failed, no source file for tenant user exists (userrc file)')
+        self.assertEqual(os.path.exists(source_tenant_user.replace('source ','').replace(';','')),True,'Failed, no source file for tenant user exists (userrc file)')
         existing_projects = [item['name'] for item in
                              exec_command_line_command(source_overcloud + 'openstack project list -f json')['JsonOutput']]
         self.assertIn('new-project',existing_projects,'Failed, there is no existing project: "new-project"')
