@@ -28,6 +28,7 @@ existing_projects=[item['name'] for item in exec_command_line_command(source_com
 print 'Projects --> ',existing_projects
 
 
+
 def empty_file_content(log_file_name):
     f = open(log_file_name, 'w')
     f.write('')
