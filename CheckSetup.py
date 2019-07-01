@@ -307,7 +307,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         if len(existing_server_ids)>0:
             for id in existing_server_ids:
                 exec_command_line_command(source_overcloud+'openstack server delete '+id)
-        #existing_server_ids = [item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']]
         start_time=time.time()
         to_stop=False
         # Wait till all servers are deleted "
@@ -321,19 +320,15 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                 to_stop=True
         self.assertEqual(len(list_servers_result), 0, 'Failed: existing servers detected, IDs:\n'+str(list_servers_result))
 
-        # Create a keypair as tenant user
-        #com_result=exec_command_line_command(source_tenant_user+'openstack keypair create --public-key ~/.ssh/id_rsa.pub default')
-        #self.assertEqual(com_result['ReturnCode'],0,'Failed, keypair failed to be created'+str(com_result['ReturnCode']))
-
-
         # Create server as tenant user
         bm_name='BM_Guest_Tenant_User'
         tenant_net=prms['tenant_nets'][0]
         tenant_net_id=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack network list -f json')['JsonOutput'] if item['name'] is tenant_net]
         expected_vlans_on_switch=[]
         vlan_id=exec_command_line_command(source_overcloud+'openstack network show '+tenant_net+' -f json')['JsonOutput']['provider:segmentation_id']
-        create_bm_command=source_tenant_user+'openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+tenant_net+' '+bm_name
+        create_bm_command=source_tenant_user+'openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+tenant_net+' '+bm_name+'-f json'
         result=exec_command_line_command(source_tenant_user+create_bm_command)
+        bm_guest_id=result['JsonOutput']['id']
         self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest command has failed with:\n'+result['CommandOutput'])
         expected_vlans_on_switch.append(str(vlan_id))
         start_time=time.time()
@@ -353,6 +348,14 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         for vlan in expected_vlans_on_switch:
             self.assertIn(str(vlan),str(actual_vlans),
                             'Failed, detected VLANs on swith are not as expected:''\n'+str(actual_vlans)+'\n'+str(expected_vlans_on_switch))
+
+        # As admin user delete tenant user with existing BM guest
+        print bm_guest_id
+        print actual_vlans
+
+
+
+
 
 
 
