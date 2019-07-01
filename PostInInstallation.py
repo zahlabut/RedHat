@@ -266,7 +266,7 @@ for user in users:
         if "OS_PROJECT_NAME" in line:
             line='export OS_PROJECT_NAME='+user['project']+'\n'
         append_to_file('/home/stack/'+user['rc_file'],line)
-    command='. /home/stack/'+user['rc_file']+';'+'openstack keypair create --public-key ~/.ssh/id_rsa.pub default'
+
 
 
 
