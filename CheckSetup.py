@@ -6,6 +6,7 @@ overclud_user='heat-admin'
 overcloud_ssh_key='/home/stack/.ssh/id_rsa'
 source_overcloud='source /home/stack/overcloudrc;'
 source_undercloud='source /home/stack/stackrc;'
+source_tenant_user='source /home/stack/userrc;'
 overcloud_log_path='/var/log'
 manageable_timeout=600 #Test 009 "Clean"
 available_timeout=600 #Test 009 "Clean"
@@ -295,16 +296,17 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         existing_users = [item['name'] for item in
                           exec_command_line_command(source_overcloud + 'openstack user list -f json')['JsonOutput']]
         self.assertIn('new-user',existing_users,'Failed, there is no existing tenant user: "new-user"')
+        self.assertEqual(os.path.exists(source_tenant_user),True,'Failed, no source file for tenant user exists (userrc file)')
         existing_projects = [item['name'] for item in
                              exec_command_line_command(source_overcloud + 'openstack project list -f json')['JsonOutput']]
         self.assertIn('new-project',existing_projects,'Failed, there is no existing project: "new-project"')
 
         # Check if any server exists and delete if it does
-        existing_server_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
+        existing_server_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']]
         self.assertNotEqual(len(existing_server_ids),0,'Failed: no existing servers detected')
         for id in existing_server_ids:
             exec_command_line_command(source_overcloud+'openstack server delete '+id)
-        existing_server_ids = [item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
+        existing_server_ids = [item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']]
         start_time=time.time()
         to_stop=False
         # Wait till all servers are deleted "
