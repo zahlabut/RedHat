@@ -233,7 +233,7 @@ if 'icmp' not in str(exec_command_line_command(source_command+'openstack securit
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
 
-# Create key pair #
+# Create admin pair #
 if 'default' not in existing_key_pairs:
     result=exec_command_line_command(source_command+'openstack keypair create --public-key /home/stack/.ssh/id_rsa.pub default')
     if result['ReturnCode']!=0:
@@ -254,20 +254,22 @@ for user in users:
     if user['name'] not in existing_users:
         commands=["openstack user create --project "+user['project']+" --password "+user['user_password']+" "+user['name'],
                   "openstack role add --user "+user['name']+" --project "+user['project']+" admin",
-                  "openstack network set --share tenant-net"]
+                  "openstack network set --share tenant-net"
+                  ]
         for com in commands:
             result=exec_command_line_command(source_command+com)
-    overcloudrc_content=open('/home/stack/overcloudrc','r').readlines()
-    empty_file_content('/home/stack/'+user['rc_file'])
-    for line in overcloudrc_content:
-        if "OS_USERNAME" in line:
-            line='export OS_USERNAME='+user['name']+'\n'
-        if "OS_PASSWORD" in line:
-            line='export OS_PASSWORD='+user['user_password']+'\n'
-        if "OS_PROJECT_NAME" in line:
-            line='export OS_PROJECT_NAME='+user['project']+'\n'
-        append_to_file('/home/stack/'+user['rc_file'],line)
-
+        overcloudrc_content=open('/home/stack/overcloudrc','r').readlines()
+        empty_file_content('/home/stack/'+user['rc_file'])
+        for line in overcloudrc_content:
+            if "OS_USERNAME" in line:
+                line='export OS_USERNAME='+user['name']+'\n'
+            if "OS_PASSWORD" in line:
+                line='export OS_PASSWORD='+user['user_password']+'\n'
+            if "OS_PROJECT_NAME" in line:
+                line='export OS_PROJECT_NAME='+user['project']+'\n'
+            append_to_file('/home/stack/'+user['rc_file'],line)
+        keypair_create="source /home/stack/"+user['rc_file']+";openstack keypair create --public-key ~/.ssh/id_rsa.pub default"
+        exec_command_line_command(keypair_create)
 
 
 
