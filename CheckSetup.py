@@ -292,6 +292,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     """This test is planned to check that once Overcloud admin user delete user (userrc) that has active server, physical
     port on switch will remain associated to the same VLAN it was before (no change on Switch)"""
     def test_013_delete_tenant_user(self):
+        print '\ntest_013_delete_tenant_user'
         # Check if tenant user and projects exists at all
         existing_users = [item['name'] for item in
                           exec_command_line_command(source_overcloud + 'openstack user list -f json')['JsonOutput']]
@@ -303,9 +304,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
         # Check if any server exists and delete if it does
         existing_server_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']]
-
-        print existing_server_ids
-
         self.assertNotEqual(len(existing_server_ids),0,'Failed: no existing servers detected')
         for id in existing_server_ids:
             exec_command_line_command(source_overcloud+'openstack server delete '+id)
@@ -314,11 +312,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         to_stop=False
         # Wait till all servers are deleted "
         while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
-
-            print 'in while'
-
             time.sleep(10)
-            list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
+            list_servers_result=exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']
             if len(list_servers_result)!=0:
                 names=[item['name'] for item in list_servers_result]
                 print '-- Existing servers are: ',names
@@ -326,10 +321,38 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                 to_stop=True
         self.assertEqual(len(list_servers_result), 0, 'Failed: existing servers detected, IDs:\n'+str(list_servers_result))
 
+        # Create a keypair as tenant user
+        com_result=exec_command_line_command(source_tenant_user+'openstack keypair create --public-key ~/.ssh/id_rsa.pub default')
+        self.assertEqual(com_result['ReturnCode'],0,'Failed, keypair failed to be created'+com_result['ReturnCode'])
 
 
-        # command='. /home/stack/'+user['rc_file']+';'+'openstack keypair create --public-key ~/.ssh/id_rsa.pub default'
-
+        # Create server as tenant user
+        bm_name='BM_Guest_Tenant_User'
+        tenant_net=prms['tenant_nets'][0]
+        tenant_net_id=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack network list -f json')['JsonOutput'] if item['name'] is tenant_net]
+        expected_vlans_on_switch=[]
+        vlan_id=exec_command_line_command(source_overcloud+'openstack network show '+tenant_net+' -f json')['JsonOutput']['provider:segmentation_id']
+        create_bm_command=source_tenant_user+'openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+tenant_net+' '+bm_name
+        result=exec_command_line_command(source_tenant_user+create_bm_command)
+        self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest command has failed with:\n'+result['CommandOutput'])
+        expected_vlans_on_switch.append(str(vlan_id))
+        start_time=time.time()
+        to_stop=False
+        # Wait till all servers are getting into "active"
+        while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
+            time.sleep(10)
+            list_servers_result=exec_command_line_command(source_tenant_user+'openstack server list -f json')['JsonOutput']
+            statuses=[item['status'] for item in list_servers_result]
+            print '--> Servers statuses are: ',statuses
+            if str(statuses).count('active')==1 or 'error' in str(statuses).lower():
+                to_stop=True
+        self.assertEqual(to_stop,True,'Failed: No BM servers detected as "active", "openstack server list" result is:\n'+str(list_servers_result))
+        # Make sure that each server was created on proper network, basing on VLAN id comparison
+        actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
+        actual_vlans=[actual_vlans[key] for key in actual_vlans.keys()]
+        for vlan in expected_vlans_on_switch:
+            self.assertIn(str(vlan),str(actual_vlans),
+                            'Failed, detected VLANs on swith are not as expected:''\n'+str(actual_vlans)+'\n'+str(expected_vlans_on_switch))
 
 
 
