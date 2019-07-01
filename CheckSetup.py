@@ -353,7 +353,9 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         print bm_guest_id
         print actual_vlans
         delete_user_command=source_overcloud+'openstack user delete new-user'
+        print exec_command_line_command(delete_user_command)
         new_actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
+        print new_actual_vlans
         new_actual_vlans=[actual_vlans[key] for key in actual_vlans.keys()]
         self.assertEqual(new_actual_vlans,actual_vlans,'Failed, VLAN was changed after deleting tenant user\n'+str(actual_vlans)+' --> '+str(new_actual_vlans))
 
