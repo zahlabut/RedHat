@@ -291,7 +291,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     """This test is planned to check that once Overcloud admin user delete user (userrc) that has active server, physical
     port on switch will remain associated to the same VLAN it was before (no change on Switch)"""
     def test_013_delete_tenant_user(self):
-        #Check if tenant user and projects exists at all
+        # Check if tenant user and projects exists at all
         existing_users = [item['name'] for item in
                           exec_command_line_command(source_overcloud + 'openstack user list -f json')['JsonOutput']]
         self.assertIn('new-user',existing_users,'Failed, there is no existing tenant user: "new-user"')
@@ -299,7 +299,27 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                              exec_command_line_command(source_overcloud + 'openstack project list -f json')['JsonOutput']]
         self.assertIn('new-project',existing_projects,'Failed, there is no existing project: "new-project"')
 
-        # # Create server
+        # Check if any server exists and delete if it does
+        existing_server_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
+        self.assertNotEqual(len(existing_server_ids),0,'Failed: no existing servers detected')
+        for id in existing_server_ids:
+            exec_command_line_command(source_overcloud+'openstack server delete '+id)
+        existing_server_ids = [item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
+        start_time=time.time()
+        to_stop=False
+        # Wait till all servers are deleted "
+        while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
+            time.sleep(10)
+            list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
+            if len(list_servers_result)!=0:
+                names=[item['name'] for item in list_servers_result]
+                print '-- Existing servers are: ',names
+            if len(list_servers_result)==0:
+                to_stop=True
+        self.assertEqual(len(list_servers_result), 0, 'Failed: existing servers detected, IDs:\n'+str(list_servers_result))
+
+
+
         # command='. /home/stack/'+user['rc_file']+';'+'openstack keypair create --public-key ~/.ssh/id_rsa.pub default'
 
 
