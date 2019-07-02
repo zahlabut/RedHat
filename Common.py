@@ -172,6 +172,22 @@ def get_switch_conf_as_json(ip,user,password,sw_type=None):
             int_vlan_dic[name] = inter_vlans
     return {'Interfaces': interfaces,'Vlans':vlans,'InterfaceVlan':int_vlan_dic}
 
+def get_switch_configuration_file(ip,user,password,sw_type=None):
+    #types: juniper_physical_sw juniper_emulator_sw
+    if sw_type=='juniper_physical_sw':
+        command = 'show configuration | display json'
+        ssh_object = SSH(ip, user, password)
+        ssh_object.ssh_connect_password()
+        out = ssh_object.ssh_command_only(command)['Stdout']
+        ssh_object.ssh_close()
+    if sw_type=='juniper_emulator_sw':
+        command = 'show configuration | display json'
+        ssh_object = SSH(ip, user, password)
+        ssh_object.ssh_connect_password()
+        out = ssh_object.ssh_command_only(command)['Stdout']
+        ssh_object.ssh_close()
+    return out
+
 def get_juniper_sw_get_port_vlan(ip, user, password, ports):
     ssh_object = SSH(ip, user, password)
     ssh_object.ssh_connect_password()
