@@ -1,5 +1,6 @@
 from Common import *
 import unittest
+from profanity_check import predict, predict_prob
 
 ### Parameters ###
 overclud_user='heat-admin'
@@ -357,68 +358,77 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     #     self.assertEqual(new_actual_vlans,actual_vlans,'Failed, VLAN was changed after deleting tenant user\n'+str(actual_vlans)+' --> '+str(new_actual_vlans))
 
 
-    """This test is planned to check that when BM guest is powered off, physical
-    port on switch will remain associated to the same VLAN it was before (no change on Switch)"""
-    def test_014_power_off_bm_guest(self):
-        print '\ntest_014_power_off_bm_guest'
-        # Check if any server exists and delete if it does
-        existing_server_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']]
-        if len(existing_server_ids)>0:
-            for id in existing_server_ids:
-                exec_command_line_command(source_overcloud+'openstack server delete '+id)
-        start_time=time.time()
-        to_stop=False
-        # Wait till all servers are deleted "
-        while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
-            time.sleep(10)
-            list_servers_result=exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']
-            if len(list_servers_result)!=0:
-                names=[item['name'] for item in list_servers_result]
-                print '-- Existing servers are: ',names
-            if len(list_servers_result)==0:
-                to_stop=True
-        self.assertEqual(len(list_servers_result), 0, 'Failed: existing servers detected, IDs:\n'+str(list_servers_result))
-        # Create server as admin user
-        bm_name='BM_Guest'
-        tenant_net=prms['tenant_nets'][0]
-        tenant_net_id=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack network list -f json')['JsonOutput'] if item['name'] is tenant_net]
-        expected_vlans_on_switch=[]
-        vlan_id=exec_command_line_command(source_overcloud+'openstack network show '+tenant_net+' -f json')['JsonOutput']['provider:segmentation_id']
-        create_bm_command=source_overcloud+'openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+tenant_net+' '+bm_name+' -f json'
-        result=exec_command_line_command(create_bm_command)
-        bm_guest_id=result['JsonOutput']['id']
-        self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest command has failed with:\n'+result['CommandOutput'])
-        expected_vlans_on_switch.append(str(vlan_id))
-        start_time=time.time()
-        to_stop=False
-        # Wait till all servers are getting into "active"
-        while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
-            time.sleep(10)
-            list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
-            statuses=[item['status'] for item in list_servers_result]
-            print '--> Servers statuses are: ',statuses
-            if str(statuses).count('active')==1 or 'error' in str(statuses).lower():
-                to_stop=True
-        self.assertEqual(to_stop,True,'Failed: No BM servers detected as "active", "openstack server list" result is:\n'+str(list_servers_result))
-        # Make sure that each server was created on proper network, basing on VLAN id comparison
-        actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
-        actual_vlans=[actual_vlans[key] for key in actual_vlans.keys()]
-        for vlan in expected_vlans_on_switch:
-            self.assertIn(str(vlan),str(actual_vlans),
-                            'Failed, detected VLANs on swith are not as expected:''\n'+str(actual_vlans)+'\n'+str(expected_vlans_on_switch))
+    # """This test is planned to check that when BM guest is powered off, physical
+    # port on switch will remain associated to the same VLAN it was before (no change on Switch)"""
+    # def test_014_power_off_bm_guest(self):
+    #     print '\ntest_014_power_off_bm_guest'
+    #     # Check if any server exists and delete if it does
+    #     existing_server_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']]
+    #     if len(existing_server_ids)>0:
+    #         for id in existing_server_ids:
+    #             exec_command_line_command(source_overcloud+'openstack server delete '+id)
+    #     start_time=time.time()
+    #     to_stop=False
+    #     # Wait till all servers are deleted "
+    #     while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
+    #         time.sleep(10)
+    #         list_servers_result=exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']
+    #         if len(list_servers_result)!=0:
+    #             names=[item['name'] for item in list_servers_result]
+    #             print '-- Existing servers are: ',names
+    #         if len(list_servers_result)==0:
+    #             to_stop=True
+    #     self.assertEqual(len(list_servers_result), 0, 'Failed: existing servers detected, IDs:\n'+str(list_servers_result))
+    #     # Create server as admin user
+    #     bm_name='BM_Guest'
+    #     tenant_net=prms['tenant_nets'][0]
+    #     tenant_net_id=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack network list -f json')['JsonOutput'] if item['name'] is tenant_net]
+    #     expected_vlans_on_switch=[]
+    #     vlan_id=exec_command_line_command(source_overcloud+'openstack network show '+tenant_net+' -f json')['JsonOutput']['provider:segmentation_id']
+    #     create_bm_command=source_overcloud+'openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+tenant_net+' '+bm_name+' -f json'
+    #     result=exec_command_line_command(create_bm_command)
+    #     bm_guest_id=result['JsonOutput']['id']
+    #     self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest command has failed with:\n'+result['CommandOutput'])
+    #     expected_vlans_on_switch.append(str(vlan_id))
+    #     start_time=time.time()
+    #     to_stop=False
+    #     # Wait till all servers are getting into "active"
+    #     while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
+    #         time.sleep(10)
+    #         list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
+    #         statuses=[item['status'] for item in list_servers_result]
+    #         print '--> Servers statuses are: ',statuses
+    #         if str(statuses).count('active')==1 or 'error' in str(statuses).lower():
+    #             to_stop=True
+    #     self.assertEqual(to_stop,True,'Failed: No BM servers detected as "active", "openstack server list" result is:\n'+str(list_servers_result))
+    #     # Make sure that each server was created on proper network, basing on VLAN id comparison
+    #     actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
+    #     actual_vlans=[actual_vlans[key] for key in actual_vlans.keys()]
+    #     for vlan in expected_vlans_on_switch:
+    #         self.assertIn(str(vlan),str(actual_vlans),
+    #                         'Failed, detected VLANs on swith are not as expected:''\n'+str(actual_vlans)+'\n'+str(expected_vlans_on_switch))
+    #
+    #     # As admin user power off BM guest and check that port on Swich is not changed after doing that
+    #     baremetal_node_id = [item['uuid'] for item in
+    #                          exec_command_line_command(source_overcloud + 'openstack baremetal node list -f json')[
+    #                              'JsonOutput'] if item['provisioning state'] == 'active'][0]
+    #     power_off_command=source_overcloud+'openstack baremetal node power off '+baremetal_node_id
+    #     self.assertEqual(0,exec_command_line_command(power_off_command)['ReturnCode'],'Failed, power off BM guest command has failed')
+    #     new_actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
+    #     new_actual_vlans=[new_actual_vlans[key] for key in new_actual_vlans.keys()]
+    #     self.assertEqual(new_actual_vlans,actual_vlans,'Failed, VLAN was changed after deleting tenant user\n'+str(actual_vlans)+' --> '+str(new_actual_vlans))
+    #
 
-        # As admin user power off BM guest and check that port on Swich is not changed after doing that
-        baremetal_node_id = [item['uuid'] for item in
-                             exec_command_line_command(source_overcloud + 'openstack baremetal node list -f json')[
-                                 'JsonOutput'] if item['provisioning state'] == 'active'][0]
-        power_off_command=source_overcloud+'openstack baremetal node power off '+baremetal_node_id
-        self.assertEqual(0,exec_command_line_command(power_off_command)['ReturnCode'],'Failed, power off BM guest command has failed')
-        new_actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
-        new_actual_vlans=[new_actual_vlans[key] for key in new_actual_vlans.keys()]
-        self.assertEqual(new_actual_vlans,actual_vlans,'Failed, VLAN was changed after deleting tenant user\n'+str(actual_vlans)+' --> '+str(new_actual_vlans))
 
 
 
+    """This test is planned to check that there are no garbage strings (In comments for example) set by developers on Switch"""
+    def test_015_no_garbage_strings_on_switch(self):
+        print '\ntest_015_no_garbage_strings_on_switch'
+        # Receive switch configuration file content
+        switch_conf_content = get_switch_configuration_file(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
+        profanity_result=predict([switch_conf_content])
+        self.assertEqual(0,profanity_result,'Failed, profanity check returned non zero code, check switch configuration file content')
 
 
 
