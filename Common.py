@@ -3,6 +3,7 @@ import paramiko
 import time
 import subprocess
 import json
+import urllib
 
 class SSH():
     def __init__(self, host, user, password='', key_path=''):
@@ -86,6 +87,19 @@ def exec_command_line_command(command):
         print e
         return {'ReturnCode': e.returncode, 'CommandOutput': 'Failed to execute: \n'+command+'with:\n'+str(e)}
 
+
+def profanity_check(text):
+    connection = urllib.urlopen("http://www.wdylike.appspot.com/?q="+text)
+    output = connection.read()
+    connection.close()
+    try:
+        if "true" in output:
+            return True
+        elif "false" in output:
+            return False
+    except Exception, e:
+        print e
+        return None
 
 
 def collect_log_paths(log_root_path):

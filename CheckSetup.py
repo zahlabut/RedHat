@@ -1,6 +1,5 @@
 from Common import *
 import unittest
-from profanity_check import predict, predict_prob
 
 ### Parameters ###
 overclud_user='heat-admin'
@@ -427,8 +426,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         print '\ntest_015_no_garbage_strings_on_switch'
         # Receive switch configuration file content
         switch_conf_content = get_switch_configuration_file(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
-        profanity_result=predict([switch_conf_content])
-        self.assertEqual(0,profanity_result,'Failed, profanity check returned non zero code, check switch configuration file content')
+        profanity_result=profanity_check([switch_conf_content])
+        self.assertEqual(False, profanity_result,'Failed, profanity check returned non zero code, check switch configuration file content')
 
 
 
