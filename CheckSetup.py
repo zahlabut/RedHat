@@ -408,10 +408,9 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                             'Failed, detected VLANs on swith are not as expected:''\n'+str(actual_vlans)+'\n'+str(expected_vlans_on_switch))
 
         # As admin user power off BM guest and check that port on Swich is not changed after doing that
-        baremetal_node_id=[item['JsonOutput']['id'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json') if item['JsonOutput']['provisioning state'] == 'active']
-
-
-
+        baremetal_node_id = [item['uuid'] for item in
+                             exec_command_line_command(source_overcloud + 'openstack baremetal node list -f json')[
+                                 'JsonOutput'] if item['provisioning state'] == 'active'][0]
         power_off_command=source_overcloud+'openstack baremetal node power off '+baremetal_node_id
         self.assertEqual(0,exec_command_line_command(power_off_command)['ReturnCode'],'Failed, power off BM guest command has failed')
         new_actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
