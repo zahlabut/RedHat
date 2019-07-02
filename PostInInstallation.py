@@ -268,6 +268,8 @@ for user in users:
             if "OS_PROJECT_NAME" in line:
                 line='export OS_PROJECT_NAME='+user['project']+'\n'
             append_to_file('/home/stack/'+user['rc_file'],line)
+
+    if 'default' not in exec_command_line_command('source /home/stack/'+user['rc_file']+';openstack keypair list') ['CommandOutput']:
         keypair_create="source /home/stack/"+user['rc_file']+";openstack keypair create --public-key ~/.ssh/id_rsa.pub default"
         exec_command_line_command(keypair_create)
 
