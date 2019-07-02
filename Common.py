@@ -189,12 +189,14 @@ def get_switch_conf_as_json(ip,user,password,sw_type=None):
 def get_switch_configuration_file(ip,user,password,sw_type=None):
     #types: juniper_physical_sw juniper_emulator_sw
     if sw_type=='juniper_physical_sw':
+        print 'swtitch'
         command = 'show configuration | display json'
         ssh_object = SSH(ip, user, password)
         ssh_object.ssh_connect_password()
         out = ssh_object.ssh_command_only(command)['Stdout']
         ssh_object.ssh_close()
     if sw_type=='juniper_emulator_sw':
+        print 'emulator'
         command = 'show configuration | display json'
         ssh_object = SSH(ip, user, password)
         ssh_object.ssh_connect_password()
