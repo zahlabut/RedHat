@@ -435,9 +435,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         profanity_result=profanity_check(switch_conf_content, 'description')
         print profanity_result
 
-        # print profanity_result
-        # self.assertEqual(False, profanity_result,'Failed, profanity check returned: "'+str(profanity_result)+'" check switch configuration file content')
-        #
+        print profanity_result
+        self.assertEqual(False, profanity_result['ProfanityCheckResult'],'Failed, profanity check returned: "'+str(profanity_result['Failed_Line'])+'" check switch configuration file content')
 
 
 
