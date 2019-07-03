@@ -432,7 +432,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         f.write(switch_conf_content)
         f.close()
 
-        profanity_result=profanity_check(switch_conf_content)
+        profanity_result=profanity_check(switch_conf_content, 'description')
         print profanity_result
 
         # print profanity_result
