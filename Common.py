@@ -92,6 +92,7 @@ def profanity_check(text, check_lines_contains_string=None):
     text=str(text).split('\n')
     if check_lines_contains_string!=None:
         text=[line for line in text if check_lines_contains_string.lower() in line.lower()]
+        text.append('fuck')
     for line in text:
         print line
         connection = urllib.urlopen("http://www.wdylike.appspot.com/?q="+line)
