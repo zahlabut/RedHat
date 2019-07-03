@@ -90,9 +90,11 @@ def exec_command_line_command(command):
 
 def profanity_check(text, check_lines_contains_string=None):
     text=str(text).split('\n')
+
     if check_lines_contains_string!=None:
         text=[line for line in text if check_lines_contains_string.lower() in line.lower()]
     for line in text:
+        print line
         connection = urllib.urlopen("http://www.wdylike.appspot.com/?q="+line)
         output = connection.read()
         connection.close()
