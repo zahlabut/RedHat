@@ -187,6 +187,7 @@ def get_switch_conf_as_json(ip,user,password,sw_type=None):
     return {'Interfaces': interfaces,'Vlans':vlans,'InterfaceVlan':int_vlan_dic}
 
 def get_switch_configuration_file(ip,user,password,sw_type=None):
+    print ip,user,password,sw_type
     #types: juniper_physical_sw juniper_emulator_sw
     if sw_type=='juniper_physical_sw':
         print 'swtitch'
