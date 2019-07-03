@@ -89,6 +89,7 @@ def exec_command_line_command(command):
 
 
 def profanity_check(text):
+    text=str(text)
     connection = urllib.urlopen("http://www.wdylike.appspot.com/?q="+text)
     output = connection.read()
     connection.close()
@@ -203,7 +204,7 @@ def get_switch_configuration_file(ip,user,password,sw_type=None):
         ssh_object.ssh_connect_password()
         out = ssh_object.ssh_command_only(command)['Stdout']
         ssh_object.ssh_close()
-    return str(out)
+    return out
 
 def get_juniper_sw_get_port_vlan(ip, user, password, ports):
     ssh_object = SSH(ip, user, password)
