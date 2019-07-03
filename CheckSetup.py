@@ -426,16 +426,10 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         print '\ntest_015_no_garbage_strings_on_switch'
         # Receive switch configuration file content
         switch_conf_content = get_switch_configuration_file(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['switch_type'])
-        print type(switch_conf_content)
-
         f=open('f.txt','w')
         f.write(switch_conf_content)
         f.close()
-
         profanity_result=profanity_check(switch_conf_content, 'description')
-        print profanity_result
-
-        print profanity_result
         self.assertEqual(False, profanity_result['ProfanityCheckResult'],'Failed, profanity check failed on line: "'+str(profanity_result['Failed_Line'])+'" check switch configuration file content')
 
 
