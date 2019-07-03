@@ -89,18 +89,18 @@ def exec_command_line_command(command):
 
 
 def profanity_check(text):
-    text=str(text)
-    connection = urllib.urlopen("http://www.wdylike.appspot.com/?q="+text)
-    output = connection.read()
-    connection.close()
-    try:
-        if "true" in output:
-            return True
-        elif "false" in output:
-            return False
-    except Exception, e:
-        print e
-        return None
+    text=str(text).split('\n')
+    result=True
+    for line in text:
+        print line
+        connection = urllib.urlopen("http://www.wdylike.appspot.com/?q="+line)
+        output = connection.read()
+        connection.close()
+        if "false" in output:
+            result=False
+            return {'ProfanityCheckResult':False, 'Failed_Line':line}
+    return {'ProfanityCheckResult':True, 'Failed_Line':None}
+
 
 
 def collect_log_paths(log_root_path):
