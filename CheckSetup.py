@@ -427,8 +427,14 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         # Receive switch configuration file content
         switch_conf_content = get_switch_configuration_file(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['switch_type'])
         print type(switch_conf_content)
+
+        f=open('f.txt','w')
+        f.write(switch_conf_content)
+        f.close()
+
         profanity_result=profanity_check(switch_conf_content)
-        self.assertEqual(False, profanity_result,'Failed, profanity check returned non zero code, check switch configuration file content')
+        print profanity_result
+        self.assertEqual(False, profanity_result,'Failed, profanity check returned: '+str(profanity_result)+' check switch configuration file content')
 
 
 
