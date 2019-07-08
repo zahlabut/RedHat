@@ -323,6 +323,11 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         # Create server as tenant user
         bm_name='BM_Guest_Tenant_User'
         tenant_net=prms['tenant_nets'][0]
+
+        print tenant_net
+
+        print source_overcloud+'openstack network list -f json'
+
         tenant_net_id=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack network list -f json')['JsonOutput'] if item['name'] is tenant_net]
 
         print tenant_net_id
