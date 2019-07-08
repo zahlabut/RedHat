@@ -323,24 +323,10 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         # Create server as tenant user
         bm_name='BM_Guest_Tenant_User'
         tenant_net=prms['tenant_nets'][0]
-
-        print tenant_net
-
-        print source_overcloud+'openstack network list -f json'
-
         tenant_net_id=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack network list -f json')['JsonOutput'] if item['name'] == tenant_net][0]
-
-        print tenant_net_id
-
         expected_vlans_on_switch=[]
         vlan_id=exec_command_line_command(source_overcloud+'openstack network show '+tenant_net+' -f json')['JsonOutput']['provider:segmentation_id']
-
-        print vlan_id
-
         create_bm_command=source_tenant_user+'openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+str(tenant_net_id)+' '+bm_name+' -f json'
-
-        print create_bm_command
-
         result=exec_command_line_command(create_bm_command)
         bm_guest_id=result['JsonOutput']['id']
         self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest command has failed with:\n'+result['CommandOutput'])
@@ -452,8 +438,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     # (once tests are completed) it does the same "saving" procedure again and prints NEW/DELTA messages.
     # In case when there is a bunch of ERRORs on Overcloud, this test will take some time to complete.
     # """
-    # def test_014_no_errors_in_logs(self):
-    #     print '\ntest_012_no_errors_in_logs'
+    # def test_016_no_errors_in_logs(self):
+    #     print '\ntest_016_no_errors_in_logs'
     #     error_file_name='Overcloud_Errors.log'
     #     errors_file=open(error_file_name,'w')
     #     actual_errors={}
