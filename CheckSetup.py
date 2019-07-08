@@ -245,7 +245,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
             statuses=[item['status'] for item in list_servers_result]
             print '--> Servers statuses are: ',statuses
-            if str(statuses).count('active')==len(tenant_nets) or 'error' in str(statuses).lower():
+            self.assertIn('error',statuses,'Failed, "error" state has been detected:'+str(statuses))
+            if list(set(statuses))==['active']:
                 to_stop=True
         self.assertEqual(to_stop,True,'Failed: No BM servers detected as "active", "openstack server list" result is:\n'+str(list_servers_result))
         # Make sure that each server was created on proper network, basing on VLAN id comparison
@@ -339,7 +340,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             list_servers_result=exec_command_line_command(source_tenant_user+'openstack server list -f json')['JsonOutput']
             statuses=[item['status'] for item in list_servers_result]
             print '--> Servers statuses are: ',statuses
-            if str(statuses).count('active')==1 or 'error' in str(statuses).lower():
+            self.assertIn('error',statuses,'Failed, "error" state has been detected:'+str(statuses))
+            if list(set(statuses))==['active']:
                 to_stop=True
         self.assertEqual(to_stop,True,'Failed: No BM servers detected as "active", "openstack server list" result is:\n'+str(list_servers_result))
         # Make sure that each server was created on proper network, basing on VLAN id comparison
@@ -390,6 +392,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest command has failed with:\n'+result['CommandOutput'])
         expected_vlans_on_switch.append(str(vlan_id))
         start_time=time.time()
+        start_time=time.time()
         to_stop=False
         # Wait till all servers are getting into "active"
         while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
@@ -397,7 +400,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
             statuses=[item['status'] for item in list_servers_result]
             print '--> Servers statuses are: ',statuses
-            if str(statuses).count('active')==1 or 'error' in str(statuses).lower():
+            self.assertIn('error',statuses,'Failed, "error" state has been detected:'+str(statuses))
+            if list(set(statuses))==['active']:
                 to_stop=True
         self.assertEqual(to_stop,True,'Failed: No BM servers detected as "active", "openstack server list" result is:\n'+str(list_servers_result))
         # Make sure that each server was created on proper network, basing on VLAN id comparison
