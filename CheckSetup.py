@@ -328,7 +328,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
         print source_overcloud+'openstack network list -f json'
 
-        tenant_net_id=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack network list -f json')['JsonOutput'] if item['name'] is tenant_net]
+        tenant_net_id=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack network list -f json')['JsonOutput'] if item['name'] == tenant_net]
 
         print tenant_net_id
 
