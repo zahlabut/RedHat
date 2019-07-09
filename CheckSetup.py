@@ -184,10 +184,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     def test_009_clean_bm_guests_in_parallel(self):
         print '\ntest_009_clean_bm_guests_in_parallel'
         baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
-        print baremetal_node_ids
         self.assertNotEqual(0,len(baremetal_node_ids),'Failed, no baremetal nodes detected')
         baremetal_vlan_id = exec_command_line_command(source_overcloud + 'openstack network show baremetal -f json')['JsonOutput']['provider:segmentation_id']
-
         for id in baremetal_node_ids:
             exec_command_line_command(source_overcloud+'openstack baremetal node manage '+id)
         for id in baremetal_node_ids:
@@ -229,29 +227,18 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         created_bm=[]
         tenant_nets=prms['tenant_nets']
         tenant_net_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack network list -f json')['JsonOutput'] if item['name'] in tenant_nets]
-
-        print tenant_net_ids
         self.assertNotEqual(0,len(tenant_net_ids),'Failed, no tenant networks detected')
-
         expected_vlans_on_switch=[]
         # If servers exists, exit #
         existing_servers_ids=[node['id'] for node in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
         print '--> Existing servers IDs: ',existing_servers_ids
         self.assertEqual(0,len(existing_servers_ids),'Failed: existing nodes have been detected IDs:\n'+str(existing_servers_ids))
         # Create servers
-
         for net in tenant_net_ids:
-
-            print net
-
             bm_index+=1
             vlan_id=exec_command_line_command(source_overcloud+'openstack network show '+net+' -f json')['JsonOutput']['provider:segmentation_id']
             create_bm_command=source_overcloud+'openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+net+' '+bm_name+str(bm_index)
             result=exec_command_line_command(source_overcloud+create_bm_command)
-
-            print create_bm_command
-            print result
-
             self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest command return non Zero status code\n'+result['CommandOutput'])
             expected_vlans_on_switch.append(str(vlan_id))
         start_time=time.time()
