@@ -226,6 +226,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         tenant_net_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack network list -f json')['JsonOutput'] if item['name'] in tenant_nets]
 
         print tenant_net_ids
+        self.assertNotEqual(0,len(tenant_net_ids),'Failed, no tenant networks detected')
 
         expected_vlans_on_switch=[]
         # If servers exists, exit #
