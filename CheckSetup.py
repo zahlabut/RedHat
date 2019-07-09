@@ -184,6 +184,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     def test_009_clean_bm_guests_in_parallel(self):
         print '\ntest_009_clean_bm_guests_in_parallel'
         baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
+        print baremetal_node_ids
         self.assertNotEqual(0,len(baremetal_node_ids),'Failed, no baremetal nodes detected')
         baremetal_vlan_id = exec_command_line_command(source_overcloud + 'openstack network show baremetal -f json')['JsonOutput']['provider:segmentation_id']
 
