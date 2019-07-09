@@ -224,12 +224,16 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         created_bm=[]
         tenant_nets=prms['tenant_nets']
         tenant_net_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack network list -f json')['JsonOutput'] if item['name'] in tenant_nets]
+
+        print tenant_net_ids
+
         expected_vlans_on_switch=[]
         # If servers exists, exit #
         existing_servers_ids=[node['id'] for node in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
         print '--> Existing servers IDs: ',existing_servers_ids
         self.assertEqual(0,len(existing_servers_ids),'Failed: existing nodes have been detected IDs:\n'+str(existing_servers_ids))
         # Create servers
+
         for net in tenant_net_ids:
 
             print net
