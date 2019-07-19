@@ -10,4 +10,6 @@ out= ssh_object.ssh_command_only('show configuration | display json')['Stdout']
 print out
 
 
+
+
 #print juniper_config_parser_string(out)
