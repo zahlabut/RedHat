@@ -1,0 +1,40 @@
+nodes:
+    - name: ironic-0
+      driver: ipmi
+      driver_info:
+        ipmi_address: 10.9.10.229
+        ipmi_username: root
+        ipmi_password: calvin
+        ipmi_port: 623
+      resource_class: baremetal
+      properties:
+        cpus: 1
+        cpu_arch: x86_64
+        memory_mb: 4096
+        local_gb: 20
+      ports:
+        - address: 58:8a:5a:53:5f:f3
+          local_link_connection:
+            switch_id: 00:00:00:00:00:00
+            switch_info: switch1
+            port_id: xe-0/0/6
+    - name: ironic-1
+      driver: ipmi
+      driver_info:
+        ipmi_address: 10.9.10.230
+        ipmi_username: root
+        ipmi_password: calvin
+        ipmi_port: 623
+      resource_class: baremetal
+      properties:
+        cpus: 1
+        cpu_arch: x86_64
+        memory_mb: 4096
+        local_gb: 20
+      ports:
+        - address: 58:8a:5a:53:67:85
+          local_link_connection:
+            switch_id: 00:00:00:00:00:00
+            switch_info: switch1
+            port_id: xe-0/0/7
+
