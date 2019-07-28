@@ -12,6 +12,9 @@ manageable_timeout=600 #Test 009 "Clean"
 available_timeout=600 #Test 009 "Clean"
 create_bm_server_timeout=1200
 delete_server_timeouts=300
+if '15' in exec_command_line_command('cat /etc/rhosp-release')['CommandOutput']:
+    use_podman=True
+
 
 # QE Setup #
 qe_setup_parameters={
@@ -96,6 +99,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             ssh_object.ssh_connect_key()
             for doc in ironic_dockers:
                 command='sudo docker ps | grep '+doc
+                if use_podman==True:
+                    command=command.replace('docker','podman')
                 output=ssh_object.ssh_command(command)['Stdout']
                 self.assertNotIn('unhealthy', output, 'Failed: ' + ip + ' ' + doc + ' status is unhealthy')
                 self.assertIn(doc, output, 'Failed: ' + doc + ' is not running')
@@ -119,6 +124,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             ssh_object = SSH(ip,user=overclud_user,key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
             command='sudo docker ps | grep -i neutron_api'
+            if use_podman == True:
+                command = command.replace('docker', 'podman')
             output=ssh_object.ssh_command(command)['Stdout']
             ssh_object.ssh_close()
             self.assertNotIn('unhealthy', output, 'Failed: '+ip+' '+'neutron_api status is unhealthy')
@@ -132,6 +139,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
             output = ssh_object.ssh_command(command)['Stdout']
+            if len(output)>10000:
+                output=output[0:1000]+'...\n'*5+output[-10000:-1]
             ssh_object.ssh_close()
             self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in log\n'+output)
 
@@ -468,7 +477,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                     test_failed=True
                     errors_file.write(line+'\n')
         errors_file.close()
-        self.assertEqual(test_failed,False,'Failed, see details here: \n'+open(error_file_name,'r').read())
+        self.assertEqual(test_failed,False,'Failed, open '+error_file_name+' for more details!')
 
 if __name__ == '__main__':
     unittest.main()
