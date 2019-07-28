@@ -309,6 +309,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     port on switch will remain associated to the same VLAN it was before (no change on Switch)"""
     def test_013_delete_tenant_user(self):
         print '\ntest_013_delete_tenant_user'
+        time.sleep(30)
         baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
         self.assertNotEqual(0,len(baremetal_node_ids),'Failed, no baremetal nodes detected')
         # Check if tenant user and projects exists at all
@@ -380,6 +381,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     port on switch will remain associated to the same VLAN it was before (no change on Switch)"""
     def test_014_power_off_bm_guest(self):
         print '\ntest_014_power_off_bm_guest'
+        time.sleep(30)
         baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
         self.assertNotEqual(0,len(baremetal_node_ids),'Failed, no baremetal nodes detected')
         # Check if any server exists and delete if it does
