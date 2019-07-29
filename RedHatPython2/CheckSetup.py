@@ -247,7 +247,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             bm_index+=1
             vlan_id=exec_command_line_command(source_overcloud+'openstack network show '+net+' -f json')['JsonOutput']['provider:segmentation_id']
             create_bm_command=source_overcloud+'openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+net+' '+bm_name+str(bm_index)
-            result=exec_command_line_command(source_overcloud+create_bm_command)
+            result=exec_command_line_command(create_bm_command)
             self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest command return non Zero status code\n'+result['CommandOutput'])
             expected_vlans_on_switch.append(str(vlan_id))
         start_time=time.time()
@@ -339,6 +339,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertEqual(len(list_servers_result), 0, 'Failed: existing servers detected, IDs:\n'+str(list_servers_result))
 
         # Create server as tenant user
+        time.sleep(30)
         bm_name='BM_Guest_Tenant_User'
         tenant_net=prms['tenant_nets'][0]
         tenant_net_id=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack network list -f json')['JsonOutput'] if item['name'] == tenant_net][0]
@@ -401,6 +402,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                 to_stop=True
         self.assertEqual(len(list_servers_result), 0, 'Failed: existing servers detected, IDs:\n'+str(list_servers_result))
         # Create server as admin user
+        time.sleep(30)
         bm_name='BM_Guest'
         tenant_net=prms['tenant_nets'][0]
         tenant_net_id = [item['id'] for item in exec_command_line_command(source_overcloud + 'openstack network list -f json')['JsonOutput'] if item['name'] == tenant_net][0]
