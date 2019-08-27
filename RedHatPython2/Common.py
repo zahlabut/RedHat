@@ -98,11 +98,11 @@ def print_in_color(string,color_or_format=None):
 
 def exec_command_line_command(command):
     try:
-        print_in_color(command,'blue')
+        print_in_color(command,'green')
         command_as_list = command.split(' ')
         command_as_list = [item.replace(' ', '') for item in command_as_list if item != '']
         result = subprocess.check_output(command, stdin=True, stderr=subprocess.STDOUT, shell=True)
-        print_in_color('\n'+str(result), 'blue')
+        print_in_color(result, 'blue')
         json_output = None
         try:
             json_output = json.loads(result.lower())
