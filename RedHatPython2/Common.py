@@ -110,7 +110,7 @@ def exec_command_line_command(command):
             pass
         return {'ReturnCode': 0, 'CommandOutput': result, 'JsonOutput': json_output}
     except subprocess.CalledProcessError as e:
-        print_in_color('Command: '+command+'\n'+str(e.output),'red')
+        print_in_color(command,'blue')
         return {'ReturnCode': e.returncode, 'CommandOutput': 'Failed to execute: \n'+command+'with:\n'+e.output}
 
 
