@@ -72,14 +72,37 @@ class SSH():
     def ssh_close(self):
         self.client.close()
 
+def print_in_color(string,color_or_format=None):
+    string=str(string)
+    class bcolors:
+        HEADER = '\033[95m'
+        OKBLUE = '\033[94m'
+        OKGREEN = '\033[92m'
+        WARNING = '\033[93m'
+        FAIL = '\033[91m'
+        ENDC = '\033[0m'
+        BOLD = '\033[1m'
+        UNDERLINE = '\033[4m'
+    if color_or_format == 'green':
+        print bcolors.OKGREEN + string + bcolors.ENDC
+    elif color_or_format =='red':
+        print bcolors.FAIL + string + bcolors.ENDC
+    elif color_or_format =='yellow':
+        print bcolors.WARNING + string + bcolors.ENDC
+    elif color_or_format =='blue':
+        print bcolors.OKBLUE + string + bcolors.ENDC
+    elif color_or_format =='bold':
+        print bcolors.BOLD + string + bcolors.ENDC
+    else:
+        print string
+
 def exec_command_line_command(command):
     try:
-
-        print command
-
+        print_in_color(command,'blue')
         command_as_list = command.split(' ')
         command_as_list = [item.replace(' ', '') for item in command_as_list if item != '']
         result = subprocess.check_output(command, stdin=True, stderr=subprocess.STDOUT, shell=True)
+        print_in_color('\n'+str(result), 'blue')
         json_output = None
         try:
             json_output = json.loads(result.lower())
