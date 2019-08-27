@@ -176,6 +176,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         ssh_object.ssh_connect_key()
         com_output=ssh_object.ssh_command(ceph_health_command)['Stdout'].lower()
         ssh_object.ssh_close()
+        print com_output
         self.assertIn('up',com_output,'Failed: "up" not found in output of \n"'+com_output+'" command')
 
     """ This test is planed to validate that the Bare Metal Ports on Switch are not set to any VLAN, either: Bremetal or Tenant """
