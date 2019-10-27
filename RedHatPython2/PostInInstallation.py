@@ -81,7 +81,7 @@ if 'ProvisionRouter'.lower() not in existing_routers:
             all_errors.append(result['CommandOutput'])
 
 # Create tenant-net networks #
-tenant_networks=['tenant-net','tenant-net2','tenant-net3','tenant-net4']
+tenant_networks=['tenant-net','tenant-net2','tenant-net3','tenant-net4','tenant-net5','tenant-net6']
 for net in tenant_networks:
     if net not in existing_networks:
         result=exec_command_line_command(source_command+'openstack network create '+net)
@@ -95,7 +95,7 @@ if 'tenant-net' not in existing_networks:
         all_errors.append(result['CommandOutput'])
 
 # Create subnets for tenent-net networks #
-tenant_net_subnets={'tenant-subnet':'192.168.3','tenant-subnet2':'192.168.30','tenant-subnet3':'192.168.4','tenant-subnet4':'192.168.40'}
+tenant_net_subnets={'tenant-subnet':'192.168.3','tenant-subnet2':'192.168.30','tenant-subnet3':'192.168.4','tenant-subnet4':'192.168.40','tenant-subnet5':'192.168.5','tenant-subnet6':'192.168.50'}
 for key in tenant_net_subnets.keys():
     if key not in existing_subnets:
         result=exec_command_line_command(source_command+'openstack subnet create --network tenant-net --subnet-range '+tenant_net_subnets[key]+'.0/24 --allocation-pool start='+tenant_net_subnets[key]+'.10,end='+tenant_net_subnets[key]+'.20 tenant-subnet')
