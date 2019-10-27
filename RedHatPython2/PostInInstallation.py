@@ -102,16 +102,6 @@ for key in tenant_net_subnets.keys():
         if result['ReturnCode']!=0:
             all_errors.append(result['CommandOutput'])
 
-# # Create tenant-subnet2 subnet #
-# if 'tenant-subnet2' not in existing_subnets:
-#     result=exec_command_line_command(source_command+'openstack subnet create --network tenant-net2 --subnet-range 192.168.30.0/24 --allocation-pool start=192.168.30.10,end=192.168.30.20 tenant-subnet2')
-#     if result['ReturnCode']!=0:
-#         all_errors.append(result['CommandOutput'])
-
-
-
-
-
 
 # Create external-subnet subnet #
 if 'external-subnet' not in existing_subnets:
