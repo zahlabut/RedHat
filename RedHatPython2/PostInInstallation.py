@@ -88,7 +88,6 @@ tenant_networks=[
     ('tenant-net4','tenant-subnet4','192.168.40'),
     ('tenant-net5','tenant-subnet5','192.168.5'),
     ('tenant-net6','tenant-subnet6','192.168.50')]
-
 for item in tenant_networks:
     if item[0] not in existing_networks:
         result=exec_command_line_command(source_command+'openstack network create '+net[0])

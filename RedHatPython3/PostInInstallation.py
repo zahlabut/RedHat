@@ -80,28 +80,29 @@ if 'ProvisionRouter'.lower() not in existing_routers:
         if result['ReturnCode'] != 0:
             all_errors.append(result['CommandOutput'])
 
-# Create tenant-net networks #
-tenant_networks=['tenant-net','tenant-net2','tenant-net3','tenant-net4','tenant-net5','tenant-net6']
-for net in tenant_networks:
-    if net not in existing_networks:
-        result=exec_command_line_command(source_command+'openstack network create '+net)
+# Create tenant-net networks and subnets #
+tenant_networks=[
+    ('tenant-net','tenant-subnet','192.168.3'),
+    ('tenant-net2','tenant-subnet2','192.168.30'),
+    ('tenant-net3','tenant-subnet3','192.168.4'),
+    ('tenant-net4','tenant-subnet4','192.168.40'),
+    ('tenant-net5','tenant-subnet5','192.168.5'),
+    ('tenant-net6','tenant-subnet6','192.168.50')]
+for item in tenant_networks:
+    if item[0] not in existing_networks:
+        result=exec_command_line_command(source_command+'openstack network create '+net[0])
         if result['ReturnCode']!=0:
             all_errors.append(result['CommandOutput'])
-
+    if item[1] not in existing_subnets:
+        result=exec_command_line_command(source_command+'openstack subnet create --network '+item[0]+' --subnet-range '+item[2]+'.0/24 --allocation-pool start='+item[2]+'.10,end='+item[2]+'.20 '+item[1])
+        if result['ReturnCode']!=0:
+            all_errors.append(result['CommandOutput'])
 
 # Create external network #
 if 'tenant-net' not in existing_networks:
     result=exec_command_line_command(source_command+'openstack network create --share --provider-network-type flat --provider-physical-network datacentre --external external')
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
-
-# Create subnets for tenent-net networks #
-tenant_net_subnets={'tenant-subnet':'192.168.3','tenant-subnet2':'192.168.30','tenant-subnet3':'192.168.4','tenant-subnet4':'192.168.40','tenant-subnet5':'192.168.5','tenant-subnet6':'192.168.50'}
-for key in tenant_net_subnets.keys():
-    if key not in existing_subnets:
-        result=exec_command_line_command(source_command+'openstack subnet create --network '+key+' --subnet-range '+tenant_net_subnets[key]+'.0/24 --allocation-pool start='+tenant_net_subnets[key]+'.10,end='+tenant_net_subnets[key]+'.20 tenant-subnet')
-        if result['ReturnCode']!=0:
-            all_errors.append(result['CommandOutput'])
 
 # Create external-subnet subnet #
 if 'external-subnet' not in existing_subnets:
