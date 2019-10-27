@@ -98,7 +98,7 @@ if 'tenant-net' not in existing_networks:
 tenant_net_subnets={'tenant-subnet':'192.168.3','tenant-subnet2':'192.168.30','tenant-subnet3':'192.168.4','tenant-subnet4':'192.168.40','tenant-subnet5':'192.168.5','tenant-subnet6':'192.168.50'}
 for key in tenant_net_subnets.keys():
     if key not in existing_subnets:
-        result=exec_command_line_command(source_command+'openstack subnet create --network tenant-net --subnet-range '+tenant_net_subnets[key]+'.0/24 --allocation-pool start='+tenant_net_subnets[key]+'.10,end='+tenant_net_subnets[key]+'.20 tenant-subnet')
+        result=exec_command_line_command(source_command+'openstack subnet create --network '+key+' --subnet-range '+tenant_net_subnets[key]+'.0/24 --allocation-pool start='+tenant_net_subnets[key]+'.10,end='+tenant_net_subnets[key]+'.20 tenant-subnet')
         if result['ReturnCode']!=0:
             all_errors.append(result['CommandOutput'])
 
