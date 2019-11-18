@@ -21,9 +21,9 @@ for k in vlans.keys():
     print k,' --> ', vlans[k]
 
 
-print run_command_on_switch(
-    setup_parameters['switch_ip'],
-    setup_parameters['switch_user'],
-    setup_parameters['switch_password'],
-    #command='edit;delete interfaces xe-0/0/7 unit 0 family ethernet-switching vlan members 1202;commit')
-    command='edit;set interfaces xe-0/0/7 unit 0 family ethernet-switching vlan members 1202;commit')
+# print run_command_on_switch(
+#     setup_parameters['switch_ip'],
+#     setup_parameters['switch_user'],
+#     setup_parameters['switch_password'],
+#     #command='edit;delete interfaces xe-0/0/7 unit 0 family ethernet-switching vlan members 1202;commit')
+#     command='edit;set interfaces xe-0/0/7 unit 0 family ethernet-switching vlan members 1202;commit')
