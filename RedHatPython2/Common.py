@@ -255,7 +255,7 @@ def get_juniper_sw_get_port_vlan(ip, user, password, ports):
 def run_command_on_switch(ip, user, password, command):
     ssh_object = SSH(ip, user, password)
     ssh_object.ssh_connect_password()
-    out=ssh_object.ssh_command_only(command)['Stdout']
+    out=ssh_object.ssh_command_only(command)
     ssh_object.ssh_close()
     print out
     return out
