@@ -2,7 +2,7 @@ nodes:
     - name: ironic-0
       driver: ipmi
       driver_info:
-        ipmi_address: 10.9.10.229
+        ipmi_address: hardprov-fx2-7-drac.mgmt.snedlab.lab.eng.rdu2.redhat.com
         ipmi_username: root
         ipmi_password: calvin
         ipmi_port: 623
@@ -21,7 +21,7 @@ nodes:
     - name: ironic-1
       driver: ipmi
       driver_info:
-        ipmi_address: 10.9.10.230
+        ipmi_address: hardprov-fx2-8-drac.mgmt.snedlab.lab.eng.rdu2.redhat.com
         ipmi_username: root
         ipmi_password: calvin
         ipmi_port: 623
@@ -37,4 +37,3 @@ nodes:
             switch_id: 00:00:00:00:00:00
             switch_info: switch1
             port_id: xe-0/0/7
-
