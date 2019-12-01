@@ -145,7 +145,7 @@ if 'baremetal' not in existing_flavors:
 
 # Create small flavor #
 if 'small' not in existing_flavors:
-    result=exec_command_line_command(source_command+'openstack flavor create --id auto --ram 2048 --vcpus 2 --disk 20 --public small')
+    result=exec_command_line_command(source_command+'openstack flavor create --id auto --ram 2048 --vcpus 2 --disk 5 --public small')
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
 
