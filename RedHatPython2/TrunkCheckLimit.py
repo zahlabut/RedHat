@@ -11,11 +11,12 @@ existing_subnets=[item['name'] for item in exec_command_line_command(source_comm
 print 'Subnets --> ',existing_subnets
 
 number_of_networks_to_create=10
-start_ip = ipaddr.IPAddress('192.168.100.1')
+start_ip = ipaddr.IPAddress('192.168.1.')
 networks_to_create=[]
 for i in range(number_of_networks_to_create):
-    networks_to_create.append(('tenant-net-'+str(i),'tenant-subnet-'+str(i),str(start_ip+i)))
+    networks_to_create.append(('tenant-net-'+str(i),'tenant-subnet-'+str(i),start_ip+i))
 
+print networks_to_create
 
 for item in networks_to_create:
     if item[0] not in existing_networks:
@@ -23,7 +24,9 @@ for item in networks_to_create:
         if result['ReturnCode']!=0:
             all_errors.append(result['CommandOutput'])
     if item[1] not in existing_subnets:
-        result=exec_command_line_command(source_command+'openstack subnet create --network '+item[0]+' --subnet-range '+item[2]+'.0/24 --allocation-pool start='+item[2]+'.10,end='+item[2]+'.20 '+item[1])
+        result = exec_command_line_command(
+            source_command + 'openstack subnet create --network ' + item[0] + ' --subnet-range ' + item[
+                2] + '.0/24 --allocation-pool start=' + item[2] + '.10,end=' + item[2] + '.20 ' + item[1])
         if result['ReturnCode']!=0:
             all_errors.append(result['CommandOutput'])
 
