@@ -15,7 +15,7 @@ number_of_networks_to_create=10
 start_ip = '192.168.'
 networks_to_create=[]
 for i in range(number_of_networks_to_create):
-    networks_to_create.append(('tenant-net-'+str(i),'tenant-subnet-'+str(i),start_ip+str(i)+'.'))
+    networks_to_create.append(('tenant-net-'+str(i),'tenant-subnet-'+str(i),start_ip+str(i)))
 
 print networks_to_create
 
