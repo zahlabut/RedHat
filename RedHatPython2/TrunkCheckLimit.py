@@ -31,6 +31,8 @@ for item in networks_to_create:
             all_errors.append(result['CommandOutput'])
 
 
+
+
 if len(all_errors)!=0:
     print '\n\n\nFailed commands has been detected!!!'
     for item in list(set(all_errors)):
