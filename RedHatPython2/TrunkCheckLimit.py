@@ -11,7 +11,8 @@ existing_subnets=[item['name'] for item in exec_command_line_command(source_comm
 print 'Subnets --> ',existing_subnets
 
 number_of_networks_to_create=10
-start_ip = ipaddr.IPAddress('192.168.')
+#start_ip = ipaddr.IPAddress('192.168.')
+start_ip = '192.168.'
 networks_to_create=[]
 for i in range(number_of_networks_to_create):
     networks_to_create.append(('tenant-net-'+str(i),'tenant-subnet-'+str(i),start_ip+str(i)+'.'))
