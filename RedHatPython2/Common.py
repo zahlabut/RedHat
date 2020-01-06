@@ -109,10 +109,13 @@ def exec_command_line_command(command):
             json_output = json.loads(result.lower())
         except:
             pass
+
+        print_in_color(str({'ReturnCode': 0, 'CommandOutput': result, 'JsonOutput': json_output}),'blue')
         return {'ReturnCode': 0, 'CommandOutput': result, 'JsonOutput': json_output}
     except subprocess.CalledProcessError as e:
         print_in_color(command,'red')
         print_in_color(e.output, 'red')
+        print_in_color(str({'ReturnCode': e.returncode, 'CommandOutput': e.output}),'blue')
         return {'ReturnCode': e.returncode, 'CommandOutput': e.output}
 
 
