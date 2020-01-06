@@ -5,27 +5,27 @@ from Common import *
 source_command='source /home/stack/overcloudrc;'
 
 existing_baremetal_nodes=[item['name'] for item in exec_command_line_command(source_command+'openstack baremetal node list -f json')['JsonOutput']]
-print 'BareMetals --> ',existing_baremetal_nodes
+print('BareMetals --> ',existing_baremetal_nodes)
 existing_networks=[item['name'] for item in exec_command_line_command(source_command+'openstack network list -f json')['JsonOutput']]
-print 'Networks --> ',existing_networks
+print('Networks --> ',existing_networks)
 existing_subnets=[item['name'] for item in exec_command_line_command(source_command+'openstack subnet list -f json')['JsonOutput']]
-print 'Subnets --> ',existing_subnets
+print('Subnets --> ',existing_subnets)
 existing_routers=[item['name'] for item in exec_command_line_command(source_command+'openstack router list -f json')['JsonOutput']]
-print 'Routers --> ',existing_routers
+print('Routers --> ',existing_routers)
 existing_images=[item['name'] for item in exec_command_line_command(source_command+'openstack image list -f json')['JsonOutput']]
-print 'images --> ',existing_images
+print('images --> ',existing_images)
 existing_flavors=[item['name'] for item in exec_command_line_command(source_command+'openstack flavor list -f json')['JsonOutput']]
-print 'Flavors --> ',existing_flavors
+print('Flavors --> ',existing_flavors)
 existing_aggregates=[item['name'] for item in exec_command_line_command(source_command+'openstack aggregate list -f json')['JsonOutput']]
-print 'Aggregates --> ',existing_aggregates
+print('Aggregates --> ',existing_aggregates)
 default_security_group_id=[item['id'] for item in exec_command_line_command(source_command+'openstack security group list -f json')['JsonOutput'] if len(item['project'])!=0][0]
-print 'Security Group ID --> ',default_security_group_id
+print('Security Group ID --> ',default_security_group_id)
 existing_key_pairs=[item['name'] for item in exec_command_line_command(source_command+'openstack keypair list -f json')['JsonOutput']]
-print 'Keypairs --> ',existing_key_pairs
+print('Keypairs --> ',existing_key_pairs)
 existing_users=[item['name'] for item in exec_command_line_command(source_command+'openstack user list -f json')['JsonOutput']]
-print 'Users --> ',existing_users
+print('Users --> ',existing_users)
 existing_projects=[item['name'] for item in exec_command_line_command(source_command+'openstack project list -f json')['JsonOutput']]
-print 'Projects --> ',existing_projects
+print('Projects --> ',existing_projects)
 
 
 
@@ -272,9 +272,9 @@ for user in users:
 
 
 if len(all_errors)!=0:
-    print '\n\n\nFailed commands has been detected!!!'
+    print('\n\n\nFailed commands has been detected!!!')
     for item in list(set(all_errors)):
-        print item
-        print '-'*100
+        print(item)
+        print('-'*100)
 else:
-    print "SUCCESS"
+    print("SUCCESS")

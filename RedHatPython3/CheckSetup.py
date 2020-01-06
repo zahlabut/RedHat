@@ -62,7 +62,7 @@ if cephs==[]:
     source_command = 'source /home/stack/overcloudrc;'
     existing_key_pairs = [item['name'] for item in
                           exec_command_line_command(source_command + 'openstack keypair list -f json')['JsonOutput']]
-    print('Keypairs --> ', existing_key_pairs)
+    print(('Keypairs --> ', existing_key_pairs))
     if 'default' not in existing_key_pairs:
         result = exec_command_line_command(
             source_command + 'openstack keypair create --public-key /home/stack/.ssh/id_rsa.pub default')
@@ -231,7 +231,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         expected_vlans_on_switch=[]
         # If servers exists, exit #
         existing_servers_ids=[node['id'] for node in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
-        print('--> Existing servers IDs: ',existing_servers_ids)
+        print(('--> Existing servers IDs: ',existing_servers_ids))
         self.assertEqual(0,len(existing_servers_ids),'Failed: existing nodes have been detected IDs:\n'+str(existing_servers_ids))
         # Create servers
         for net in tenant_net_ids:
@@ -248,7 +248,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             time.sleep(10)
             list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
             statuses=[item['status'] for item in list_servers_result]
-            print('--> Servers statuses are: ',statuses)
+            print(('--> Servers statuses are: ',statuses))
             self.assertNotIn('error',statuses,'Failed, "error" state has been detected:'+str(statuses))
             if list(set(statuses))==['active']:
                 to_stop=True
@@ -281,7 +281,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
             if len(list_servers_result)!=0:
                 names=[item['name'] for item in list_servers_result]
-                print('-- Existing servers are: ',names)
+                print(('-- Existing servers are: ',names))
             if len(list_servers_result)==0:
                 to_stop=True
         self.assertEqual(len(list_servers_result), 0, 'Failed: existing servers detected, IDs:\n'+str(list_servers_result))
@@ -324,7 +324,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             list_servers_result=exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']
             if len(list_servers_result)!=0:
                 names=[item['name'] for item in list_servers_result]
-                print('-- Existing servers are: ',names)
+                print(('-- Existing servers are: ',names))
             if len(list_servers_result)==0:
                 to_stop=True
         self.assertEqual(len(list_servers_result), 0, 'Failed: existing servers detected, IDs:\n'+str(list_servers_result))
@@ -347,7 +347,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             time.sleep(10)
             list_servers_result=exec_command_line_command(source_tenant_user+'openstack server list -f json')['JsonOutput']
             statuses=[item['status'] for item in list_servers_result]
-            print('--> Servers statuses are: ',statuses)
+            print(('--> Servers statuses are: ',statuses))
             self.assertNotIn('error',statuses,'Failed, "error" state has been detected:'+str(statuses))
             if list(set(statuses))==['active']:
                 to_stop=True
@@ -386,7 +386,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             list_servers_result=exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']
             if len(list_servers_result)!=0:
                 names=[item['name'] for item in list_servers_result]
-                print('-- Existing servers are: ',names)
+                print(('-- Existing servers are: ',names))
             if len(list_servers_result)==0:
                 to_stop=True
         self.assertEqual(len(list_servers_result), 0, 'Failed: existing servers detected, IDs:\n'+str(list_servers_result))
@@ -409,7 +409,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             time.sleep(10)
             list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
             statuses=[item['status'] for item in list_servers_result]
-            print('--> Servers statuses are: ',statuses)
+            print(('--> Servers statuses are: ',statuses))
             self.assertNotIn('error',statuses,'Failed, "error" state has been detected:'+str(statuses))
             if list(set(statuses))==['active']:
                 to_stop=True

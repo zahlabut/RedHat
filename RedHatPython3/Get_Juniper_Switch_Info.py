@@ -18,4 +18,4 @@ vlans=get_juniper_sw_get_port_vlan(
 
 
 for k in list(vlans.keys()):
-    print(k,' --> ', vlans[k])
+    print((k,' --> ', vlans[k]))

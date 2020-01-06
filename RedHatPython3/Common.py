@@ -124,10 +124,10 @@ def spec_print(string_list):
         len_list.append(len('### '+item.strip()+' ###'))
     max_len=max(len_list)
     print('')
-    print("#"*max_len)
+    print(("#"*max_len))
     for item in string_list:
-        print("### "+item.strip()+" "*(max_len-len("### "+item.strip())-4)+" ###")
-    print("#"*max_len+'\n')
+        print(("### "+item.strip()+" "*(max_len-len("### "+item.strip())-4)+" ###"))
+    print(("#"*max_len+'\n'))
 
 def juniper_config_parser(path_to_config_json):
     json_output=json.loads(open(path_to_config_json,'r').read().lower())
@@ -187,7 +187,7 @@ def get_switch_conf_as_json(ip,user,password,sw_type=None):
     return {'Interfaces': interfaces,'Vlans':vlans,'InterfaceVlan':int_vlan_dic}
 
 def get_switch_configuration_file(ip,user,password,sw_type=None):
-    print(ip,user,password,sw_type)
+    print((ip,user,password,sw_type))
     #types: juniper_physical_sw juniper_emulator_sw
     if sw_type=='juniper_physical_sw':
         command = 'show configuration | display json'
