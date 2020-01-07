@@ -106,6 +106,8 @@ def exec_command_line_command(command):
         result = subprocess.check_output(command, stdin=True, stderr=subprocess.STDOUT, shell=True)
 
         print result
+
+        result=result.replace('''"Invalid -W option ignored: invalid action: '"ignore'")'''+'\n','')
         print_in_color(result,'yellow')
         json_output = None
         try:
