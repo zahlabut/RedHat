@@ -106,6 +106,7 @@ def exec_command_line_command(command):
         result = subprocess.check_output(command, stdin=True, stderr=subprocess.STDOUT, shell=True)
 
         print result
+        print type(result)
         result=result.split('\n')[1:]
         print result
 
