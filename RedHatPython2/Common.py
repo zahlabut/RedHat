@@ -115,7 +115,7 @@ def exec_command_line_command(command):
     except subprocess.CalledProcessError as e:
         print_in_color(command,'red')
         print_in_color(e.output, 'red')
-        print_in_color(str({'ReturnCode': e.returncode, 'CommandOutput': e.output}),'blue')
+        print_in_color(str({'ReturnCode': e.returncode, 'CommandOutput': e.output}),'red')
         return {'ReturnCode': e.returncode, 'CommandOutput': e.output}
 
 
