@@ -105,6 +105,7 @@ def exec_command_line_command(command):
         command_as_list = [item.replace(' ', '') for item in command_as_list if item != '']
         result = subprocess.check_output(command, stdin=True, stderr=subprocess.STDOUT, shell=True)
 
+        print result
         print_in_color(result,'yellow')
         json_output = None
         try:
