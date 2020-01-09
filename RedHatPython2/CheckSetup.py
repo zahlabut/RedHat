@@ -271,26 +271,76 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     #     for vlan in expected_vlans_on_switch:
     #         self.assertIn(str(vlan),str(actual_vlans),
     #                         'Failed, detected VLANs on swith are not as expected:''\n'+str(actual_vlans)+'\n'+str(expected_vlans_on_switch))
+    #
+    # """ This test is planed to validate that "Delete Bare Metal Guests" procedure is successfully completed.
+    # Note: it will try to delete all detected Servers on Overcloud.
+    # """
+    # def test_011_delete_bm_guests_in_parallel(self):
+    #     print '\ntest_011_delete_bm_guests_in_parallel'
+    #     baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
+    #     self.assertNotEqual(0,len(baremetal_node_ids),'Failed, no baremetal nodes detected')
+    #     time.sleep(10)
+    #     existing_server_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
+    #     self.assertNotEqual(len(existing_server_ids),0,'Failed: no existing servers detected')
+    #     for id in existing_server_ids:
+    #         exec_command_line_command(source_overcloud+'openstack server delete '+id)
+    #     existing_server_ids = [item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
+    #     start_time=time.time()
+    #     to_stop=False
+    #     # Wait till all servers are deleted "
+    #     while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
+    #         time.sleep(10)
+    #         list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
+    #         if len(list_servers_result)!=0:
+    #             names=[item['name'] for item in list_servers_result]
+    #             print '-- Existing servers are: ',names
+    #         if len(list_servers_result)==0:
+    #             to_stop=True
+    #     self.assertEqual(len(list_servers_result), 0, 'Failed: existing servers detected, IDs:\n'+str(list_servers_result))
 
-    """ This test is planed to validate that "Delete Bare Metal Guests" procedure is successfully completed.
-    Note: it will try to delete all detected Servers on Overcloud.
-    """
-    def test_011_delete_bm_guests_in_parallel(self):
-        print '\ntest_011_delete_bm_guests_in_parallel'
+    #
+    """This test is a negative test, that is trying to create a VXLAN network type which is not supported when
+    on physical switches, so proper error message should be displayed to user"""
+    def test_012_negative_create_vxlan_network(self):
+        print '\ntest_012_negative_create_vxlan_network'
+        command=source_overcloud+"openstack network create --provider-network-type xvlan --provider-physical-network baremetal zababun_vxlan"
+        command_result=exec_command_line_command(command)['CommandOutput']
+        self.assertIn('not supported',command_result,"Failed, VXLAN network was successfully created, not supported option!")
+
+
+
+    """This test is planned to check that once Overcloud admin user delete user (userrc) that has active server, physical
+    port on switch will remain associated to the same VLAN it was before (no change on Switch)"""
+    def test_013_delete_tenant_user(self):
+        "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
+        "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
+        "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
+        "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
+        "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
+        "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
+        print '\ntest_013_delete_tenant_user'
         baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
         self.assertNotEqual(0,len(baremetal_node_ids),'Failed, no baremetal nodes detected')
-        time.sleep(10)
-        existing_server_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
-        self.assertNotEqual(len(existing_server_ids),0,'Failed: no existing servers detected')
-        for id in existing_server_ids:
-            exec_command_line_command(source_overcloud+'openstack server delete '+id)
-        existing_server_ids = [item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
+        # Check if tenant user and projects exists at all
+        existing_users = [item['name'] for item in
+                          exec_command_line_command(source_overcloud + 'openstack user list -f json')['JsonOutput']]
+        self.assertIn('new-user',existing_users,'Failed, there is no existing tenant user: "new-user"')
+        self.assertEqual(os.path.exists(source_tenant_user.replace('source ','').replace(';','')),True,'Failed, no source file for tenant user exists (userrc file)')
+        existing_projects = [item['name'] for item in
+                             exec_command_line_command(source_overcloud + 'openstack project list -f json')['JsonOutput']]
+        self.assertIn('new-project',existing_projects,'Failed, there is no existing project: "new-project"')
+
+        # Check if any server exists and delete if it does
+        existing_server_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']]
+        if len(existing_server_ids)>0:
+            for id in existing_server_ids:
+                exec_command_line_command(source_overcloud+'openstack server delete '+id)
         start_time=time.time()
         to_stop=False
         # Wait till all servers are deleted "
         while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
             time.sleep(10)
-            list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
+            list_servers_result=exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']
             if len(list_servers_result)!=0:
                 names=[item['name'] for item in list_servers_result]
                 print '-- Existing servers are: ',names
@@ -298,94 +348,44 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                 to_stop=True
         self.assertEqual(len(list_servers_result), 0, 'Failed: existing servers detected, IDs:\n'+str(list_servers_result))
 
-    #
-    # """This test is a negative test, that is trying to create a VXLAN network type which is not supported when
-    # on physical switches, so proper error message should be displayed to user"""
-    # def test_012_negative_create_vxlan_network(self):
-    #     print '\ntest_012_negative_create_vxlan_network'
-    #     command=source_overcloud+"openstack network create --provider-network-type xvlan --provider-physical-network baremetal zababun_vxlan"
-    #     command_result=exec_command_line_command(command)['CommandOutput']
-    #     self.assertIn('not supported',command_result,"Failed, VXLAN network was successfully created, not supported option!")
-    #
-    #
-    #
-    # """This test is planned to check that once Overcloud admin user delete user (userrc) that has active server, physical
-    # port on switch will remain associated to the same VLAN it was before (no change on Switch)"""
-    # def test_013_delete_tenant_user(self):
-    #     "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
-    #     "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
-    #     "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
-    #     "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
-    #     "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
-    #     "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
-    #     print '\ntest_013_delete_tenant_user'
-    #     baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
-    #     self.assertNotEqual(0,len(baremetal_node_ids),'Failed, no baremetal nodes detected')
-    #     # Check if tenant user and projects exists at all
-    #     existing_users = [item['name'] for item in
-    #                       exec_command_line_command(source_overcloud + 'openstack user list -f json')['JsonOutput']]
-    #     self.assertIn('new-user',existing_users,'Failed, there is no existing tenant user: "new-user"')
-    #     self.assertEqual(os.path.exists(source_tenant_user.replace('source ','').replace(';','')),True,'Failed, no source file for tenant user exists (userrc file)')
-    #     existing_projects = [item['name'] for item in
-    #                          exec_command_line_command(source_overcloud + 'openstack project list -f json')['JsonOutput']]
-    #     self.assertIn('new-project',existing_projects,'Failed, there is no existing project: "new-project"')
-    #
-    #     # Check if any server exists and delete if it does
-    #     existing_server_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']]
-    #     if len(existing_server_ids)>0:
-    #         for id in existing_server_ids:
-    #             exec_command_line_command(source_overcloud+'openstack server delete '+id)
-    #     start_time=time.time()
-    #     to_stop=False
-    #     # Wait till all servers are deleted "
-    #     while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
-    #         time.sleep(10)
-    #         list_servers_result=exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']
-    #         if len(list_servers_result)!=0:
-    #             names=[item['name'] for item in list_servers_result]
-    #             print '-- Existing servers are: ',names
-    #         if len(list_servers_result)==0:
-    #             to_stop=True
-    #     self.assertEqual(len(list_servers_result), 0, 'Failed: existing servers detected, IDs:\n'+str(list_servers_result))
-    #
-    #     # Create server as tenant user
-    #     time.sleep(30)
-    #     bm_name='BM_Guest_Tenant_User'
-    #     tenant_net=prms['tenant_nets'][0]
-    #     tenant_net_id=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack network list -f json')['JsonOutput'] if item['name'] == tenant_net][0]
-    #     expected_vlans_on_switch=[]
-    #     vlan_id=exec_command_line_command(source_overcloud+'openstack network show '+tenant_net+' -f json')['JsonOutput']['provider:segmentation_id']
-    #     create_bm_command=source_tenant_user+'openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+str(tenant_net_id)+' '+bm_name+' -f json'
-    #     result=exec_command_line_command(create_bm_command)
-    #     bm_guest_id=result['JsonOutput']['id']
-    #     self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest command has failed with:\n'+result['CommandOutput'])
-    #     expected_vlans_on_switch.append(str(vlan_id))
-    #     start_time=time.time()
-    #     to_stop=False
-    #     # Wait till all servers are getting into "active"
-    #     while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
-    #         time.sleep(10)
-    #         list_servers_result=exec_command_line_command(source_tenant_user+'openstack server list -f json')['JsonOutput']
-    #         statuses=[item['status'] for item in list_servers_result]
-    #         print '--> Servers statuses are: ',statuses
-    #         self.assertNotIn('error',statuses,'Failed, "error" state has been detected:'+str(statuses))
-    #         if list(set(statuses))==['active']:
-    #             to_stop=True
-    #     self.assertEqual(to_stop,True,'Failed: No BM servers detected as "active", "openstack server list" result is:\n'+str(list_servers_result))
-    #     # Make sure that each server was created on proper network, basing on VLAN id comparison
-    #     actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
-    #     actual_vlans=[actual_vlans[key] for key in actual_vlans.keys()]
-    #     for vlan in expected_vlans_on_switch:
-    #         self.assertIn(str(vlan),str(actual_vlans),
-    #                         'Failed, detected VLANs on swith are not as expected:''\n'+str(actual_vlans)+'\n'+str(expected_vlans_on_switch))
-    #
-    #     # As admin user delete tenant user with existing BM guest
-    #     delete_user_command=source_overcloud+'openstack user delete new-user'
-    #     self.assertEqual(0,exec_command_line_command(delete_user_command)['ReturnCode'], 'Failed, delete tenant user command has failed')
-    #     new_actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
-    #     new_actual_vlans=[new_actual_vlans[key] for key in new_actual_vlans.keys()]
-    #     self.assertEqual(new_actual_vlans,actual_vlans,'Failed, VLAN was changed after deleting tenant user\n'+str(actual_vlans)+' --> '+str(new_actual_vlans))
-    #
+        # Create server as tenant user
+        time.sleep(30)
+        bm_name='BM_Guest_Tenant_User'
+        tenant_net=prms['tenant_nets'][0]
+        tenant_net_id=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack network list -f json')['JsonOutput'] if item['name'] == tenant_net][0]
+        expected_vlans_on_switch=[]
+        vlan_id=exec_command_line_command(source_overcloud+'openstack network show '+tenant_net+' -f json')['JsonOutput']['provider:segmentation_id']
+        create_bm_command=source_tenant_user+'openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+str(tenant_net_id)+' '+bm_name+' -f json'
+        result=exec_command_line_command(create_bm_command)
+        bm_guest_id=result['JsonOutput']['id']
+        self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest command has failed with:\n'+result['CommandOutput'])
+        expected_vlans_on_switch.append(str(vlan_id))
+        start_time=time.time()
+        to_stop=False
+        # Wait till all servers are getting into "active"
+        while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
+            time.sleep(10)
+            list_servers_result=exec_command_line_command(source_tenant_user+'openstack server list -f json')['JsonOutput']
+            statuses=[item['status'] for item in list_servers_result]
+            print '--> Servers statuses are: ',statuses
+            self.assertNotIn('error',statuses,'Failed, "error" state has been detected:'+str(statuses))
+            if list(set(statuses))==['active']:
+                to_stop=True
+        self.assertEqual(to_stop,True,'Failed: No BM servers detected as "active", "openstack server list" result is:\n'+str(list_servers_result))
+        # Make sure that each server was created on proper network, basing on VLAN id comparison
+        actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
+        actual_vlans=[actual_vlans[key] for key in actual_vlans.keys()]
+        for vlan in expected_vlans_on_switch:
+            self.assertIn(str(vlan),str(actual_vlans),
+                            'Failed, detected VLANs on swith are not as expected:''\n'+str(actual_vlans)+'\n'+str(expected_vlans_on_switch))
+
+        # As admin user delete tenant user with existing BM guest
+        delete_user_command=source_overcloud+'openstack user delete new-user'
+        self.assertEqual(0,exec_command_line_command(delete_user_command)['ReturnCode'], 'Failed, delete tenant user command has failed')
+        new_actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
+        new_actual_vlans=[new_actual_vlans[key] for key in new_actual_vlans.keys()]
+        self.assertEqual(new_actual_vlans,actual_vlans,'Failed, VLAN was changed after deleting tenant user\n'+str(actual_vlans)+' --> '+str(new_actual_vlans))
+
     #
     # """This test is planned to check that when BM guest is powered off, physical
     # port on switch will remain associated to the same VLAN it was before (no change on Switch)"""
