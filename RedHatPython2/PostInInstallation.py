@@ -184,8 +184,7 @@ if 'overcloud-full.vmlinuz' not in existing_images:
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
 
-if 'id overcloud-full.initrd' not in existing_images:
-    print 'here'*1000
+if 'overcloud-full.initrd' not in existing_images:
     result=exec_command_line_command(source_command+'openstack image create --file /home/stack/overcloud-full.initrd --public --container-format ari --disk-format ari -f value -c id overcloud-full.initrd')
     id2=result['CommandOutput'].strip()
     if result['ReturnCode']!=0:
