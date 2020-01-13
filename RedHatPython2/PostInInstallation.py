@@ -90,7 +90,7 @@ tenant_networks=[
     ('tenant-net6','tenant-subnet6','192.168.50')]
 for item in tenant_networks:
     if item[0] not in existing_networks:
-        result=exec_command_line_command(source_command+'openstack network create '+item[0])
+        result=exec_command_line_command(source_command+'openstack network create --provider-network-type vlan '+item[0])
         if result['ReturnCode']!=0:
             all_errors.append(result['CommandOutput'])
     if item[1] not in existing_subnets:
