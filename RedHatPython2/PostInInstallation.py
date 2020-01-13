@@ -28,7 +28,6 @@ existing_projects=[item['name'] for item in exec_command_line_command(source_com
 print 'Projects --> ',existing_projects
 
 
-
 def empty_file_content(log_file_name):
     f = open(log_file_name, 'w')
     f.write('')
@@ -186,6 +185,7 @@ if 'overcloud-full.vmlinuz' not in existing_images:
         all_errors.append(result['CommandOutput'])
 
 if 'id overcloud-full.initrd' not in existing_images:
+    print 'here'*1000
     result=exec_command_line_command(source_command+'openstack image create --file /home/stack/overcloud-full.initrd --public --container-format ari --disk-format ari -f value -c id overcloud-full.initrd')
     id2=result['CommandOutput'].strip()
     if result['ReturnCode']!=0:
