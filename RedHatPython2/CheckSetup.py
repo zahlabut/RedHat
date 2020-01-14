@@ -482,6 +482,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         ports=exec_command_line_command(source_overcloud+'openstack port list -f json')
         print ports
         if ports['ReturnCode']==0 and 'PARENT_PORT_1' not in str(ports['JsonOutput']):
+            print 'here'*1000
             port=exec_command_line_command(source_overcloud+'openstack port create --network tenant-net PARENT_PORT_1')
             self.assertNotEqual(port['ReturnCode'], 0,'Failed to create TRUNK port!')
 
