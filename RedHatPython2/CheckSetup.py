@@ -484,7 +484,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             ports=[item['name'] for item in ports['JsonOutput']]
             if 'PARENT_PORT_1'.lower() not in ports:
                 port=exec_command_line_command(source_overcloud+'openstack port create --network tenant-net PARENT_PORT_1')
-                self.assertNotEqual(port['ReturnCode'], 0,'Failed to create TRUNK port!')
+                self.assertEqual(port['ReturnCode'], 0,'Failed to create TRUNK port!')
 
         # Check in trunk network exists, create if needed.
         networks=exec_command_line_command(source_overcloud+'openstack network trunk list -f json')
@@ -492,7 +492,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             networks=[item['name'] for item in networks['JsonOutput']]
             if 'TRUNK_NET_1'.lower() not in networks:
                 port=exec_command_line_command(source_overcloud+'openstack network trunk create --parent-port PARENT_PORT_1 TRUNK_NET_1')
-                self.assertNotEqual(port['ReturnCode'], 0,'Failed to create TRUNK network!')
+                self.assertEqual(port['ReturnCode'], 0,'Failed to create TRUNK network!')
 
         # Check in subport exists, create if needed.
         ports=exec_command_line_command(source_overcloud+'openstack port list -f json')
@@ -500,7 +500,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             ports=[item['name'] for item in ports['JsonOutput']]
             if 'SUB_PORT_1'.lower() not in ports:
                 port=exec_command_line_command(source_overcloud+'openstack port create --network tenant-net2 SUB_PORT_1')
-                self.assertNotEqual(port['ReturnCode'], 0,'Failed to create SubPort port!')
+                self.assertEqual(port['ReturnCode'], 0,'Failed to create SubPort port!')
 
         # Add subport to trunk network
         net_details=exec_command_line_command(source_overcloud+'openstack network show tenant-net2 -f json')
@@ -562,6 +562,13 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         #
         #
         #
+
+
+
+
+
+
+
         #
 
 
