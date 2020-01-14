@@ -517,7 +517,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         trunk_network_info=exec_command_line_command(source_overcloud+'source /home/stack/overcloudrc;openstack network trunk show TRUNK_NET_1')
         print trunk_network_info
         if trunk_network_info['ReturnCode']==0:
-            if "SUB_PORT_1".lower() not in str(trunk_network_info['CommandOutput']).lower():
+            if subport_id not in str(trunk_network_info['CommandOutput']).lower():
                 add_subport_to_net=exec_command_line_command(source_overcloud+'openstack network trunk set --subport port=SUB_PORT_1,segmentation-type=vlan,segmentation-id='+segmantation_id+' TRUNK_NET_1')
                 self.assertEqual(add_subport_to_net['ReturnCode'],0, 'Failed to add subport to trunk network!')
 
