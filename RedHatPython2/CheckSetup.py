@@ -507,25 +507,62 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         if net_details['ReturnCode']==0:
             segmantation_id=net_details['JsonOutput']['provider:segmentation_id']
             segmantation_id=str(segmantation_id)
-
         subport_id=exec_command_line_command(source_overcloud+'openstack port list -f json')
         if subport_id['ReturnCode']==0:
             subport_id=[item['id'] for item in subport_id['JsonOutput'] if 'SUB_PORT_1'.lower() in item['name']][0]
-            print subport_id
-
-
         trunk_network_info=exec_command_line_command(source_overcloud+'source /home/stack/overcloudrc;openstack network trunk show TRUNK_NET_1')
-        print trunk_network_info
         if trunk_network_info['ReturnCode']==0:
             if subport_id not in str(trunk_network_info['CommandOutput']).lower():
                 add_subport_to_net=exec_command_line_command(source_overcloud+'openstack network trunk set --subport port=SUB_PORT_1,segmentation-type=vlan,segmentation-id='+segmantation_id+' TRUNK_NET_1')
                 self.assertEqual(add_subport_to_net['ReturnCode'],0, 'Failed to add subport to trunk network!')
 
+        # Create BM Guest
+        # If servers exists, exit #
+        existing_servers_names=[node['name'] for node in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
+        print '--> Existing servers Names: ',existing_servers_names
+        self.assertIn('BM_Guest1'.lower(),existing_servers_names.lower(),'Failed: existing nodes have been detected IDs:\n'+str(existing_servers_names))
+        # Create servers
+        admin_project_id=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack security group list -f json')['JsonOutput']
+                          if item['name']=='admin']
+        default_sec_gr_id=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack security group list')['JsonOutput'] if
+                           item['project']==admin_project_id]
+
+        print default_sec_gr_id
+
+
+        #
+        # create_bm_command=source_overcloud+'openstack server create --image overcloud-full --security-group d0fc9ab3-2f83-45fe-96d6-26b4c94d042c --flavor baremetal --port PARENT_PORT_1 --key default BM_Guest1'
+        #
+        #
+        #     result=exec_command_line_command(create_bm_command)
+        #     self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest command return non Zero status code\n'+result['CommandOutput'])
+        #     expected_vlans_on_switch.append(str(vlan_id))
+        # start_time=time.time()
+        # to_stop=False
+        # # Wait till all servers are getting into "active"
+        # while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
+        #     time.sleep(10)
+        #     list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
+        #     statuses=[item['status'] for item in list_servers_result]
+        #     print '--> Servers statuses are: ',statuses
+        #     self.assertNotIn('error',statuses,'Failed, "error" state has been detected:'+str(statuses))
+        #     if list(set(statuses))==['active']:
+        #         to_stop=True
+        # self.assertEqual(to_stop,True,'Failed: No BM servers detected as "active", "openstack server list" result is:\n'+str(list_servers_result))
+        # # Make sure that each server was created on proper network, basing on VLAN id comparison
+        # actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
+        # actual_vlans=[actual_vlans[key] for key in actual_vlans.keys()]
+        # for vlan in expected_vlans_on_switch:
+        #     self.assertIn(str(vlan),str(actual_vlans),
+        #                     'Failed, detected VLANs on swith are not as expected:''\n'+str(actual_vlans)+'\n'+str(expected_vlans_on_switch))
+        #
+        #
+
 
 
         #
         #
-        # openstack server create --image overcloud-full --security-group d0fc9ab3-2f83-45fe-96d6-26b4c94d042c --flavor baremetal --port PARENT_PORT_1 --key default BM_Guest1
+        #
         #
         #
         #
