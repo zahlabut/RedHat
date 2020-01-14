@@ -546,8 +546,17 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
              if list(set(statuses))==['active']:
                  to_stop=True
         self.assertEqual(to_stop,True,'Failed: No BM servers detected as "active", "openstack server list" result is:\n'+str(list_servers_result))
-        # # Make sure that each server was created on proper network, basing on VLAN id comparison
-        # actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
+
+        # Check Trunk on Switch port
+        actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
+        print actual_vlans
+
+
+
+
+
+
+
         # actual_vlans=[actual_vlans[key] for key in actual_vlans.keys()]
         # for vlan in expected_vlans_on_switch:
         #     self.assertIn(str(vlan),str(actual_vlans),
