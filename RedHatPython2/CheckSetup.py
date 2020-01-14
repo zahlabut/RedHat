@@ -508,7 +508,14 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             segmantation_id=net_details['JsonOutput']['provider:segmentation_id']
             segmantation_id=str(segmantation_id)
 
+        subport_id=exec_command_line_command(source_overcloud,'openstack port list -f json')
+        if subport_id['ReturnCode']==0:
+            subport_id=[item['id'] for item in subport_id['JsonOutput'] if 'SUB_PORT_1'.lower() in item['name']][0]
+            print subport_id
+
+
         trunk_network_info=exec_command_line_command(source_overcloud+'source /home/stack/overcloudrc;openstack network trunk show TRUNK_NET_1')
+        print trunk_network_info
         if trunk_network_info['ReturnCode']==0:
             if "SUB_PORT_1".lower() not in str(trunk_network_info['CommandOutput']).lower():
                 add_subport_to_net=exec_command_line_command(source_overcloud+'openstack network trunk set --subport port=SUB_PORT_1,segmentation-type=vlan,segmentation-id='+segmantation_id+' TRUNK_NET_1')
