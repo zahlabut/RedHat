@@ -478,20 +478,46 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     Test will verify that the BM Guest is created and that Ansible Networking took care to configure Trunk port as expected
     """
     def test_016_create_trunk_bm_guest(self):
-
+        # Check if parent port exists, create if needed.
         ports=exec_command_line_command(source_overcloud+'openstack port list -f json')
-        print ports
         if ports['ReturnCode']==0:
-            if 'PARENT_PORT_1' not in str(ports['JsonOutput']):
-                print 'here'*1000
+            ports=[item['name'] for item in ports['JsonOutput']]
+            if 'PARENT_PORT_1'.lower() not in ports:
                 port=exec_command_line_command(source_overcloud+'openstack port create --network tenant-net PARENT_PORT_1')
                 self.assertNotEqual(port['ReturnCode'], 0,'Failed to create TRUNK port!')
 
+        # Check in trunk network exists, create if needed.
+        networks=exec_command_line_command(source_overcloud+'openstack network trunk list -f json')
+        if networks['ReturnCode']==0:
+            networks=[item['name'] for item in networks['JsonOutput']]
+            if 'TRUNK_NET_1'.lower() not in networks:
+                port=exec_command_line_command(source_overcloud+'openstack network trunk create --parent-port PARENT_PORT_1 TRUNK_NET_1')
+                self.assertNotEqual(port['ReturnCode'], 0,'Failed to create TRUNK network!')
+
+        # Check in subport exists, create if needed.
+        ports=exec_command_line_command(source_overcloud+'openstack port list -f json')
+        if ports['ReturnCode']==0:
+            ports=[item['name'] for item in ports['JsonOutput']]
+            if 'SUB_PORT_1'.lower() not in ports:
+                port=exec_command_line_command(source_overcloud+'openstack port create --network tenant-net2 SUB_PORT_1')
+                self.assertNotEqual(port['ReturnCode'], 0,'Failed to create SubPort port!')
+
+        # Add subport to trunk network
+        net_details=exec_command_line_command(source_overcloud+'openstack network show tenant-net2 -f json')
+        if net_details['ReturnCode']==0:
+            segmantation_id=net_details['JsonOutput']['provider:segmentation_id']
+            segmantation_id=str(segmantation_id)
+
+        trunk_network_info=exec_command_line_command(source_overcloud+'source /home/stack/overcloudrc;openstack network trunk show TRUNK_NET_1')
+        if trunk_network_info['ReturnCode']==0:
+            if "SUB_PORT_1".lower() not in str(trunk_network_info['CommandOutput']).lower():
+                add_subport_to_net=exec_command_line_command(source_overcloud+'openstack network trunk set --subport port=SUB_PORT_1,segmentation-type=vlan,segmentation-id='+segmantation_id+' TRUNK_NET_1')
+                self.assertEqual(add_subport_to_net['ReturnCode'],0, 'Failed to add subport to trunk network!')
+
+
+
         #
         #
-        # openstack network trunk create --parent-port PARENT_PORT_1 TRUNK_NET_1
-        # openstack port create --network tenant-net2 SUB_PORT_1
-        # openstack network trunk set --subport port=SUB_PORT_1,segmentation-type=vlan,segmentation-id=1206 TRUNK_NET_1
         # openstack server create --image overcloud-full --security-group d0fc9ab3-2f83-45fe-96d6-26b4c94d042c --flavor baremetal --port PARENT_PORT_1 --key default BM_Guest1
         #
         #
