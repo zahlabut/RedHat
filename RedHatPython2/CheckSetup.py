@@ -553,6 +553,12 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
 
 
+        #{'xe-0/0/6': ['1200', '1206'], 'xe-0/0/7': ['1202']}
+        number_of_vlans_per_physical_port=[len(actual_vlans(key)) for key in actual_vlans.keys()]
+        print number_of_vlans_per_physical_port
+        self.assertIn(2,number_of_vlans_per_physical_port,'Failed, no port with more than one Vlan was detected, existing configuration on '
+                                                          'Switch is: '+str(actual_vlans))
+
 
 
 
