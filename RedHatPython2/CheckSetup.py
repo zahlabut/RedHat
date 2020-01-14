@@ -519,12 +519,13 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         # Create BM Guest
         # If servers exists, exit #
         existing_servers_names=[node['name'] for node in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
-        print '--> Existing servers Names: ',existing_servers_names
         self.assertNotIn('BM_Guest1'.lower(),str(existing_servers_names).lower(),'Failed: existing nodes have been detected IDs:\n'+str(existing_servers_names))
         # Create servers
         admin_project_id=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack security group list -f json')['JsonOutput']
                           if item['name']=='admin']
-        default_sec_gr_id=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack security group list')['JsonOutput'] if
+        print admin_project_id
+
+        default_sec_gr_id=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack security group list -f json')['JsonOutput'] if
                            item['project']==admin_project_id]
 
         print default_sec_gr_id
