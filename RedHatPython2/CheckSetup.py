@@ -522,11 +522,11 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertNotIn('BM_Guest1'.lower(),str(existing_servers_names).lower(),'Failed: existing nodes have been detected IDs:\n'+str(existing_servers_names))
         # Create servers
         admin_project_id=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack project list -f json')['JsonOutput']
-                          if item['name']=='admin']
+                          if item['name']=='admin'][0]
         print admin_project_id
 
         default_sec_gr_id=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack security group list -f json')['JsonOutput'] if
-                           item['project']==admin_project_id]
+                           item['project']==admin_project_id][0]
 
         print default_sec_gr_id
 
