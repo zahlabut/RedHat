@@ -552,43 +552,12 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         print 'Detected Vlans on Switch Port are: '+str(actual_vlans)
         test_pass=False
         for key in actual_vlans.keys():
-            if len(actual_vlans[key])>2:
-                test_pass=True
-                break
+            if actual_vlans[key]!=None:
+                if len(actual_vlans[key])>1:
+                    test_pass=True
+                    break
         self.assertEquals(True, test_pass, 'Failed, no port with more than one Vlan was detected, existing configuration on '
                                                           'Switch is: '+str(actual_vlans))
-
-
-
-
-        # actual_vlans=[actual_vlans[key] for key in actual_vlans.keys()]
-        # for vlan in expected_vlans_on_switch:
-        #     self.assertIn(str(vlan),str(actual_vlans),
-        #                     'Failed, detected VLANs on swith are not as expected:''\n'+str(actual_vlans)+'\n'+str(expected_vlans_on_switch))
-        #
-        #
-
-
-
-        #
-        #
-        #
-        #
-        #
-
-
-
-
-
-
-
-        #
-
-
-
-
-
-
 
 
     #
