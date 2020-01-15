@@ -549,7 +549,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
         # Check Trunk on Switch port
         actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
-        print actual_vlans
+        print 'Detected Vlans on Switch Port are: '+str(actual_vlans)
 
 
 
@@ -559,6 +559,13 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertIn(2,number_of_vlans_per_physical_port,'Failed, no port with more than one Vlan was detected, existing configuration on '
                                                           'Switch is: '+str(actual_vlans))
 
+
+        test_pass=False
+        for key in actual_vlans.keys():
+            if len(actual_vlans[key])>2:
+                test_pass=True
+                break
+        self.assertEquals(True, test_pass, 'Failed, there is no port on switch containing more then one Vlan (No trunk)!')
 
 
 
