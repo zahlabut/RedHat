@@ -159,12 +159,12 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     """
     def test_006_net_ansible_indication_msg_in_log(self):
         print '\ntest_006_net_ansible_indication_msg_in_log'
-        output, stderr=[],[]
+
         commands=["sudo grep -i 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep -i 'ansible host'",
                   "sudo zgrep -i 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep -i 'ansible host'"]
         for ip in controller_ips:
             print ip
-
+            output, stderr = [], []
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
             log_files=ssh_object.ssh_command('sudo ls /var/log/containers/neutron | grep -i server')['Stdout']
@@ -181,10 +181,10 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                 output.append(out['Stdout'])
                 stderr.append(out['Stderr'])
             ssh_object.ssh_close()
-        print output
-        print str(output)
-        self.assertIn('Ansible Host', str(output), 'Failed: ' + ip +
-                      ' no indication for Ansible Networking configuration in log'+'\n'+str(output)+'\n'+str(stderr))
+            print output
+            print str(output)
+            self.assertIn('Ansible Host', str(output), 'Failed: ' + ip +
+                          ' no indication for Ansible Networking configuration in log'+'\n'+str(output)+'\n'+str(stderr))
 
     """ This test is planed to validate that Ceph (once included in Setup) is OK (up and running) """
     @unittest.skipIf(prms['setup']=='Virtual_Setup','Ceph is not installed on virtual setup!')
