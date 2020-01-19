@@ -211,20 +211,11 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
         self.assertNotEqual(0,len(baremetal_node_ids),'Failed, no baremetal nodes detected')
         baremetal_vlan_id = exec_command_line_command(source_overcloud + 'openstack network show baremetal -f json')['JsonOutput']['provider:segmentation_id']
-
-
-
-
-
-
         for id in baremetal_node_ids:
             exec_command_line_command(source_overcloud+'openstack baremetal node manage '+id)
             state=[item['provisioning state'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
             self.assertIn('manageable', state, 'Failed: baremetal node state is: '+state[0]+' expected: "manageable"')
             exec_command_line_command(source_overcloud+'openstack baremetal node provide '+id)
-
-
-
         start_time=time.time()
         to_stop=False
         while to_stop==False and (time.time()<(start_time+manageable_timeout)):
@@ -264,8 +255,16 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         # If servers exists, exit #
         existing_servers_ids=[node['id'] for node in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
         print '--> Existing servers IDs: ',existing_servers_ids
-        self.assertEqual(0,len(existing_servers_ids),'Failed: existing nodes have been detected IDs:\n'+str(existing_servers_ids))
+        print 'This test will try to delete all existing servers!'
+        delete_result=delete_server(source_overcloud, existing_servers_ids, 300)
+        self.assertEquals(True, delete_result, 'Failed to delete existing servers: '+str(existing_servers_ids))
+
+
+        #self.assertEqual(0,len(existing_servers_ids),'Failed: existing nodes have been detected IDs:\n'+str(existing_servers_ids))
         # Create servers
+
+
+
         for net in tenant_net_ids:
             bm_index+=1
             vlan_id=exec_command_line_command(source_overcloud+'openstack network show '+net+' -f json')['JsonOutput']['provider:segmentation_id']

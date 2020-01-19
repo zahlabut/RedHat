@@ -113,7 +113,6 @@ def exec_command_line_command(command):
         print_in_color(e.output, 'red')
         return {'ReturnCode': e.returncode, 'CommandOutput': e.output}
 
-
 def profanity_check(text, check_lines_contains_string=None):
     text=str(text).split('\n')
     if check_lines_contains_string!=None:
@@ -125,8 +124,6 @@ def profanity_check(text, check_lines_contains_string=None):
         if "true" in output:
             return {'ProfanityCheckResult':True, 'Failed_Line':line}
     return {'ProfanityCheckResult':False, 'Failed_Line':None}
-
-
 
 def collect_log_paths(log_root_path):
     logs=[]
@@ -245,11 +242,6 @@ def get_juniper_sw_get_port_vlan(ip, user, password, ports):
     ssh_object.ssh_close()
     return result_dic
 
-
-
-
-
-
 def run_command_on_switch(ip, user, password, command):
     ssh_object = SSH(ip, user, password)
     ssh_object.ssh_connect_password()
@@ -257,3 +249,25 @@ def run_command_on_switch(ip, user, password, command):
     ssh_object.ssh_close()
     print out
     return out
+
+def delete_server(source_overcloud, ids_list, timeout):
+    exec_command_line_command(source_overcloud + 'openstack server delete ' + id)
+    start_time = time.time()
+    to_stop = False
+    for id in ids_list:
+        exec_command_line_command(source_overcloud + 'openstack server delete ' + id)
+    existing_server_ids = [item['id'] for item in exec_command_line_command(source_overcloud + 'openstack server list -f json')['JsonOutput']]
+    start_time = time.time()
+    to_stop = False
+    # Wait till all servers are deleted "
+    while to_stop == False and time.time() < (start_time + timeout):
+        time.sleep(10)
+        list_servers_result = exec_command_line_command(source_overcloud + 'openstack server list -f json')[
+            'JsonOutput']
+        if len(list_servers_result) != 0:
+            names = [item['name'] for item in list_servers_result]
+            print '-- Existing servers are: ', names
+        if len(list_servers_result) == 0:
+            to_stop = True
+    # Return True if no server left, else return False
+    return to_stop
