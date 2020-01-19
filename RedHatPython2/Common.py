@@ -253,8 +253,6 @@ def run_command_on_switch(ip, user, password, command):
 def delete_server(source_overcloud, ids_list, timeout):
     for id in ids_list:
         exec_command_line_command(source_overcloud + 'openstack server delete ' + id)
-    for id in ids_list:
-        exec_command_line_command(source_overcloud + 'openstack server delete ' + id)
     existing_server_ids = [item['id'] for item in exec_command_line_command(source_overcloud + 'openstack server list -f json')['JsonOutput']]
     start_time = time.time()
     to_stop = False
