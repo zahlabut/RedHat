@@ -264,7 +264,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         # Create servers
 
 
-
+        print tenant_net_ids
         for net in tenant_net_ids[0]:
 
 
