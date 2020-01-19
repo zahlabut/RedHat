@@ -165,12 +165,13 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         for ip in controller_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
-            out=''
             for com in commands:
-                out+=ssh_object.ssh_command(com)
+                out=ssh_object.ssh_command(com)
                 output.append(out['Stdout'])
                 stderr.append(out['Stderr'])
             ssh_object.ssh_close()
+        print output
+        print str(output)
         self.assertIn('Ansible Host', str(output), 'Failed: ' + ip +
                       ' no indication for Ansible Networking configuration in log'+'\n'+str(output)+'\n'+str(stderr))
 
