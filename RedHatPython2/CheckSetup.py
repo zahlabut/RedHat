@@ -182,7 +182,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             ssh_object.ssh_close()
             print output
             print str(output)
-            self.assertIn('Ansible Host', str(output), 'Failed: ' + ip +
+            self.assertIn('Ansible Host'.lower(), str(output).lower(), 'Failed: ' + ip +
                           ' no indication for Ansible Networking configuration in log'+'\n'+str(output)+'\n'+str(stderr))
 
     """ This test is planed to validate that Ceph (once included in Setup) is OK (up and running) """
