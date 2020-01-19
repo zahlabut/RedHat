@@ -265,7 +265,12 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
 
 
-        for net in tenant_net_ids:
+        for net in tenant_net_ids[0]:
+
+
+
+
+
             bm_index+=1
             vlan_id=exec_command_line_command(source_overcloud+'openstack network show '+net+' -f json')['JsonOutput']['provider:segmentation_id']
             create_bm_command=source_overcloud+'openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+net+' '+bm_name+str(bm_index)
