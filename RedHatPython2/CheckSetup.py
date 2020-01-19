@@ -169,8 +169,11 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             ssh_object.ssh_connect_key()
             log_files=ssh_object.ssh_command('sudo ls /var/log/containers/neutron | grep -i server')['Stdout']
             log_files=[fil.strip() for fil in log_files.splitlines()]
-            print log_files
-
+            for fil in files:
+                if fil.endswith('.gz') == True:
+                    commands.append("sudo zgrep -i 'networking_ansible.config' /var/log/containers/neutron/"+fil+" | grep -i 'ansible host'")
+                else:
+                    commands.append("sudo grep -i 'networking_ansible.config' /var/log/containers/neutron/" +fil+" | grep -i 'ansible host'")
             for com in commands:
                 out=ssh_object.ssh_command(com)
                 print com
