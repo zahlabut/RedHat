@@ -160,8 +160,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     def test_006_net_ansible_indication_msg_in_log(self):
         print '\ntest_006_net_ansible_indication_msg_in_log'
         for ip in controller_ips:
-
-            print ip
             commands=[]
             output, stderr = [], []
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
@@ -175,13 +173,9 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                     commands.append("sudo grep -i 'networking_ansible.config' /var/log/containers/neutron/" +fil+" | grep -i 'ansible host'")
             for com in commands:
                 out=ssh_object.ssh_command(com)
-                print com
-                print out
                 output.append(out['Stdout'])
                 stderr.append(out['Stderr'])
             ssh_object.ssh_close()
-            print output
-            print str(output)
             self.assertIn('Ansible Host'.lower(), str(output).lower(), 'Failed: ' + ip +
                           ' no indication for Ansible Networking configuration in log'+'\n'+str(output)+'\n'+str(stderr))
 
