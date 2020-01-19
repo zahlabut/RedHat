@@ -159,11 +159,10 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     """
     def test_006_net_ansible_indication_msg_in_log(self):
         print '\ntest_006_net_ansible_indication_msg_in_log'
-
-        commands=["sudo grep -i 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep -i 'ansible host'",
-                  "sudo zgrep -i 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep -i 'ansible host'"]
         for ip in controller_ips:
+
             print ip
+            commands=[]
             output, stderr = [], []
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
