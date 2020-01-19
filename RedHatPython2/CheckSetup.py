@@ -164,8 +164,13 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                   "sudo zgrep -i 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep -i 'ansible host'"]
         for ip in controller_ips:
             print ip
+
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
+            log_files=ssh_object.ssh_command('sudo ls /var/log/containers/neutron | grep -i server')['Stdout']
+            log_files=[fil.strip() for fil in log_files.splitlines()]
+            print log_files
+
             for com in commands:
                 out=ssh_object.ssh_command(com)
                 print com
