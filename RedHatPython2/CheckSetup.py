@@ -255,9 +255,10 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         # If servers exists, exit #
         existing_servers_ids=[node['id'] for node in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
         print '--> Existing servers IDs: ',existing_servers_ids
-        print 'This test will try to delete all existing servers!'
-        delete_result=delete_server(source_overcloud, existing_servers_ids, 300)
-        self.assertEquals(True, delete_result, 'Failed to delete existing servers: '+str(existing_servers_ids))
+        if existing_servers_ids!=[]:
+            print 'This test will try to delete all existing servers!'
+            delete_result=delete_server(source_overcloud, existing_servers_ids, 300)
+            self.assertEquals(True, delete_result, 'Failed to delete existing servers: '+str(existing_servers_ids))
 
 
         #self.assertEqual(0,len(existing_servers_ids),'Failed: existing nodes have been detected IDs:\n'+str(existing_servers_ids))
@@ -265,7 +266,9 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
 
         print tenant_net_ids
-        for net in tenant_net_ids[0]:
+        tenant_net_ids=[tenant_net_ids[0]]
+
+        for net in tenant_net_ids:
 
 
 
