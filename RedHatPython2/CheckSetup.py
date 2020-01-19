@@ -17,6 +17,13 @@ if '15' in exec_command_line_command('cat /etc/rhosp-release')['CommandOutput']:
 if '16' in exec_command_line_command('cat /etc/rhosp-release')['CommandOutput']:
     use_podman=True
 
+'''
+#####################################################################################
+To run a single test, execute:
+python2 CheckSetup.py AnsibleNetworkingFunctionalityTests.test_001_ironic_in_catalog
+#####################################################################################
+'''
+
 # QE Setup #
 qe_setup_parameters={
     'baremetal_guest_ports':['xe-0/0/6', 'xe-0/0/7'],#,'xe-0/0/42','xe-0/0/43','xe-0/0/44','xe-0/0/45'],
@@ -153,8 +160,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     def test_006_net_ansible_indication_msg_in_log(self):
         print '\ntest_006_net_ansible_indication_msg_in_log'
         output, stderr=[],[]
-        commands=["grep -i 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep -i 'ansible host'",
-                  "zgrep -i 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep -i 'ansible host'"]
+        commands=["sudo grep -i 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep -i 'ansible host'",
+                  "sudo zgrep -i 'networking_ansible.config' /var/log/containers/neutron/server.log* | grep -i 'ansible host'"]
         for ip in controller_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
