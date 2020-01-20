@@ -274,6 +274,7 @@ def wait_till_bm_is_in_state(source_overcloud,bm_ids, expected_state, timeout=30
     to_stop = False
     actual_states=[]
     while to_stop==False and time.time() < (start_time + timeout):
+        time.sleep(10)
         command=source_overcloud+'openstack baremetal node list -f json'
         command_result=exec_command_line_command(command)
         if command_result['ReturnCode']==0:

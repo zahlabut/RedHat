@@ -265,7 +265,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             self.assertEquals(True, delete_result, 'Failed to delete existing servers: '+str(existing_servers_ids))
         # Make sure that BM Nodes are in "available" and wait some time if needed
         status=wait_till_bm_is_in_state(source_overcloud, baremetal_node_ids, 'available')
-        self.assertEquals(True,status,'Failed, BM are not in "manageable" Provisioning State!')
+        self.assertEquals(True,status,'Failed, not all BM are in "available" Provisioning State!')
         # Create servers
         for net in tenant_net_ids:
             bm_index+=1
