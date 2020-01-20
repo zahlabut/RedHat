@@ -100,7 +100,6 @@ def exec_command_line_command(command):
     try:
         print_in_color('--> '+command, 'blue')
         command_as_list = command.split(' ')
-        command_as_list = [item.replace(' ', '') for item in command_as_list if item != '']
         result = subprocess.check_output(command, stdin=True, stderr=subprocess.STDOUT, shell=True)
         json_output = None
         try:
@@ -250,7 +249,7 @@ def run_command_on_switch(ip, user, password, command):
     print out
     return out
 
-def delete_server(source_overcloud, ids_list, timeout=300):
+def delete_server(source_overcloud, ids_list, timeout=600):
     for id in ids_list:
         exec_command_line_command(source_overcloud + 'openstack server delete ' + id)
     existing_server_ids = [item['id'] for item in exec_command_line_command(source_overcloud + 'openstack server list -f json')['JsonOutput']]

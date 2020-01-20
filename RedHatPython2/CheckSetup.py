@@ -263,6 +263,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             print 'This test will try to delete all existing servers!'
             delete_result=delete_server(source_overcloud, existing_servers_ids, 300)
             self.assertEquals(True, delete_result, 'Failed to delete existing servers: '+str(existing_servers_ids))
+            time.sleep(10) # Seems like on parallel execution one of the node is getting into "Clean Fail" state
         # Make sure that BM Nodes are in "available" and wait some time if needed
         status=wait_till_bm_is_in_state(source_overcloud, baremetal_node_ids, 'available')
         self.assertEquals(True,status,'Failed, not all BM are in "available" Provisioning State!')
