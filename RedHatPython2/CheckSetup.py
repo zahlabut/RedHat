@@ -214,13 +214,13 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         for id in baremetal_node_ids:
             exec_command_line_command(source_overcloud+'openstack baremetal node manage '+id)
 
-            wait_till_bm_is_in_state(source_overcloud,[id],'manageable')
+            status=wait_till_bm_is_in_state(source_overcloud, [id], 'manageable')
+            self.assertEquals(True,status,'Failed, BM are not in "manageable" Provisioning State!')
 
             state=[item['provisioning state'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
             self.assertIn('manageable', state, 'Failed: baremetal node state is: '+state[0]+' expected: "manageable"')
             exec_command_line_command(source_overcloud+'openstack baremetal node provide '+id)
 
-            wait_till_bm_is_in_state(source_overcloud, [id], 'available')
 
         start_time=time.time()
         to_stop=False
