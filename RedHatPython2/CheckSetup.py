@@ -298,6 +298,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             add_result=exec_command_line_command(source_overcloud+'openstack server add floating ip '+id+' '+server_info['FloatingIpId'])
             print server_info
             self.assertEquals(add_result['ReturnCode'],0,'Failed to add Floating Ip to Server: '+id)
+            servers_info.append(server_info)
 
         # Ping test, should fail, because BM guests are not on the same VLAN
         first_server_ip=servers_info[0]['FloatingIp']
