@@ -295,7 +295,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             result=exec_command_line_command(source_overcloud+'openstack floating ip create external -f json')['JsonOutput']
             server_info['FloatingIpId']=result['id']
             server_info['FloatingIp']=result['floating_ip_address']
-            add_result=exec_command_line_command(source_overcloud+'openstack) server add floating ip '+id+' '+server_info['FloatingIpId']+' -f json')
+            add_result=exec_command_line_command(source_overcloud+'openstack server add floating ip '+id+' '+server_info['FloatingIpId']+' -f json')
             print server_info
             self.assertEquals(add_result['ReturnCode'],0,'Failed to add Floating Ip to Server: '+id)
 
