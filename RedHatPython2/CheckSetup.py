@@ -291,8 +291,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         servers_info=[]
         for id in server_ids:
             server_info={}
-            server_info['InternalIp']=exec_command_line_command(source_overcloud+'openstack server show '+id+' -f json')['JsonOutput']['JsonOutput']\
-                .split('=')[1]
+            server_info['InternalIp']=exec_command_line_command(source_overcloud+'openstack server show '+id+' -f json')['JsonOutput'].split('=')[1]
             result=exec_command_line_command(source_overcloud+'openstack floating ip create external -f json')['JsonOutput']
             server_info['FloatingIpId']=result['id']
             server_info['FloatingIp']=result['floating_ip_address']
