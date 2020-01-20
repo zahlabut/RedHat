@@ -238,7 +238,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     In addition to that, floating IP will be added to each server and then it will use SSH+PING to validate thata
     there is no connectivity between first and "next=second" BM guests, as both not in the same VLAN 
     """
-    def test_010_create_bm_guests_in_parallel(self):
+    def test_010_create_bm_guests_in_parallel_and_check_connectivity(self):
         print '\ntest_010_create_bm_guests_in_parallel'
         baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
         self.assertNotEqual(0,len(baremetal_node_ids),'Failed, no baremetal nodes detected')
