@@ -212,13 +212,11 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         print '-- Existing BM node IDs are: '+str(baremetal_node_ids)
         self.assertNotEqual(0,len(baremetal_node_ids),'Failed, no baremetal nodes detected')
         baremetal_vlan_id = exec_command_line_command(source_overcloud + 'openstack network show baremetal -f json')['JsonOutput']['provider:segmentation_id']
-
         # Change state to "manageable"
         for id in baremetal_node_ids:
             exec_command_line_command(source_overcloud+'openstack baremetal node manage '+id)
         status=wait_till_bm_is_in_state(source_overcloud, baremetal_node_ids, 'manageable')
         self.assertEquals(True,status,'Failed, BM are not in "manageable" Provisioning State!')
-
         # Start "Clean"
         for id in baremetal_node_ids:
             exec_command_line_command(source_overcloud+'openstack baremetal node provide '+id)
@@ -258,28 +256,18 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         tenant_net_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack network list -f json')['JsonOutput'] if item['name'] in tenant_nets]
         self.assertNotEqual(0,len(tenant_net_ids),'Failed, no tenant networks detected')
         expected_vlans_on_switch=[]
-        # If servers exists, exit #
+        # Delete all existing servers if any #
         existing_servers_ids=[node['id'] for node in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
         print '--> Existing servers IDs: ',existing_servers_ids
         if existing_servers_ids!=[]:
             print 'This test will try to delete all existing servers!'
             delete_result=delete_server(source_overcloud, existing_servers_ids, 300)
             self.assertEquals(True, delete_result, 'Failed to delete existing servers: '+str(existing_servers_ids))
-
-
-        #self.assertEqual(0,len(existing_servers_ids),'Failed: existing nodes have been detected IDs:\n'+str(existing_servers_ids))
+        # Make sure that BM Nodes are in "available" and wait some time if needed
+        status=wait_till_bm_is_in_state(source_overcloud, baremetal_node_ids, 'available')
+        self.assertEquals(True,status,'Failed, BM are not in "manageable" Provisioning State!')
         # Create servers
-
-
-        # print tenant_net_ids
-        # tenant_net_ids=[tenant_net_ids[0]]
-
         for net in tenant_net_ids:
-
-
-
-
-
             bm_index+=1
             vlan_id=exec_command_line_command(source_overcloud+'openstack network show '+net+' -f json')['JsonOutput']['provider:segmentation_id']
             create_bm_command=source_overcloud+'openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+net+' '+bm_name+str(bm_index)
