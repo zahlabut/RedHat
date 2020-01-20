@@ -229,16 +229,9 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             if str(actual_vlans).count(str(baremetal_vlan_id))==len(prms['baremetal_guest_ports']):
                 to_stop=True
         self.assertIn(str(baremetal_vlan_id),str(actual_vlans), 'Failed: baremetal ports are not set to baremetal network vlan:\n' +str(actual_vlans))
-        start_time = time.time()
-        to_stop=False
-        while to_stop == False and (time.time()<(start_time+available_timeout)):
-            time.sleep(5)
-            states = [item['provisioning state'] for item in exec_command_line_command(source_overcloud + 'openstack baremetal node list -f json')['JsonOutput']]
-            print states
-            if list(set(states))==['available']:
-                to_stop=True
-        self.assertEqual(['available'], list(set(states)), 'Failed: baremetal node states are: '+str(states)+' expected:available')
-        time.sleep(30) #needed for next test, create servers
+        status=wait_till_bm_is_in_state(source_overcloud, baremetal_node_ids, 'available')
+        self.assertEquals(True,status,'Failed, BM are not in "available" Provisioning State!')
+
 
     """ This test is planed to validate that Bare Metal guests creation (as Servers on Overcloud) is successfully done and that
     Ansible Networking feature sets proper VLAN on switch, depending on "network" which is used for creation.
