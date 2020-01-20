@@ -279,7 +279,7 @@ def wait_till_bm_is_in_state(source_overcloud,bm_ids, expected_state, timeout=30
         if command_result['ReturnCode']==0:
             actual_states=[item['provisioning state'] for item in command_result['JsonOutput']]
             print '-- Actual Provisioing States are: '+str(actual_states)
-            if list(set(actual_states)) != [expected_state]:
+            if list(set(actual_states)) == [expected_state]:
                 to_stop=True
         else:
             print_in_color('Failed to execute: '+command)
