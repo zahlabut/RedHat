@@ -299,6 +299,12 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             print server_info
             self.assertEquals(add_result['ReturnCode'],0,'Failed to add Floating Ip to Server: '+id)
 
+        # Ping test, should fail, because BM guests are not on the same VLAN
+        first_server_ip=servers_info[0]['FloatingIp']
+        next_server_internal_ip=servers_info[1]['InternalIp']
+        ping_sommand='ssh cloud-user@'+first_server_ip+' ping '+next_server_internal_ip+' -c 1'
+        ping_result=exec_command_line_command(ping_sommand)['CommandOutput']
+        self.assertIn('0 received',ping_result, 'Failed, PING did work somehow :-( ')
 
 
 
