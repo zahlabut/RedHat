@@ -311,7 +311,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         next_server_internal_ip=servers_info[1]['InternalIp']
         ping_sommand='ssh cloud-user@'+first_server_ip+' ping '+next_server_internal_ip+' -c 1'
         ping_result=exec_command_line_command(ping_sommand)['CommandOutput']
-        self.assertIn('0 received',ping_result, 'Failed, PING did work somehow :-( ')
+        self.assertNotIn('time=',ping_result, 'Failed, PING did work somehow :-( ')
 
 
 
