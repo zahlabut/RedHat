@@ -249,7 +249,8 @@ def run_command_on_switch(ip, user, password, command):
     print out
     return out
 
-def delete_server(source_overcloud, ids_list, timeout=600):
+
+def delete_server(source_overcloud, ids_list, timeout=300):
     for id in ids_list:
         exec_command_line_command(source_overcloud + 'openstack server delete ' + id)
     existing_server_ids = [item['id'] for item in exec_command_line_command(source_overcloud + 'openstack server list -f json')['JsonOutput']]
@@ -268,7 +269,7 @@ def delete_server(source_overcloud, ids_list, timeout=600):
     # Return True if no server left, else return False
     return to_stop
 
-def wait_till_bm_is_in_state(source_overcloud,bm_ids, expected_state, timeout=600):
+def wait_till_bm_is_in_state(source_overcloud,bm_ids, expected_state, timeout=300):
     start_time = time.time()
     to_stop = False
     actual_states=[]
