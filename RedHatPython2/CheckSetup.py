@@ -526,6 +526,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             delete_result=delete_server(source_overcloud, existing_server_ids, 300)
             self.assertEquals(True, delete_result, 'Failed to delete existing servers: '+str(existing_server_ids))
         # Make sure that BM Nodes are in "available" and wait some time if needed
+        baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
         status=wait_till_bm_is_in_state(source_overcloud, baremetal_node_ids, 'available')
         self.assertEquals(True,status,'Failed, not all BM are in "available" Provisioning State!')
 
