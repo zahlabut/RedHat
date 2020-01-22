@@ -103,7 +103,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
         # Make sure that BM Nodes are in "available" and wait some time if needed
         status=wait_till_bm_is_in_state(source_overcloud, self.baremetal_node_ids, 'enroll')
-        if status==False
+        if status==False:
             status=wait_till_bm_is_in_state(source_overcloud, self.baremetal_node_ids, 'available')
             self.assertEquals(True,status,'Failed, not all BM are in "available" Provisioning State!')
 
