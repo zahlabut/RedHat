@@ -331,22 +331,12 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         time.sleep(10)
         existing_server_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
         self.assertNotEqual(len(existing_server_ids),0,'Failed: no existing servers detected')
-        for id in existing_server_ids:
-            exec_command_line_command(source_overcloud+'openstack server delete '+id)
-        existing_server_ids = [item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
-        start_time=time.time()
-        to_stop=False
-        # Wait till all servers are deleted "
-        while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
-            time.sleep(10)
-            list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
-            if len(list_servers_result)!=0:
-                names=[item['name'] for item in list_servers_result]
-                print '-- Existing servers are: ',names
-            if len(list_servers_result)==0:
-                to_stop=True
-        self.assertEqual(len(list_servers_result), 0, 'Failed: existing servers detected, IDs:\n'+str(list_servers_result))
-
+        print '--> Existing servers IDs: ',existing_server_ids
+        if existing_server_ids!=[]:
+            delete_result=delete_server(source_overcloud, existing_server_ids, 300)
+            self.assertEquals(True, delete_result, 'Failed to delete existing servers: '+str(existing_server_ids))
+        result=wait_till_bm_is_in_state(source_overcloud, baremetal_node_ids, 'available')
+        self.assertEquals(True, result, 'Failed, Baremetal noddes are not in "available" provisioning state!')
 
     """This test is a negative test, that is trying to create a VXLAN network type which is not supported when
     on physical switches, so proper error message should be displayed to user"""
