@@ -372,20 +372,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         existing_projects = [item['name'] for item in
                              exec_command_line_command(source_overcloud + 'openstack project list -f json')['JsonOutput']]
         self.assertIn('new-project',existing_projects,'Failed, there is no existing project: "new-project"')
-
-        # Check if any server exists and delete if it does
-        existing_servers_ids=[node['id'] for node in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
-        print '--> Existing servers IDs: ',existing_servers_ids
-        if existing_servers_ids!=[]:
-            print 'This test will try to delete all existing servers!'
-            delete_result=delete_server(source_overcloud, existing_servers_ids, 300)
-            self.assertEquals(True, delete_result, 'Failed to delete existing servers: '+str(existing_servers_ids))
-        # Make sure that BM Nodes are in "available" and wait some time if needed
-        status=wait_till_bm_is_in_state(source_overcloud, baremetal_node_ids, 'available')
-        self.assertEquals(True,status,'Failed, not all BM are in "available" Provisioning State!')
-
         # Create server as tenant user
-        time.sleep(30)
         bm_name='BM_Guest_Tenant_User'
         tenant_net=prms['tenant_nets'][0]
         tenant_net_id=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack network list -f json')['JsonOutput'] if item['name'] == tenant_net][0]
