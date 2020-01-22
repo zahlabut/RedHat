@@ -101,6 +101,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertNotEqual(0,len(self.baremetal_node_ids),'Failed, no baremetal nodes detected')
 
 
+
         # Make sure that BM Nodes are in "available" and wait some time if needed
         status=wait_till_bm_is_in_state(source_overcloud, self.baremetal_node_ids, 'enroll')
         if status==False:
