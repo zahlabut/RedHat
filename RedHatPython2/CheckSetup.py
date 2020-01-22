@@ -304,7 +304,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         ping_result=exec_command_line_command(ping_sommand)['CommandOutput']
         self.assertNotIn('time=',ping_result, 'Failed, PING did work somehow :-( ')
 
-
     """ This test is planed to validate that "Delete Bare Metal Guests" procedure is successfully completed.
     Note: it will try to delete all detected Servers on Overcloud.
     """
@@ -350,7 +349,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         if existing_server_ids!=[]:
             delete_result=delete_server(source_overcloud, existing_server_ids, 300)
             self.assertEquals(True, delete_result, 'Failed to delete existing servers: '+str(existing_server_ids))
-
 
     """This test is a negative test, that is trying to create a VXLAN network type which is not supported when
     on physical switches, so proper error message should be displayed to user"""
@@ -408,7 +406,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         new_actual_vlans=[new_actual_vlans[key] for key in new_actual_vlans.keys()]
         self.assertEqual(new_actual_vlans,actual_vlans,'Failed, VLAN was changed after deleting tenant user\n'+str(actual_vlans)+' --> '+str(new_actual_vlans))
 
-
     """This test is planned to check that when BM guest is powered off, physical
     port on switch will remain associated to the same VLAN it was before (no change on Switch)"""
     def test_014_power_off_bm_guest(self):
@@ -451,8 +448,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         new_actual_vlans=[new_actual_vlans[key] for key in new_actual_vlans.keys()]
         self.assertEqual(new_actual_vlans,actual_vlans,'Failed, VLAN was changed after deleting tenant user\n'+str(actual_vlans)+' --> '+str(new_actual_vlans))
 
-
-
     """This test is planned to check that there are no garbage strings (In comments for example) set by developers on Switch"""
     def test_015_no_garbage_strings_on_switch(self):
         print '\ntest_015_no_garbage_strings_on_switch'
@@ -460,10 +455,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         switch_conf_content = get_switch_configuration_file(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['switch_type'])
         profanity_result=profanity_check(switch_conf_content, 'description')
         self.assertEqual(False, profanity_result['ProfanityCheckResult'],'Failed, profanity check failed on line: "'+str(profanity_result['Failed_Line'])+'" check switch configuration file content')
-
-
-
-
 
     """This test is planed to test Trunk, so it will try to create BM guest connected to port set as Trunk
     one or more Vlans.
@@ -477,7 +468,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             if 'PARENT_PORT_1'.lower() not in ports:
                 port=exec_command_line_command(source_overcloud+'openstack port create --network tenant-net PARENT_PORT_1')
                 self.assertEqual(port['ReturnCode'], 0,'Failed to create TRUNK port!')
-
         # Check in trunk network exists, create if needed.
         networks=exec_command_line_command(source_overcloud+'openstack network trunk list -f json')
         if networks['ReturnCode']==0:
@@ -485,7 +475,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             if 'TRUNK_NET_1'.lower() not in networks:
                 port=exec_command_line_command(source_overcloud+'openstack network trunk create --parent-port PARENT_PORT_1 TRUNK_NET_1')
                 self.assertEqual(port['ReturnCode'], 0,'Failed to create TRUNK network!')
-
         # Check in subport exists, create if needed.
         ports=exec_command_line_command(source_overcloud+'openstack port list -f json')
         if ports['ReturnCode']==0:
@@ -493,7 +482,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             if 'SUB_PORT_1'.lower() not in ports:
                 port=exec_command_line_command(source_overcloud+'openstack port create --network tenant-net2 SUB_PORT_1')
                 self.assertEqual(port['ReturnCode'], 0,'Failed to create SubPort port!')
-
         # Add subport to trunk network
         net_details=exec_command_line_command(source_overcloud+'openstack network show tenant-net2 -f json')
         if net_details['ReturnCode']==0:
@@ -507,19 +495,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             if subport_id not in str(trunk_network_info['CommandOutput']).lower():
                 add_subport_to_net=exec_command_line_command(source_overcloud+'openstack network trunk set --subport port=SUB_PORT_1,segmentation-type=vlan,segmentation-id='+segmantation_id+' TRUNK_NET_1')
                 self.assertEqual(add_subport_to_net['ReturnCode'],0, 'Failed to add subport to trunk network!')
-
-        # Check if any server exists and delete if it does
-        existing_server_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']]
-        print '--> Existing servers IDs: ',existing_server_ids
-        if existing_server_ids!=[]:
-            print 'This test will try to delete all existing servers!'
-            delete_result=delete_server(source_overcloud, existing_server_ids, 300)
-            self.assertEquals(True, delete_result, 'Failed to delete existing servers: '+str(existing_server_ids))
-        # Make sure that BM Nodes are in "available" and wait some time if needed
-        baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
-        status=wait_till_bm_is_in_state(source_overcloud, baremetal_node_ids, 'available')
-        self.assertEquals(True,status,'Failed, not all BM are in "available" Provisioning State!')
-
         # Create servers
         admin_project_id=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack project list -f json')['JsonOutput']
                           if item['name']=='admin'][0]
@@ -530,8 +505,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest command return non Zero status code\n'+result['CommandOutput'])
         start_time=time.time()
         to_stop=False
-
-
         # Wait till all servers are getting into "active"
         while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
              time.sleep(10)
@@ -542,7 +515,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
              if list(set(statuses))==['active']:
                  to_stop=True
         self.assertEqual(to_stop,True,'Failed: No BM servers detected as "active", "openstack server list" result is:\n'+str(list_servers_result))
-
         # Check Trunk on Switch port
         actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
         print 'Detected Vlans on Switch Port are: '+str(actual_vlans)
