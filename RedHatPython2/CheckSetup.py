@@ -314,13 +314,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertNotIn('time=',ping_result, 'Failed, PING did work somehow :-( ')
 
 
-
-
-
-
-
-
-
     """ This test is planed to validate that "Delete Bare Metal Guests" procedure is successfully completed.
     Note: it will try to delete all detected Servers on Overcloud.
     """
@@ -346,17 +339,9 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         command_result=exec_command_line_command(command)['CommandOutput']
         self.assertIn('not supported',command_result,"Failed, VXLAN network was successfully created, not supported option!")
 
-
-
     """This test is planned to check that once Overcloud admin user delete user (userrc) that has active server, physical
     port on switch will remain associated to the same VLAN it was before (no change on Switch)"""
     def test_013_delete_tenant_user(self):
-        "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
-        "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
-        "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
-        "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
-        "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
-        "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
         print '\ntest_013_delete_tenant_user'
         baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
         self.assertNotEqual(0,len(baremetal_node_ids),'Failed, no baremetal nodes detected')
@@ -370,22 +355,15 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.assertIn('new-project',existing_projects,'Failed, there is no existing project: "new-project"')
 
         # Check if any server exists and delete if it does
-        existing_server_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']]
-        if len(existing_server_ids)>0:
-            for id in existing_server_ids:
-                exec_command_line_command(source_overcloud+'openstack server delete '+id)
-        start_time=time.time()
-        to_stop=False
-        # Wait till all servers are deleted "
-        while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
-            time.sleep(10)
-            list_servers_result=exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']
-            if len(list_servers_result)!=0:
-                names=[item['name'] for item in list_servers_result]
-                print '-- Existing servers are: ',names
-            if len(list_servers_result)==0:
-                to_stop=True
-        self.assertEqual(len(list_servers_result), 0, 'Failed: existing servers detected, IDs:\n'+str(list_servers_result))
+        existing_servers_ids=[node['id'] for node in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
+        print '--> Existing servers IDs: ',existing_servers_ids
+        if existing_servers_ids!=[]:
+            print 'This test will try to delete all existing servers!'
+            delete_result=delete_server(source_overcloud, existing_servers_ids, 300)
+            self.assertEquals(True, delete_result, 'Failed to delete existing servers: '+str(existing_servers_ids))
+        # Make sure that BM Nodes are in "available" and wait some time if needed
+        status=wait_till_bm_is_in_state(source_overcloud, baremetal_node_ids, 'available')
+        self.assertEquals(True,status,'Failed, not all BM are in "available" Provisioning State!')
 
         # Create server as tenant user
         time.sleep(30)
