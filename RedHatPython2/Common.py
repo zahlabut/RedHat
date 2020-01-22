@@ -270,8 +270,6 @@ def delete_server(source_overcloud, ids_list, timeout=300):
     return to_stop
 
 def wait_till_bm_is_in_state(source_overcloud,bm_ids, expected_state, timeout=300):
-    if expected_state=='enroll':
-        timeout=20
     start_time = time.time()
     to_stop = False
     actual_states=[]

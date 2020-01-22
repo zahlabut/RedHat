@@ -100,13 +100,14 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         print '-- Existing BM node IDs are: '+str(self.baremetal_node_ids)
         self.assertNotEqual(0,len(self.baremetal_node_ids),'Failed, no baremetal nodes detected')
 
-
-
-        # Make sure that BM Nodes are in "available" and wait some time if needed
-        status=wait_till_bm_is_in_state(source_overcloud, self.baremetal_node_ids, 'enroll')
-        if status==False:
-            status=wait_till_bm_is_in_state(source_overcloud, self.baremetal_node_ids, 'available')
-            self.assertEquals(True,status,'Failed, not all BM are in "available" Provisioning State!')
+        # Check provisioning state
+        self.baremetal_node_states=[item['provisioning state'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
+        if list(set(self.baremetal_node_states))!=['enroll']:
+            # Make sure that BM Nodes are in "available" and wait some time if needed
+            status=wait_till_bm_is_in_state(source_overcloud, self.baremetal_node_ids, 'enroll')
+            if status==False:
+                status=wait_till_bm_is_in_state(source_overcloud, self.baremetal_node_ids, 'available')
+                self.assertEquals(True,status,'Failed, not all BM are in "available" Provisioning State!')
 
 
     """ This test is planed to validate that Ironic service is in Catalog List (exists on Overcloud) """
