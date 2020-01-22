@@ -380,7 +380,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         vlan_id=exec_command_line_command(source_overcloud+'openstack network show '+tenant_net+' -f json')['JsonOutput']['provider:segmentation_id']
         create_bm_command=source_tenant_user+'openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+str(tenant_net_id)+' '+bm_name+' -f json'
         result=exec_command_line_command(create_bm_command)
-        bm_guest_id=result['JsonOutput']['id']
         self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest command has failed with:\n'+result['CommandOutput'])
         expected_vlans_on_switch.append(str(vlan_id))
         start_time=time.time()
@@ -414,19 +413,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     port on switch will remain associated to the same VLAN it was before (no change on Switch)"""
     def test_014_power_off_bm_guest(self):
         print '\ntest_014_power_off_bm_guest'
-        baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
-        self.assertNotEqual(0,len(baremetal_node_ids),'Failed, no baremetal nodes detected')
-        # Check if any server exists and delete if it does
-        existing_server_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']]
-        print '--> Existing servers IDs: ',existing_server_ids
-        if existing_server_ids!=[]:
-            print 'This test will try to delete all existing servers!'
-            delete_result=delete_server(source_overcloud, existing_server_ids, 300)
-            self.assertEquals(True, delete_result, 'Failed to delete existing servers: '+str(existing_server_ids))
-        # Make sure that BM Nodes are in "available" and wait some time if needed
-        status=wait_till_bm_is_in_state(source_overcloud, baremetal_node_ids, 'available')
-        self.assertEquals(True,status,'Failed, not all BM are in "available" Provisioning State!')
-
         # Create server as admin user
         bm_name='BM_Guest'
         tenant_net=prms['tenant_nets'][0]
@@ -435,7 +421,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         vlan_id=exec_command_line_command(source_overcloud+'openstack network show '+tenant_net+' -f json')['JsonOutput']['provider:segmentation_id']
         create_bm_command=source_overcloud+'openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+str(tenant_net_id)+' '+bm_name+' -f json'
         result=exec_command_line_command(create_bm_command)
-        bm_guest_id=result['JsonOutput']['id']
         self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest command has failed with:\n'+result['CommandOutput'])
         expected_vlans_on_switch.append(str(vlan_id))
         start_time=time.time()
@@ -456,7 +441,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         for vlan in expected_vlans_on_switch:
             self.assertIn(str(vlan),str(actual_vlans),
                             'Failed, detected VLANs on swith are not as expected:''\n'+str(actual_vlans)+'\n'+str(expected_vlans_on_switch))
-
         # As admin user power off BM guest and check that port on Swich is not changed after doing that
         baremetal_node_id = [item['uuid'] for item in
                              exec_command_line_command(source_overcloud + 'openstack baremetal node list -f json')[
