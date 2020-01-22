@@ -91,25 +91,19 @@ for ip in nodes_ips:
     ssh_object.ssh_close()
 
 
-
-
-
 class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
-
     def setUp(self):
         print "\n--> SetUp Start"
         # Chack that BM guest are imported on Overcloud #
         self.baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
         print '-- Existing BM node IDs are: '+str(self.baremetal_node_ids)
         self.assertNotEqual(0,len(self.baremetal_node_ids),'Failed, no baremetal nodes detected')
-
         # Check provisioning state
         self.baremetal_node_states=[item['provisioning state'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
         if list(set(self.baremetal_node_states))!=['enroll']:
             # Make sure that BM Nodes are in "available" and wait some time if needed
             status=wait_till_bm_is_in_state(source_overcloud, self.baremetal_node_ids, 'available')
             self.assertEquals(True,status,'Failed, not all BM are in "available" Provisioning State!')
-
 
     """ This test is planed to validate that Ironic service is in Catalog List (exists on Overcloud) """
     def test_001_ironic_in_catalog(self):
@@ -257,11 +251,9 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     """
     def test_010_create_bm_guests_in_parallel_and_check_connectivity(self):
         print '\ntest_010_create_bm_guests_in_parallel'
-        baremetal_node_ids=self.baremetal_node_ids
         # Create BM Guests
         bm_name='BM_Guest_'
         bm_index=0
-        created_bm=[]
         tenant_nets=prms['tenant_nets']
         tenant_net_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack network list -f json')['JsonOutput'] if item['name'] in tenant_nets]
         self.assertNotEqual(0,len(tenant_net_ids),'Failed, no tenant networks detected')
@@ -294,10 +286,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             self.assertIn(str(vlan),str(actual_vlans),
                             'Failed, detected VLANs on swith are not as expected:''\n'+str(actual_vlans)+'\n'+str(expected_vlans_on_switch))
 
-        # Delete all existing Floating IPs if any
-        existing_floating_ip_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack floating ip list -f json')['JsonOutput']]
-        for id in existing_floating_ip_ids:
-            exec_command_line_command(source_overcloud+'openstack floating ip delete '+id)
+
         # Add Floating IP to each server
         server_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
         servers_info=[]
@@ -612,8 +601,11 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             print '--> Delete all existing BM Guests'
             delete_result=delete_server(source_overcloud, self.existing_servers_ids, 300)
             self.assertEquals(True, delete_result, 'Failed to delete existing servers: '+str(self.existing_servers_ids))
-            time.sleep(10) # Seems like on parallel execution one of the node is getting into "Clean Fail" state
 
+        # Delete all existing Floating IPs if any
+        self.existing_floating_ip_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack floating ip list -f json')['JsonOutput']]
+        for id in self.existing_floating_ip_ids:
+            exec_command_line_command(source_overcloud+'openstack floating ip delete '+id)
 
 if __name__ == '__main__':
     unittest.main()
