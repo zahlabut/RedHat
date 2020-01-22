@@ -407,35 +407,21 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     """This test is planned to check that when BM guest is powered off, physical
     port on switch will remain associated to the same VLAN it was before (no change on Switch)"""
     def test_014_power_off_bm_guest(self):
-        "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
-        "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
-        "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
-        "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
-        "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
-        "Ceck that baremetals are in manageble state!!!!!!!!!!!!!!!!!!"
         print '\ntest_014_power_off_bm_guest'
-        time.sleep(30)
         baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
         self.assertNotEqual(0,len(baremetal_node_ids),'Failed, no baremetal nodes detected')
         # Check if any server exists and delete if it does
         existing_server_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']]
-        if len(existing_server_ids)>0:
-            for id in existing_server_ids:
-                exec_command_line_command(source_overcloud+'openstack server delete '+id)
-        start_time=time.time()
-        to_stop=False
-        # Wait till all servers are deleted "
-        while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
-            time.sleep(10)
-            list_servers_result=exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']
-            if len(list_servers_result)!=0:
-                names=[item['name'] for item in list_servers_result]
-                print '-- Existing servers are: ',names
-            if len(list_servers_result)==0:
-                to_stop=True
-        self.assertEqual(len(list_servers_result), 0, 'Failed: existing servers detected, IDs:\n'+str(list_servers_result))
+        print '--> Existing servers IDs: ',existing_server_ids
+        if existing_server_ids!=[]:
+            print 'This test will try to delete all existing servers!'
+            delete_result=delete_server(source_overcloud, existing_server_ids, 300)
+            self.assertEquals(True, delete_result, 'Failed to delete existing servers: '+str(existing_server_ids))
+        # Make sure that BM Nodes are in "available" and wait some time if needed
+        status=wait_till_bm_is_in_state(source_overcloud, baremetal_node_ids, 'available')
+        self.assertEquals(True,status,'Failed, not all BM are in "available" Provisioning State!')
+
         # Create server as admin user
-        time.sleep(30)
         bm_name='BM_Guest'
         tenant_net=prms['tenant_nets'][0]
         tenant_net_id = [item['id'] for item in exec_command_line_command(source_overcloud + 'openstack network list -f json')['JsonOutput'] if item['name'] == tenant_net][0]
@@ -446,7 +432,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         bm_guest_id=result['JsonOutput']['id']
         self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest command has failed with:\n'+result['CommandOutput'])
         expected_vlans_on_switch.append(str(vlan_id))
-        start_time=time.time()
         start_time=time.time()
         to_stop=False
         # Wait till all servers are getting into "active"
