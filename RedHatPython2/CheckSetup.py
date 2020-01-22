@@ -258,7 +258,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         tenant_net_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack network list -f json')['JsonOutput'] if item['name'] in tenant_nets]
         self.assertNotEqual(0,len(tenant_net_ids),'Failed, no tenant networks detected')
         expected_vlans_on_switch=[]
-
         # Create servers
         for net in tenant_net_ids:
             bm_index+=1
@@ -285,8 +284,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         for vlan in expected_vlans_on_switch:
             self.assertIn(str(vlan),str(actual_vlans),
                             'Failed, detected VLANs on swith are not as expected:''\n'+str(actual_vlans)+'\n'+str(expected_vlans_on_switch))
-
-
         # Add Floating IP to each server
         server_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
         servers_info=[]
@@ -300,7 +297,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             print server_info
             self.assertEquals(add_result['ReturnCode'],0,'Failed to add Floating Ip to Server: '+id)
             servers_info.append(server_info)
-
         # Ping test, should fail, because BM guests are not on the same VLAN
         first_server_ip=servers_info[0]['FloatingIp']
         next_server_internal_ip=servers_info[1]['InternalIp']
@@ -368,8 +364,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     port on switch will remain associated to the same VLAN it was before (no change on Switch)"""
     def test_013_delete_tenant_user(self):
         print '\ntest_013_delete_tenant_user'
-        baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
-        self.assertNotEqual(0,len(baremetal_node_ids),'Failed, no baremetal nodes detected')
         # Check if tenant user and projects exists at all
         existing_users = [item['name'] for item in
                           exec_command_line_command(source_overcloud + 'openstack user list -f json')['JsonOutput']]
