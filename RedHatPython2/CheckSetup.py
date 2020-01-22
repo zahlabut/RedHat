@@ -518,26 +518,29 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                 add_subport_to_net=exec_command_line_command(source_overcloud+'openstack network trunk set --subport port=SUB_PORT_1,segmentation-type=vlan,segmentation-id='+segmantation_id+' TRUNK_NET_1')
                 self.assertEqual(add_subport_to_net['ReturnCode'],0, 'Failed to add subport to trunk network!')
 
-        # Create BM Guest
-        # If servers exists, exit #
-        existing_servers_names=[node['name'] for node in exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']]
-        self.assertNotIn('BM_Guest1'.lower(),str(existing_servers_names).lower(),'Failed: existing nodes have been detected IDs:\n'+str(existing_servers_names))
+        # Check if any server exists and delete if it does
+        existing_server_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']]
+        print '--> Existing servers IDs: ',existing_server_ids
+        if existing_server_ids!=[]:
+            print 'This test will try to delete all existing servers!'
+            delete_result=delete_server(source_overcloud, existing_server_ids, 300)
+            self.assertEquals(True, delete_result, 'Failed to delete existing servers: '+str(existing_server_ids))
+        # Make sure that BM Nodes are in "available" and wait some time if needed
+        status=wait_till_bm_is_in_state(source_overcloud, baremetal_node_ids, 'available')
+        self.assertEquals(True,status,'Failed, not all BM are in "available" Provisioning State!')
+
         # Create servers
         admin_project_id=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack project list -f json')['JsonOutput']
                           if item['name']=='admin'][0]
         default_sec_gr_id=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack security group list -f json')['JsonOutput'] if
                            item['project']==admin_project_id][0]
         create_bm_command=source_overcloud+'openstack server create --image overcloud-full --security-group '+default_sec_gr_id+' --flavor baremetal --port PARENT_PORT_1 --key default BM_Guest1'
-
-
-
-
         result=exec_command_line_command(create_bm_command)
-
         self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest command return non Zero status code\n'+result['CommandOutput'])
-
         start_time=time.time()
         to_stop=False
+
+
         # Wait till all servers are getting into "active"
         while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
              time.sleep(10)
