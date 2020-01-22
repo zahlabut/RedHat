@@ -92,6 +92,27 @@ for ip in nodes_ips:
 
 
 class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
+
+    def setUp(self):
+        print "--> SetUp Start"
+        # Chack that BM guest are imported on Overcloud #
+        self.baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
+        print '-- Existing BM node IDs are: '+str(self.baremetal_node_ids)
+        self.assertNotEqual(0,len(self.baremetal_node_ids),'Failed, no baremetal nodes detected')
+
+        # Delete all existing BM guests if any #
+        self.existing_servers_ids=[node['id'] for node in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
+        print '--> Existing servers IDs: ',self.existing_servers_ids
+        if self.existing_servers_ids!=[]:
+            print '--> Delete all existing BM Guests'
+            delete_result=delete_server(source_overcloud, self.existing_servers_ids, 300)
+            self.assertEquals(True, delete_result, 'Failed to delete existing servers: '+str(self.existing_servers_ids))
+            time.sleep(10) # Seems like on parallel execution one of the node is getting into "Clean Fail" state
+        # Make sure that BM Nodes are in "available" and wait some time if needed
+        status=wait_till_bm_is_in_state(source_overcloud, self.baremetal_node_ids, 'available')
+        self.assertEquals(True,status,'Failed, not all BM are in "available" Provisioning State!')
+
+
     """ This test is planed to validate that Ironic service is in Catalog List (exists on Overcloud) """
     def test_001_ironic_in_catalog(self):
         print '\ntest_001_ironic_in_catalog'
@@ -208,9 +229,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     """
     def test_009_clean_bm_guests_in_parallel(self):
         print '\ntest_009_clean_bm_guests_in_parallel'
-        baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
-        print '-- Existing BM node IDs are: '+str(baremetal_node_ids)
-        self.assertNotEqual(0,len(baremetal_node_ids),'Failed, no baremetal nodes detected')
+        baremetal_node_ids=self.baremetal_node_ids
         baremetal_vlan_id = exec_command_line_command(source_overcloud + 'openstack network show baremetal -f json')['JsonOutput']['provider:segmentation_id']
         # Change state to "manageable"
         for id in baremetal_node_ids:
@@ -240,8 +259,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     """
     def test_010_create_bm_guests_in_parallel_and_check_connectivity(self):
         print '\ntest_010_create_bm_guests_in_parallel'
-        baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
-        self.assertNotEqual(0,len(baremetal_node_ids),'Failed, no baremetal nodes detected')
+        baremetal_node_ids=self.baremetal_node_ids
         # Create BM Guests
         bm_name='BM_Guest_'
         bm_index=0
@@ -250,17 +268,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         tenant_net_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack network list -f json')['JsonOutput'] if item['name'] in tenant_nets]
         self.assertNotEqual(0,len(tenant_net_ids),'Failed, no tenant networks detected')
         expected_vlans_on_switch=[]
-        # Delete all existing servers if any #
-        existing_servers_ids=[node['id'] for node in exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']]
-        print '--> Existing servers IDs: ',existing_servers_ids
-        if existing_servers_ids!=[]:
-            print 'This test will try to delete all existing servers!'
-            delete_result=delete_server(source_overcloud, existing_servers_ids, 300)
-            self.assertEquals(True, delete_result, 'Failed to delete existing servers: '+str(existing_servers_ids))
-            time.sleep(10) # Seems like on parallel execution one of the node is getting into "Clean Fail" state
-        # Make sure that BM Nodes are in "available" and wait some time if needed
-        status=wait_till_bm_is_in_state(source_overcloud, baremetal_node_ids, 'available')
-        self.assertEquals(True,status,'Failed, not all BM are in "available" Provisioning State!')
+
         # Create servers
         for net in tenant_net_ids:
             bm_index+=1
