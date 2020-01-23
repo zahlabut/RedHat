@@ -291,16 +291,28 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             result=exec_command_line_command(source_overcloud+'openstack floating ip create external -f json')['JsonOutput']
             server_info['FloatingIpId']=result['id']
             server_info['FloatingIp']=result['floating_ip_address']
+            server_info['Name']=result['name']
             add_result=exec_command_line_command(source_overcloud+'openstack server add floating ip '+id+' '+server_info['FloatingIpId'])
             print server_info
             self.assertEquals(add_result['ReturnCode'],0,'Failed to add Floating Ip to Server: '+id)
             servers_info.append(server_info)
         # Ping test, should fail, because BM guests are not on the same VLAN
-        first_server_ip=servers_info[0]['FloatingIp']
-        next_server_internal_ip=servers_info[1]['InternalIp']
-        ping_sommand='ssh cloud-user@'+first_server_ip+' ping '+next_server_internal_ip+' -c 1'
-        ping_result=exec_command_line_command(ping_sommand)['CommandOutput']
-        self.assertNotIn('time=',ping_result, 'Failed, PING did work somehow :-( ')
+
+        # BM_Guest_1 VM_1 --> OK
+        # BM_Guest_1 VM_2 --> FAIL
+        # BM_Guest_2 VM_2 --> OK
+        # BM_Guest_1 VM_1 --> FAIL
+
+
+        first_bm_ip=[server['FloatingIp'] for server in servers_info if server['Name']=='BM_Guest_1']
+        for server in servers_info:
+            ping_command = 'ssh cloud-user@' + first_bm_ip + ' ping ' + server['InternalIp'] + ' -c 2'
+            ping_result = exec_command_line_command(ping_command)['CommandOutput']
+            if server['Name'].split('_')[-1]=='1':
+                self.assertIn('time=',ping_result, 'Failed, PING \n'+ping_result)
+            else:
+                self.assertNotIn('time=', ping_result, 'Failed, PING did worked somehow :(\n' + ping_result)
+
 
     """ This test is planed to validate that "Delete Bare Metal Guests" procedure is successfully completed.
     Note: it will try to delete all detected Servers on Overcloud.
