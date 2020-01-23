@@ -249,7 +249,6 @@ def run_command_on_switch(ip, user, password, command):
     print out
     return out
 
-
 def delete_server(source_overcloud, ids_list, timeout=300):
     for id in ids_list:
         exec_command_line_command(source_overcloud + 'openstack server delete ' + id)
@@ -296,6 +295,15 @@ def wait_till_servers_are_active(source_overcloud,timeout=600):
         print '--> Servers statuses are: ', statuses
         if list(set(statuses)) == ['active']:
             to_stop = True
+    return to_stop
+
+def check_ssh(ssh_command, timeout=300):
+    start_time=time.time()
+    to_stop=False
+    while to_stop == False and time.time() < (start_time + timeout):
+        time.sleep(3)
+        if exec_command_line_command(ssh_command)['ReturnCode']==0:
+            to_stop=True
     return to_stop
 
 

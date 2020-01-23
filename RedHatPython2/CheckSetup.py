@@ -296,20 +296,14 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             print server_info
             self.assertEquals(add_result['ReturnCode'],0,'Failed to add Floating Ip to Server: '+id)
             servers_info.append(server_info)
-        # Ping test, should fail, because BM guests are not on the same VLAN
 
-        # BM_Guest_1 VM_1 --> OK
-        # BM_Guest_1 VM_2 --> FAIL
-        # BM_Guest_2 VM_2 --> OK
-        # BM_Guest_1 VM_1 --> FAIL
-
-        print servers_info
-
-        raw_input('stam')
-
-
+        # Connectivity check using PING, logic is as follow:
+        # SSH to BM_Gueest_1 and PING to the rest of servers (to internal IPs),
+        # Only Servers with the same index, it means "1" (VM_1 for example) should work and the rest should not.
         first_bm_ip=[server['FloatingIp'] for server in servers_info if server['Name']=='BM_Guest_1'.lower()][0]
         print first_bm_ip
+        is_ssh_ok=check_ssh('ssh cloud-user@'+first_bm_ip)
+        self.assertEquals(True, is_ssh_ok, 'Failed to establish SSH connection to BM Guest FloatingIp: '+first_bm_ip)
         for server in servers_info:
             ping_command = 'ssh cloud-user@' + first_bm_ip + ' ping ' + server['InternalIp'] + ' -c 2'
             print '--> '+ping_command
