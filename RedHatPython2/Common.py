@@ -286,7 +286,7 @@ def wait_till_bm_is_in_state(source_overcloud, expected_state, timeout=600):
             print_in_color('Failed to execute: '+command)
     return to_stop
 
-def wait_till_servers_are_active(source_overcloud,timeout=600()):
+def wait_till_servers_are_active(source_overcloud,timeout=600):
     start_time = time.time()
     to_stop = False
     while to_stop == False and time.time() < (start_time + timeout):
