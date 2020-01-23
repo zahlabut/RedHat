@@ -252,7 +252,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     """
     def test_010_create_bm_guests_in_parallel_and_check_connectivity(self):
         print '\ntest_010_create_bm_guests_in_parallel'
-        # Create BM Guests
+        # Create Servers
         bm_name='BM_Guest_'
         vm_name='VM_'
         counter=0
@@ -268,7 +268,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             result=exec_command_line_command(create_bm_command)
             self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest, command return non Zero status code\n'+result['CommandOutput'])
             create_vm_command=source_overcloud+'openstack server create --small baremetal --image overcloud-full --key default --nic net-id='+net+' '+vm_name+str(counter)
-            result=exec_command_line_command(create_bm_command)
+            result=exec_command_line_command(create_vm_command)
             self.assertEqual(0, result['ReturnCode'], 'Failed: create VM, command return non Zero status code\n'+result['CommandOutput'])
             expected_vlans_on_switch.append(str(vlan_id))
 
