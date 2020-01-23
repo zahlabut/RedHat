@@ -304,7 +304,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         # BM_Guest_1 VM_1 --> FAIL
 
 
-        first_bm_ip=[server['FloatingIp'] for server in servers_info if server['Name']=='BM_Guest_1']
+        first_bm_ip=[server['FloatingIp'] for server in servers_info if server['Name']=='BM_Guest_1'][0]
         for server in servers_info:
             ping_command = 'ssh cloud-user@' + first_bm_ip + ' ping ' + server['InternalIp'] + ' -c 2'
             ping_result = exec_command_line_command(ping_command)['CommandOutput']
