@@ -278,7 +278,7 @@ def wait_till_bm_is_in_state(source_overcloud, expected_state, timeout=600):
         command_result=exec_command_line_command(command)
         if command_result['ReturnCode']==0:
             actual_states=[item['provisioning state'] for item in command_result['JsonOutput']]
-            print '-- Actual Provisioing States are: '+str(actual_states)
+            print '--> Actual Provisioing States are: '+str(actual_states)
             if list(set(actual_states)) == [expected_state]:
                 to_stop=True
             if 'clean failed' in actual_states:
@@ -295,10 +295,9 @@ def wait_till_servers_are_active(source_overcloud,timeout=600):
         time.sleep(10)
         list_servers_result = exec_command_line_command(source_overcloud + 'openstack server list --all -f json')['JsonOutput']
         statuses = [item['status'] for item in list_servers_result]
+        print '--> Server statuses: '+str(statuses)
         if 'error' in statuses:
-            print 'here'
-            print statuses
-            #return False
+            return False
         print '--> Servers statuses are: ', statuses
         if list(set(statuses)) == ['active']:
             to_stop = True
