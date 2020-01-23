@@ -544,8 +544,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         errors_file.close()
         self.assertEqual(test_failed,False,'Failed, open '+error_file_name+' for more details!')
 
-
-
     def tearDown(self):
         print '\n--> TearDown start'
         # Delete all existing BM guests if any #
