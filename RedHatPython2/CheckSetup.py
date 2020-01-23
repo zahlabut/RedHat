@@ -247,8 +247,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     """ This test is planed to validate that Bare Metal guests creation (as Servers on Overcloud) is successfully done and that
     Ansible Networking feature sets proper VLAN on switch, depending on "network" which is used for creation.
     Note: this test will try to create server per existing Tenant network in "tenant_nets" parameter.
-    In addition to that, floating IP will be added to each server and then it will use SSH+PING to validate thata
-    there is no connectivity between first and "next=second" BM guests, as both not in the same VLAN 
+    In addition to that, floating IP will be added to each server and then it will use SSH+PING to validate that
+    there is no connectivity between servers not in the same VLAN, VMs are also covered in this test. 
     """
     def test_010_create_bm_guests_in_parallel_and_check_connectivity(self):
         print '\ntest_010_create_bm_guests_in_parallel'
