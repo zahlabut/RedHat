@@ -336,18 +336,11 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             result=exec_command_line_command(create_bm_command)
             self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest command return non Zero status code\n'+result['CommandOutput'])
             expected_vlans_on_switch.append(str(vlan_id))
-        start_time=time.time()
-        to_stop=False
+
         # Wait till all servers are getting into "active"
-        while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
-            time.sleep(10)
-            list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
-            statuses=[item['status'] for item in list_servers_result]
-            print '--> Servers statuses are: ',statuses
-            self.assertNotIn('error',statuses,'Failed, "error" state has been detected:'+str(statuses))
-            if list(set(statuses))==['active']:
-                to_stop=True
-        self.assertEqual(to_stop,True,'Failed: No BM servers detected as "active", "openstack server list" result is:\n'+str(list_servers_result))
+        result=wait_till_servers_are_active(source_overcloud)
+        self.assertEquals(True, result, 'Failed, not all Servers are in "active" status!')
+
         # Make sure that each server was created on proper network, basing on VLAN id comparison
         actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
         actual_vlans=[actual_vlans[key] for key in actual_vlans.keys()]
@@ -394,16 +387,12 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         expected_vlans_on_switch.append(str(vlan_id))
         start_time=time.time()
         to_stop=False
+
+
         # Wait till all servers are getting into "active"
-        while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
-            time.sleep(10)
-            list_servers_result=exec_command_line_command(source_tenant_user+'openstack server list -f json')['JsonOutput']
-            statuses=[item['status'] for item in list_servers_result]
-            print '--> Servers statuses are: ',statuses
-            self.assertNotIn('error',statuses,'Failed, "error" state has been detected:'+str(statuses))
-            if list(set(statuses))==['active']:
-                to_stop=True
-        self.assertEqual(to_stop,True,'Failed: No BM servers detected as "active", "openstack server list" result is:\n'+str(list_servers_result))
+        result=wait_till_servers_are_active(source_overcloud)
+        self.assertEquals(True, result, 'Failed, not all Servers are in "active" status!')
+
         # Make sure that each server was created on proper network, basing on VLAN id comparison
         actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
         actual_vlans=[actual_vlans[key] for key in actual_vlans.keys()]
@@ -432,18 +421,11 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         result=exec_command_line_command(create_bm_command)
         self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest command has failed with:\n'+result['CommandOutput'])
         expected_vlans_on_switch.append(str(vlan_id))
-        start_time=time.time()
-        to_stop=False
+
         # Wait till all servers are getting into "active"
-        while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
-            time.sleep(10)
-            list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
-            statuses=[item['status'] for item in list_servers_result]
-            print '--> Servers statuses are: ',statuses
-            self.assertNotIn('error',statuses,'Failed, "error" state has been detected:'+str(statuses))
-            if list(set(statuses))==['active']:
-                to_stop=True
-        self.assertEqual(to_stop,True,'Failed: No BM servers detected as "active", "openstack server list" result is:\n'+str(list_servers_result))
+        result=wait_till_servers_are_active(source_overcloud)
+        self.assertEquals(True, result, 'Failed, not all Servers are in "active" status!')
+
         # Make sure that each server was created on proper network, basing on VLAN id comparison
         actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
         actual_vlans=[actual_vlans[key] for key in actual_vlans.keys()]
@@ -515,18 +497,12 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         create_bm_command=source_overcloud+'openstack server create --image overcloud-full --security-group '+default_sec_gr_id+' --flavor baremetal --port PARENT_PORT_1 --key default BM_Guest1'
         result=exec_command_line_command(create_bm_command)
         self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest command return non Zero status code\n'+result['CommandOutput'])
-        start_time=time.time()
-        to_stop=False
+
+
         # Wait till all servers are getting into "active"
-        while to_stop == False and time.time() < (start_time + create_bm_server_timeout):
-             time.sleep(10)
-             list_servers_result=exec_command_line_command(source_overcloud+'openstack server list -f json')['JsonOutput']
-             statuses=[item['status'] for item in list_servers_result]
-             print '--> Servers statuses are: ',statuses
-             self.assertNotIn('error',statuses,'Failed, "error" state has been detected:'+str(statuses))
-             if list(set(statuses))==['active']:
-                 to_stop=True
-        self.assertEqual(to_stop,True,'Failed: No BM servers detected as "active", "openstack server list" result is:\n'+str(list_servers_result))
+        result=wait_till_servers_are_active(source_overcloud)
+        self.assertEquals(True, result, 'Failed, not all Servers are in "active" status!')
+
         # Check Trunk on Switch port
         actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
         print 'Detected Vlans on Switch Port are: '+str(actual_vlans)
