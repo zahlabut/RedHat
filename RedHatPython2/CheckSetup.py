@@ -106,6 +106,9 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             # Make sure that BM Nodes are in "available" and wait some time if needed
             status=wait_till_bm_is_in_state(source_overcloud, 'available')
             self.assertEquals(True,status,'Failed, not all BM are in "available" Provisioning State!')
+        else:
+            self.test_009_clean_bm_guests_in_parallel()
+
 
     """ This test is planed to validate that Ironic service is in Catalog List (exists on Overcloud) """
     def test_001_ironic_in_catalog(self):
