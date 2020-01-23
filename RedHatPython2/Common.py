@@ -297,14 +297,23 @@ def wait_till_servers_are_active(source_overcloud,timeout=600):
             to_stop = True
     return to_stop
 
-def check_ssh(ssh_command, timeout=300):
-    start_time=time.time()
-    to_stop=False
-    while to_stop == False and time.time() < (start_time + timeout):
-        time.sleep(3)
-        if exec_command_line_command(ssh_command)['ReturnCode']==0:
-            to_stop=True
-    return to_stop
+def check_ssh(ip, user,password,timeout=300):
+    try:
+        to_stop=False
+        start_time=time.time()
+        while to_stop == False and time.time() < (start_time + timeout):
+            time.sleep(3)
+            ssh_object = SSH(ip, user,password)
+            ssh_object.ssh_connect_password()
+            out = ssh_object.ssh_command_only('date')['Stdout']
+            if len(str(out))!=0:
+                to_stop=True
+            ssh_object.ssh_close()
+        return to_stop
+    except Exception,e:
+        print_in_color(str(e),'red')
+        return False
+
 
 
 

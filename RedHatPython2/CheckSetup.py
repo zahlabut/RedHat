@@ -1,6 +1,7 @@
 from Common import *
 import unittest
 
+
 ### Parameters ###
 overclud_user='heat-admin'
 overcloud_ssh_key='/home/stack/.ssh/id_rsa'
@@ -302,16 +303,29 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         # Only Servers with the same index, it means "1" (VM_1 for example) should work and the rest should not.
         first_bm_ip=[server['FloatingIp'] for server in servers_info if server['Name']=='BM_Guest_1'.lower()][0]
         print first_bm_ip
-        is_ssh_ok=check_ssh('ssh cloud-user@'+first_bm_ip)
+        is_ssh_ok=check_ssh(first_bm_ip,'cloud-user','')
         self.assertEquals(True, is_ssh_ok, 'Failed to establish SSH connection to BM Guest FloatingIp: '+first_bm_ip)
+        # for server in servers_info:
+        #     ping_command = 'ssh cloud-user@' + first_bm_ip + ' ping ' + server['InternalIp'] + ' -c 2'
+        #     print '--> '+ping_command
+        #     ping_result = exec_command_line_command(ping_command)['CommandOutput']
+        #     print ping_result
+        #     if server['Name'].split('_')[-1]=='1':
+        #         self.assertIn('time=',ping_result, 'Failed, PING \n'+ping_result)
+        #     else:
+        #         self.assertNotIn('time=', ping_result, 'Failed, PING did worked somehow :(\n' + ping_result)
+
         for server in servers_info:
-            ping_command = 'ssh cloud-user@' + first_bm_ip + ' ping ' + server['InternalIp'] + ' -c 2'
-            print '--> '+ping_command
-            ping_result = exec_command_line_command(ping_command)['CommandOutput']
+            ssh_object = SSH('10.9.92.21', 'cloud-user', '')
+            ssh_object.ssh_connect_password()
+            ping_result = ssh_object.ssh_command_only('ping '+server['InternalIp']+' -c 2')['Stdout']
+            print ping_result
             if server['Name'].split('_')[-1]=='1':
                 self.assertIn('time=',ping_result, 'Failed, PING \n'+ping_result)
             else:
                 self.assertNotIn('time=', ping_result, 'Failed, PING did worked somehow :(\n' + ping_result)
+
+
 
 
     """ This test is planed to validate that "Delete Bare Metal Guests" procedure is successfully completed.
