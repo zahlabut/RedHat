@@ -292,6 +292,8 @@ def wait_till_servers_are_active(source_overcloud,timeout=600):
         time.sleep(10)
         list_servers_result = exec_command_line_command(source_overcloud + 'openstack server list --all -f json')['JsonOutput']
         statuses = [item['status'] for item in list_servers_result]
+        if 'error' in statuses:
+            return False
         print '--> Servers statuses are: ', statuses
         if list(set(statuses)) == ['active']:
             to_stop = True
