@@ -269,7 +269,7 @@ def delete_server(source_overcloud, ids_list, timeout=300):
     # Return True if no server left, else return False
     return to_stop
 
-def wait_till_bm_is_in_state(source_overcloud,bm_ids, expected_state, timeout=600):
+def wait_till_bm_is_in_state(source_overcloud, expected_state, timeout=600):
     start_time = time.time()
     to_stop = False
     actual_states=[]
@@ -286,7 +286,17 @@ def wait_till_bm_is_in_state(source_overcloud,bm_ids, expected_state, timeout=60
             print_in_color('Failed to execute: '+command)
     return to_stop
 
-
+def wait_till_servers_are_active(source_overcloud,timeout=600()):
+    start_time = time.time()
+    to_stop = False
+    while to_stop == False and time.time() < (start_time + timeout):
+        time.sleep(10)
+        list_servers_result = exec_command_line_command(source_overcloud + 'openstack server list --all -f json')['JsonOutput']
+        statuses = [item['status'] for item in list_servers_result]
+        print '--> Servers statuses are: ', statuses
+        if list(set(statuses)) == ['active']:
+            to_stop = True
+    return to_stop
 
 
 
