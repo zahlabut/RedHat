@@ -281,6 +281,8 @@ def wait_till_bm_is_in_state(source_overcloud, expected_state, timeout=600):
             print '-- Actual Provisioing States are: '+str(actual_states)
             if list(set(actual_states)) == [expected_state]:
                 to_stop=True
+            if 'clean failed' in actual_states:
+                return False
         else:
             print_in_color('Failed to execute: '+command)
     return to_stop
