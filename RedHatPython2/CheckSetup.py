@@ -107,7 +107,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             status=wait_till_bm_is_in_state(source_overcloud, 'available')
             self.assertEquals(True,status,'Failed, not all BM are in "available" Provisioning State!')
         else:
-            print '--> Baremetal Nodes are in "enroll", SetUp activates "Clean" using dedicated "Clean" test for that purpose!'
+            print '--> Baremetal Nodes are in "enroll", SetUp activates "Clean" using dedicated test case'
             self.test_009_clean_bm_guests_in_parallel()
 
 
