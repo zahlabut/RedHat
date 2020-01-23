@@ -298,20 +298,17 @@ def wait_till_servers_are_active(source_overcloud,timeout=600):
         print '--> Server statuses: '+str(statuses)
         if 'error' in statuses:
             return False
-        print '--> Servers statuses are: ', statuses
         if list(set(statuses)) == ['active']:
             to_stop = True
     return to_stop
 
 def check_ssh(ip, user,password,timeout=300):
-
     print 'check_ssh'
     print ip, user,password,timeout
     to_stop=False
     start_time=time.time()
     while to_stop == False and time.time() < (start_time + timeout):
         print 'in while'
-        time.sleep(10)
         try:
             ssh_object = SSH(ip, user, password)
             print ssh_object
