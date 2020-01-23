@@ -306,7 +306,7 @@ def check_ssh(ip, user,password,timeout=300):
         to_stop=False
         start_time=time.time()
         while to_stop == False and time.time() < (start_time + timeout):
-            time.sleep(3)
+            time.sleep(10)
             ssh_object = SSH(ip, user,password)
             ssh_object.ssh_connect_password()
             out = ssh_object.ssh_command_only('date')['Stdout']

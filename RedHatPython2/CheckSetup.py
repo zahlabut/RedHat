@@ -316,7 +316,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         #         self.assertNotIn('time=', ping_result, 'Failed, PING did worked somehow :(\n' + ping_result)
 
         for server in servers_info:
-            ssh_object = SSH('10.9.92.21', 'cloud-user', '')
+            ssh_object = SSH(first_bm_ip, 'cloud-user', '')
             ssh_object.ssh_connect_password()
             ping_result = ssh_object.ssh_command_only('ping '+server['InternalIp']+' -c 2')['Stdout']
             print ping_result
