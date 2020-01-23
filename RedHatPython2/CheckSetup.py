@@ -304,6 +304,10 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         # BM_Guest_1 VM_1 --> FAIL
 
         print servers_info
+
+        raw_input('stam')
+
+
         first_bm_ip=[server['FloatingIp'] for server in servers_info if server['Name']=='BM_Guest_1'.lower()][0]
         print first_bm_ip
         for server in servers_info:
