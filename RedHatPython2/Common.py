@@ -320,6 +320,7 @@ def check_ssh(ip, user,password,timeout=300):
             ssh_object.ssh_close()
         except Exception,e:
             print_in_color(str(e), 'red')
+        time.sleep(5)
     return to_stop
 
 
