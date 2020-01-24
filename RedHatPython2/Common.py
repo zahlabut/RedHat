@@ -268,10 +268,9 @@ def delete_server(source_overcloud, ids_list, timeout=300):
     # Return True if no server left, else return False
     return to_stop
 
-def wait_till_bm_is_in_state(source_overcloud, expected_state, timeout=600):
+def wait_till_bm_is_in_state(source_overcloud, expected_state, timeout=300):
     start_time = time.time()
     to_stop = False
-    actual_states=[]
     while to_stop==False and time.time() < (start_time + timeout):
         time.sleep(10)
         command=source_overcloud+'openstack baremetal node list -f json'
@@ -288,7 +287,7 @@ def wait_till_bm_is_in_state(source_overcloud, expected_state, timeout=600):
             print_in_color('Failed to execute: '+command)
     return to_stop
 
-def wait_till_servers_are_active(source_overcloud,timeout=600):
+def wait_till_servers_are_active(source_overcloud,timeout=300):
     start_time = time.time()
     to_stop = False
     while to_stop == False and time.time() < (start_time + timeout):
@@ -313,6 +312,7 @@ def check_ssh(ip, user,password,timeout=300):
             ssh_object = SSH(ip, user, password)
             print ssh_object
             ssh_object.ssh_connect_password()
+            print 'after ssh connect'
             out = ssh_object.ssh_command_only('date')['Stdout']
             print out
             if len(str(out))!=0:
