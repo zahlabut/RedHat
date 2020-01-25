@@ -271,8 +271,9 @@ def delete_server(source_overcloud, ids_list, timeout=300):
 def wait_till_bm_is_in_state(source_overcloud, expected_state, timeout=300):
     start_time = time.time()
     to_stop = False
+    delay=10
     while to_stop==False and time.time() < (start_time + timeout):
-        time.sleep(10)
+        time.sleep(delay)
         command=source_overcloud+'openstack baremetal node list -f json'
         command_result=exec_command_line_command(command)
         if command_result['ReturnCode']==0:
@@ -283,6 +284,8 @@ def wait_till_bm_is_in_state(source_overcloud, expected_state, timeout=300):
             if 'clean failed' in actual_states:
                 print actual_states
                 return False
+            if 'available' in actual_states:
+                delay-=1
         else:
             print_in_color('Failed to execute: '+command)
     return to_stop
