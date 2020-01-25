@@ -311,7 +311,10 @@ def check_ssh(ip, user,password,timeout=300):
     print ip, user,password,timeout
     to_stop=False
     start_time=time.time()
+    try_number=0
     while to_stop == False and time.time() < (start_time + timeout):
+        try_number+=1
+        print 'Try number: '+str(try_number)
         print 'in while'
         try:
             ssh_object = SSH(ip, user, password)
