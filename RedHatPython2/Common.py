@@ -285,7 +285,7 @@ def wait_till_bm_is_in_state(source_overcloud, expected_state, timeout=600):
                 print actual_states
                 return False
             if 'available' in actual_states:
-                timeout-=10
+                timeout-=1
         else:
             print_in_color('Failed to execute: '+command)
     if to_stop==True:
