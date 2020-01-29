@@ -329,9 +329,6 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             else:
                 self.assertNotIn('time=', ping_result, 'Failed, PING did worked somehow :(\n' + ping_result)
 
-
-
-
     """ This test is planed to validate that "Delete Bare Metal Guests" procedure is successfully completed.
     Note: it will try to delete all detected Servers on Overcloud.
     """
@@ -471,6 +468,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     Test will verify that the BM Guest is created and that Ansible Networking took care to configure Trunk port as expected
     """
     def test_016_create_trunk_bm_guest(self):
+        print '\ntest_016_create_trunk_bm_guest'
         # Check if parent port exists, create if needed.
         ports=exec_command_line_command(source_overcloud+'openstack port list -f json')
         if ports['ReturnCode']==0:
