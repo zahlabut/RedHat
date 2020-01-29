@@ -526,6 +526,9 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                 if len(actual_vlans[key])>1:
                     test_pass=True
                     break
+                if '-' in actual_vlans[key]:
+                    test_pass=True
+                    break
         self.assertEquals(True, test_pass, 'Failed, no port with more than one Vlan was detected, existing configuration on '
                                                           'Switch is: '+str(actual_vlans))
 
