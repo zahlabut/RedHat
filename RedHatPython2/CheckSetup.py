@@ -1,7 +1,6 @@
 from Common import *
 import unittest
-import Postinstallation
-
+import PostInstall
 
 
 ### Parameters ###
