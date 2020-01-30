@@ -522,6 +522,10 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         print 'Detected Vlans on Switch Port are: '+str(actual_vlans)
         test_pass=False
         for key in actual_vlans.keys():
+
+            print actual_vlans[key]
+            print type(actual_vlans[key])
+
             if actual_vlans[key]!=None:
                 if len(actual_vlans[key])>1:
                     test_pass=True
