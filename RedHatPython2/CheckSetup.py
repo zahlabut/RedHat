@@ -530,7 +530,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                 if len(actual_vlans[key])>1:
                     test_pass=True
                     break
-                if '-' in actual_vlans[key]:
+                if '-' in str(actual_vlans[key]):
                     test_pass=True
                     break
         self.assertEquals(True, test_pass, 'Failed, no port with more than one Vlan was detected, existing configuration on '
@@ -544,7 +544,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     In case when there is a bunch of ERRORs on Overcloud, this test will take some time to complete.
     """
     def test_017_no_errors_in_logs(self):
-        print '\ntest_016_no_errors_in_logs'
+        print '\ntest_017_no_errors_in_logs'
         error_file_name='Overcloud_Errors.log'
         errors_file=open(error_file_name,'w')
         actual_errors={}
