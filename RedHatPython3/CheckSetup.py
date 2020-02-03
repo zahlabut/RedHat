@@ -173,7 +173,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             output, stderr = [], []
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
-            log_files=ssh_object.ssh_command('sudo ls /var/log/containers/neutron | grep -i server')['Stdout']
+            log_files=ssh_object.ssh_command('sudo ls /var/log/containers/neutron | grep -i server.log')['Stdout']
             log_files=[fil.strip() for fil in log_files.splitlines()]
             for log in log_files:
                 fil.write(log+'\n')
@@ -181,6 +181,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                     commands.append("sudo zgrep ' ERROR ' /var/log/containers/neutron/"+log)
                 else:
                     commands.append("sudo grep ' ERROR ' /var/log/containers/neutron/"+log)
+            print commands
             for com in commands:
                 out=ssh_object.ssh_command(com)
                 output.append(out['Stdout'])
