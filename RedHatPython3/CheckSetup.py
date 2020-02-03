@@ -98,7 +98,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
     def setUp(self):
         print("\n--> SetUp Start")
-        # Chack that BM guest are imported on Overcloud #
+        # Check that BM guest are imported on Overcloud #
         self.baremetal_node_ids=[item['uuid'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
         print('-- Existing BM node IDs are: '+str(self.baremetal_node_ids))
         self.assertNotEqual(0,len(self.baremetal_node_ids),'Failed, no baremetal nodes detected')
