@@ -43,7 +43,7 @@ class SSH():
             print (self.host, self.user, self.key_path)
             self.client.connect(self.host, username=self.user, key_filename=self.key_path)
             return {'Status':True}
-        except Exception, e:
+        except Exception as e:
             return {'Status':False,'Exception':e}
 
 
