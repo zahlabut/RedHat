@@ -165,15 +165,27 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     """ This test is planed to validate that no ERRORS exists in Neutron Server log on all Controllers """
     def test_005_errors_in_neutron_api(self):
         print('\ntest_005_errors_in_neutron_api')
-        command='grep -i error /var/log/containers/neutron/server.log*'
         for ip in controller_ips:
+            commands = []
+            output, stderr = [], []
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
+            log_files=ssh_object.ssh_command('sudo ls /var/log/containers/neutron | grep -i server')['Stdout']
+            log_files=[fil.strip() for fil in log_files.splitlines()]
+            for fil in log_files:
+                if fil.endswith('.gz') == True:
+                    commands.append("sudo zgrep -i ' ERROR ' /var/log/containers/neutron/"+fil)
+                else:
+                    commands.append("sudo grep -i ' ERROR ' /var/log/containers/neutron/"+fil)
+            for com in commands:
+                out=ssh_object.ssh_command(com)
+                output.append(out['Stdout'])
+                stderr.append(out['Stderr'])
             output = ssh_object.ssh_command(command)['Stdout']
             if len(output)>10000:
                 output=output[0:1000]+'...\n'*5+output[-10000:-1]
             ssh_object.ssh_close()
-            self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in log\n'+output)
+            self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in server log\n'+output)
 
     """ This test is planed to validate that "indication string" which is indicates that
     Ansible Networking Feature configuration is done, exists in Controllers' logs

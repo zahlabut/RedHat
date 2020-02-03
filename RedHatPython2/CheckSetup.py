@@ -137,7 +137,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     """ This test is planed to validate that no ERRORs exists in Ironic's logs on Overcloud """
     def test_003_errors_in_ironic_logs(self):
         print '\ntest_003_errors_in_ironic_logs'
-        command="sudo grep -R ' ERROR ' /var/log/containers/ironic/*"
+        command="sudo grep -r ' ERROR ' /var/log/containers/ironic/"
         for ip in controller_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
