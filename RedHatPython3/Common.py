@@ -40,7 +40,6 @@ class SSH():
             self.client = paramiko.SSHClient()
             self.client.load_system_host_keys()
             self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            print (self.host, self.user, self.key_path)
             self.client.connect(self.host, username=self.user, key_filename=self.key_path)
             return {'Status':True}
         except Exception as e:
@@ -62,7 +61,6 @@ class SSH():
             print_in_color(result['Stderr'],'yellow')
         else:
             print_in_color(result['Stderr'], 'red')
-        print(result)
         return result
 
 
