@@ -72,10 +72,34 @@ class SSH():
     def ssh_close(self):
         self.client.close()
 
+def print_in_color(string,color_or_format=None):
+    string=str(string)
+    class bcolors:
+        HEADER = '\033[95m'
+        OKBLUE = '\033[94m'
+        OKGREEN = '\033[92m'
+        WARNING = '\033[93m'
+        FAIL = '\033[91m'
+        ENDC = '\033[0m'
+        BOLD = '\033[1m'
+        UNDERLINE = '\033[4m'
+    if color_or_format == 'green':
+        print(bcolors.OKGREEN + string + bcolors.ENDC)
+    elif color_or_format =='red':
+        print(bcolors.FAIL + string + bcolors.ENDC)
+    elif color_or_format =='yellow':
+        print(bcolors.WARNING + string + bcolors.ENDC)
+    elif color_or_format =='blue':
+        print(bcolors.OKBLUE + string + bcolors.ENDC)
+    elif color_or_format =='bold':
+        print(bcolors.BOLD + string + bcolors.ENDC)
+    else:
+        print(string)
+
 def exec_command_line_command(command):
     try:
+        print_in_color('--> '+command, 'blue')
         command_as_list = command.split(' ')
-        command_as_list = [item.replace(' ', '') for item in command_as_list if item != '']
         result = subprocess.check_output(command, stdin=True, stderr=subprocess.STDOUT, shell=True)
         json_output = None
         try:
@@ -84,9 +108,9 @@ def exec_command_line_command(command):
             pass
         return {'ReturnCode': 0, 'CommandOutput': result, 'JsonOutput': json_output}
     except subprocess.CalledProcessError as e:
-        print(e)
-        return {'ReturnCode': e.returncode, 'CommandOutput': 'Failed to execute: \n'+command+'with:\n'+str(e)}
-
+        print_in_color(command,'red')
+        print_in_color(e.output, 'red')
+        return {'ReturnCode': e.returncode, 'CommandOutput': e.output}
 
 def profanity_check(text, check_lines_contains_string=None):
     text=str(text).split('\n')
@@ -99,8 +123,6 @@ def profanity_check(text, check_lines_contains_string=None):
         if "true" in output:
             return {'ProfanityCheckResult':True, 'Failed_Line':line}
     return {'ProfanityCheckResult':False, 'Failed_Line':None}
-
-
 
 def collect_log_paths(log_root_path):
     logs=[]
@@ -124,10 +146,10 @@ def spec_print(string_list):
         len_list.append(len('### '+item.strip()+' ###'))
     max_len=max(len_list)
     print('')
-    print(("#"*max_len))
+    print("#"*max_len)
     for item in string_list:
-        print(("### "+item.strip()+" "*(max_len-len("### "+item.strip())-4)+" ###"))
-    print(("#"*max_len+'\n'))
+        print("### "+item.strip()+" "*(max_len-len("### "+item.strip())-4)+" ###")
+    print("#"*max_len+'\n')
 
 def juniper_config_parser(path_to_config_json):
     json_output=json.loads(open(path_to_config_json,'r').read().lower())
@@ -187,7 +209,7 @@ def get_switch_conf_as_json(ip,user,password,sw_type=None):
     return {'Interfaces': interfaces,'Vlans':vlans,'InterfaceVlan':int_vlan_dic}
 
 def get_switch_configuration_file(ip,user,password,sw_type=None):
-    print((ip,user,password,sw_type))
+    print(ip,user,password,sw_type)
     #types: juniper_physical_sw juniper_emulator_sw
     if sw_type=='juniper_physical_sw':
         command = 'show configuration | display json'
@@ -218,6 +240,97 @@ def get_juniper_sw_get_port_vlan(ip, user, password, ports):
             result_dic[port]=None
     ssh_object.ssh_close()
     return result_dic
+
+def run_command_on_switch(ip, user, password, command):
+    ssh_object = SSH(ip, user, password)
+    ssh_object.ssh_connect_password()
+    out=ssh_object.ssh_command_only(command)
+    ssh_object.ssh_close()
+    print(out)
+    return out
+
+def delete_server(source_overcloud, ids_list, timeout=600):
+    for id in ids_list:
+        exec_command_line_command(source_overcloud + 'openstack server delete ' + id)
+    existing_server_ids = [item['id'] for item in exec_command_line_command(source_overcloud + 'openstack server list -f json')['JsonOutput']]
+    start_time = time.time()
+    to_stop = False
+    # Wait till all servers are deleted "
+    while to_stop == False and time.time() < (start_time + timeout):
+        time.sleep(10)
+        list_servers_result = exec_command_line_command(source_overcloud + 'openstack server list -f json')[
+            'JsonOutput']
+        if len(list_servers_result) != 0:
+            names = [item['name'] for item in list_servers_result]
+            print('-- Existing servers are: ', names)
+        if len(list_servers_result) == 0:
+            to_stop = True
+    # Return True if no server left, else return False
+    return to_stop
+
+def wait_till_bm_is_in_state(source_overcloud, expected_state, timeout=600):
+    start_time = time.time()
+    to_stop = False
+    delay=10
+    while to_stop==False and time.time() < (start_time + timeout):
+        time.sleep(delay)
+        command=source_overcloud+'openstack baremetal node list -f json'
+        command_result=exec_command_line_command(command)
+        if command_result['ReturnCode']==0:
+            actual_states=[item['provisioning state'] for item in command_result['JsonOutput']]
+            print('--> Actual Provisioing States are: '+str(actual_states))
+            if list(set(actual_states)) == [expected_state]:
+                to_stop=True
+            if 'clean failed' in actual_states:
+                print(actual_states)
+                return False
+            if 'available' in actual_states:
+                timeout-=1
+        else:
+            print_in_color('Failed to execute: '+command)
+    if to_stop==True:
+        time.sleep(5) # Adding delay anyway
+    return to_stop
+
+def wait_till_servers_are_active(source_overcloud,timeout=600):
+    start_time = time.time()
+    to_stop = False
+    while to_stop == False and time.time() < (start_time + timeout):
+        time.sleep(10)
+        list_servers_result = exec_command_line_command(source_overcloud + 'openstack server list --all -f json')['JsonOutput']
+        statuses = [item['status'] for item in list_servers_result]
+        print('--> Server statuses: '+str(statuses))
+        if 'error' in statuses:
+            return False
+        if list(set(statuses)) == ['active']:
+            to_stop = True
+    return to_stop
+
+def check_ssh(ip, user,password,timeout=300):
+    print('check_ssh')
+    print(ip, user,password,timeout)
+    to_stop=False
+    start_time=time.time()
+    try_number=0
+    while to_stop == False and time.time() < (start_time + timeout):
+        try_number+=1
+        print('Try number: '+str(try_number))
+        print('in while')
+        try:
+            ssh_object = SSH(ip, user, password)
+            print(ssh_object)
+            ssh_object.ssh_connect_password()
+            print('after ssh connect')
+            out = ssh_object.ssh_command_only('date')['Stdout']
+            print(out)
+            if len(str(out))!=0:
+                to_stop=True
+            ssh_object.ssh_close()
+        except Exception as e:
+            print_in_color(str(e), 'red')
+        time.sleep(5)
+    return to_stop
+
 
 
 

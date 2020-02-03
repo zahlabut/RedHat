@@ -28,7 +28,6 @@ existing_projects=[item['name'] for item in exec_command_line_command(source_com
 print('Projects --> ',existing_projects)
 
 
-
 def empty_file_content(log_file_name):
     f = open(log_file_name, 'w')
     f.write('')
@@ -90,7 +89,7 @@ tenant_networks=[
     ('tenant-net6','tenant-subnet6','192.168.50')]
 for item in tenant_networks:
     if item[0] not in existing_networks:
-        result=exec_command_line_command(source_command+'openstack network create '+item[0])
+        result=exec_command_line_command(source_command+'openstack network create --provider-network-type vlan '+item[0])
         if result['ReturnCode']!=0:
             all_errors.append(result['CommandOutput'])
     if item[1] not in existing_subnets:
@@ -98,11 +97,14 @@ for item in tenant_networks:
         if result['ReturnCode']!=0:
             all_errors.append(result['CommandOutput'])
 
+
 # Create external network #
 if 'tenant-net' not in existing_networks:
     result=exec_command_line_command(source_command+'openstack network create --share --provider-network-type flat --provider-physical-network datacentre --external external')
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
+
+
 
 # Create external-subnet subnet #
 if 'external-subnet' not in existing_subnets:
@@ -142,7 +144,7 @@ if 'baremetal' not in existing_flavors:
 
 # Create small flavor #
 if 'small' not in existing_flavors:
-    result=exec_command_line_command(source_command+'openstack flavor create --id auto --ram 2048 --vcpus 2 --disk 20 --public small')
+    result=exec_command_line_command(source_command+'openstack flavor create --id auto --ram 2048 --vcpus 2 --disk 10 --public small')
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
 
@@ -182,7 +184,7 @@ if 'overcloud-full.vmlinuz' not in existing_images:
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
 
-if 'id overcloud-full.initrd' not in existing_images:
+if 'overcloud-full.initrd' not in existing_images:
     result=exec_command_line_command(source_command+'openstack image create --file /home/stack/overcloud-full.initrd --public --container-format ari --disk-format ari -f value -c id overcloud-full.initrd')
     id2=result['CommandOutput'].strip()
     if result['ReturnCode']!=0:
