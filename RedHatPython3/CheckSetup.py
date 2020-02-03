@@ -107,7 +107,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         if list(set(self.baremetal_node_states))!=['enroll']:
             # Make sure that BM Nodes are in "available" and wait some time if needed
             status=wait_till_bm_is_in_state(source_overcloud, 'available')
-            self.assertEquals(True,status,'Failed, not all BM are in "available" Provisioning State!')
+            self.assertEqual(True,status,'Failed, not all BM are in "available" Provisioning State!')
         else:
             print('--> Baremetal Nodes are in "enroll", SetUp activates "Clean" using dedicated test case')
             self.test_009_clean_bm_guests_in_parallel()
@@ -141,6 +141,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         command="sudo grep -R ' ERROR ' /var/log/containers/ironic/*"
         for ip in controller_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
+            print (ssh_object)
             ssh_object.ssh_connect_key()
             output = ssh_object.ssh_command(command)['Stdout']
             ssh_object.ssh_close()
@@ -235,7 +236,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         for id in baremetal_node_ids:
             exec_command_line_command(source_overcloud+'openstack baremetal node manage '+id)
         status=wait_till_bm_is_in_state(source_overcloud, 'manageable')
-        self.assertEquals(True,status,'Failed, BM are not in "manageable" Provisioning State!')
+        self.assertEqual(True,status,'Failed, BM are not in "manageable" Provisioning State!')
         # Start "Clean"
         for id in baremetal_node_ids:
             exec_command_line_command(source_overcloud+'openstack baremetal node provide '+id)
@@ -249,7 +250,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                 to_stop=True
         self.assertIn(str(baremetal_vlan_id),str(actual_vlans), 'Failed: baremetal ports are not set to baremetal network vlan:\n' +str(actual_vlans))
         status=wait_till_bm_is_in_state(source_overcloud, 'available')
-        self.assertEquals(True,status,'Failed, BM are not in "available" Provisioning State!')
+        self.assertEqual(True,status,'Failed, BM are not in "available" Provisioning State!')
 
     """ This test is planed to validate that Bare Metal guests creation (as Servers on Overcloud) is successfully done and that
     Ansible Networking feature sets proper VLAN on switch, depending on "network" which is used for creation.
@@ -281,7 +282,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
         # Wait till all servers are getting into "active"
         result=wait_till_servers_are_active(source_overcloud)
-        self.assertEquals(True, result, 'Failed, not all Servers are in "active" status!')
+        self.assertEqual(True, result, 'Failed, not all Servers are in "active" status!')
 
         # Make sure that each server was created on proper network, basing on VLAN id comparison
         actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
@@ -301,7 +302,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             server_info['Name']=exec_command_line_command(source_overcloud+'openstack server show '+id+' -f json')['JsonOutput']['name']
             add_result=exec_command_line_command(source_overcloud+'openstack server add floating ip '+id+' '+server_info['FloatingIpId'])
             print(server_info)
-            self.assertEquals(add_result['ReturnCode'],0,'Failed to add Floating Ip to Server: '+id)
+            self.assertEqual(add_result['ReturnCode'],0,'Failed to add Floating Ip to Server: '+id)
             servers_info.append(server_info)
 
         # Connectivity check using PING, logic is as follow:
@@ -310,7 +311,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         first_bm_ip=[server['FloatingIp'] for server in servers_info if server['Name']=='BM_Guest_1'.lower()][0]
         print(first_bm_ip)
         is_ssh_ok=check_ssh(first_bm_ip,'cloud-user','')
-        self.assertEquals(True, is_ssh_ok, 'Failed to establish SSH connection to BM Guest FloatingIp: '+first_bm_ip)
+        self.assertEqual(True, is_ssh_ok, 'Failed to establish SSH connection to BM Guest FloatingIp: '+first_bm_ip)
 
         for server in servers_info:
             ssh_object = SSH(first_bm_ip, 'cloud-user', '')
@@ -345,7 +346,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
         # Wait till all servers are getting into "active"
         result=wait_till_servers_are_active(source_overcloud)
-        self.assertEquals(True, result, 'Failed, not all Servers are in "active" status!')
+        self.assertEqual(True, result, 'Failed, not all Servers are in "active" status!')
 
         # Make sure that each server was created on proper network, basing on VLAN id comparison
         actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
@@ -359,7 +360,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         print('--> Existing servers IDs: ',existing_server_ids)
         if existing_server_ids!=[]:
             delete_result=delete_server(source_overcloud, existing_server_ids, 300)
-            self.assertEquals(True, delete_result, 'Failed to delete existing servers: '+str(existing_server_ids))
+            self.assertEqual(True, delete_result, 'Failed to delete existing servers: '+str(existing_server_ids))
 
     """This test is a negative test, that is trying to create a VXLAN network type which is not supported when
     on physical switches, so proper error message should be displayed to user"""
@@ -397,7 +398,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
         # Wait till all servers are getting into "active"
         result=wait_till_servers_are_active(source_overcloud)
-        self.assertEquals(True, result, 'Failed, not all Servers are in "active" status!')
+        self.assertEqual(True, result, 'Failed, not all Servers are in "active" status!')
 
         # Make sure that each server was created on proper network, basing on VLAN id comparison
         actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
@@ -430,7 +431,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
         # Wait till all servers are getting into "active"
         result=wait_till_servers_are_active(source_overcloud)
-        self.assertEquals(True, result, 'Failed, not all Servers are in "active" status!')
+        self.assertEqual(True, result, 'Failed, not all Servers are in "active" status!')
 
         # Make sure that each server was created on proper network, basing on VLAN id comparison
         actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
@@ -508,7 +509,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
         # Wait till all servers are getting into "active"
         result=wait_till_servers_are_active(source_overcloud)
-        self.assertEquals(True, result, 'Failed, not all Servers are in "active" status!')
+        self.assertEqual(True, result, 'Failed, not all Servers are in "active" status!')
 
         # Check Trunk on Switch port
         actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
@@ -526,7 +527,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                 if '-' in str(actual_vlans[key]):
                     test_pass=True
                     break
-        self.assertEquals(True, test_pass, 'Failed, no port with more than one Vlan was detected, existing configuration on '
+        self.assertEqual(True, test_pass, 'Failed, no port with more than one Vlan was detected, existing configuration on '
                                                           'Switch is: '+str(actual_vlans))
 
 
@@ -566,7 +567,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         if self.existing_servers_ids!=[]:
             print('--> Delete all existing BM Guests')
             delete_result=delete_server(source_overcloud, self.existing_servers_ids, 300)
-            self.assertEquals(True, delete_result, 'Failed to delete existing servers: '+str(self.existing_servers_ids))
+            self.assertEqual(True, delete_result, 'Failed to delete existing servers: '+str(self.existing_servers_ids))
 
         # Delete all existing Floating IPs if any
         self.existing_floating_ip_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack floating ip list -f json')['JsonOutput']]

@@ -50,6 +50,7 @@ class SSH():
             print_in_color(result['Stderr'], 'red')
         return result
 
+
     def ssh_command_only(self, command):
         self.stdin,self.stdout,self.stderr=self.client.exec_command(command)
         return {'Stdout':self.stdout.read().decode(),'Stderr':self.stderr.read().decode()}
