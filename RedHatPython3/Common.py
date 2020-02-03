@@ -34,6 +34,19 @@ class SSH():
             print_in_color(str(e), 'red')
             return {'Status':False,'Exception':e}
 
+
+    def ssh_connect_key(self):
+        try:
+            self.client = paramiko.SSHClient()
+            self.client.load_system_host_keys()
+            self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            print (self.host, self.user, self.key_path)
+            self.client.connect(self.host, username=self.user, key_filename=self.key_path)
+            return {'Status':True}
+        except Exception, e:
+            return {'Status':False,'Exception':e}
+
+
     def ssh_command(self, command):
         print_in_color('--> '+command,'blue')
         stdin,stdout,stderr=self.client.exec_command(command)
