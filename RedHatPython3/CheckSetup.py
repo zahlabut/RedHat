@@ -166,8 +166,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     def test_005_errors_in_neutron_api(self):
         print('\ntest_005_errors_in_neutron_api')
         result_file='Server_Log_Errors.log'
-        fil=open(result_file,'w')
         for ip in controller_ips:
+            fil = open(result_file, 'w')
             fil.write('--- ControllerIP: '+ip+'\n')
             commands = []
             output, stderr = [], []
