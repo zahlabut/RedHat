@@ -181,7 +181,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                     commands.append("sudo zgrep ' ERROR ' /var/log/containers/neutron/"+log)
                 else:
                     commands.append("sudo grep ' ERROR ' /var/log/containers/neutron/"+log)
-            print commands
+            print (commands)
             for com in commands:
                 out=ssh_object.ssh_command(com)
                 output.append(out['Stdout'])
