@@ -549,33 +549,33 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                                                           'Switch is: '+str(actual_vlans))
 
 
-    """ This test is planed to search for ERRORs messages in all Overcloud logs and will fail if NEW messages (ERRORS while
-    tests execution) will be detected
-    Note: current implementation is not efficient, it just saves all ERRORs before tests are being executed and then
-    (once tests are completed) it does the same "saving" procedure again and prints NEW/DELTA messages.
-    In case when there is a bunch of ERRORs on Overcloud, this test will take some time to complete.
-    """
-    def test_017_no_errors_in_logs(self):
-        print('\ntest_017_no_errors_in_logs')
-        error_file_name='Overcloud_Errors.log'
-        errors_file=open(error_file_name,'w')
-        actual_errors={}
-        for ip in nodes_ips:
-            ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
-            ssh_object.ssh_connect_key()
-            command = "sudo grep -Rn ' ERROR ' " + overcloud_log_path
-            actual_errors[ip] = ssh_object.ssh_command_only(command)['Stdout'].split('\n')
-            ssh_object.ssh_close()
-        test_failed=False
-        for ip in list(actual_errors.keys()):
-            errors_file.write('-' * 50 + node_ip_name_dic[ip] + '-' * 50+'\n')
-            for line in actual_errors[ip]:
-                if line not in existing_errors[ip]:
-                    #print line
-                    test_failed=True
-                    errors_file.write(line+'\n')
-        errors_file.close()
-        self.assertEqual(test_failed,False,'Failed, open '+error_file_name+' for more details!')
+    # """ This test is planed to search for ERRORs messages in all Overcloud logs and will fail if NEW messages (ERRORS while
+    # tests execution) will be detected
+    # Note: current implementation is not efficient, it just saves all ERRORs before tests are being executed and then
+    # (once tests are completed) it does the same "saving" procedure again and prints NEW/DELTA messages.
+    # In case when there is a bunch of ERRORs on Overcloud, this test will take some time to complete.
+    # """
+    # def test_017_no_errors_in_logs(self):
+    #     print('\ntest_017_no_errors_in_logs')
+    #     error_file_name='Overcloud_Errors.log'
+    #     errors_file=open(error_file_name,'w')
+    #     actual_errors={}
+    #     for ip in nodes_ips:
+    #         ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
+    #         ssh_object.ssh_connect_key()
+    #         command = "sudo grep -Rn ' ERROR ' " + overcloud_log_path
+    #         actual_errors[ip] = ssh_object.ssh_command_only(command)['Stdout'].split('\n')
+    #         ssh_object.ssh_close()
+    #     test_failed=False
+    #     for ip in list(actual_errors.keys()):
+    #         errors_file.write('-' * 50 + node_ip_name_dic[ip] + '-' * 50+'\n')
+    #         for line in actual_errors[ip]:
+    #             if line not in existing_errors[ip]:
+    #                 #print line
+    #                 test_failed=True
+    #                 errors_file.write(line+'\n')
+    #     errors_file.close()
+    #     self.assertEqual(test_failed,False,'Failed, open '+error_file_name+' for more details!')
 
     def tearDown(self):
         print('\n--> TearDown start')
