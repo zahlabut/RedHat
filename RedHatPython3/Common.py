@@ -20,6 +20,7 @@ class SSH():
             self.client.connect(self.host, username=self.user, password=self.password)
             return {'Status':True}
         except Exception as e:
+            print_in_color(str(e),'red')
             return {'Status':False,'Exception':e}
 
     def ssh_connect_key(self):
@@ -30,6 +31,7 @@ class SSH():
             self.client.connect(self.host, username=self.user, key_filename=self.key_path)
             return {'Status':True}
         except Exception as e:
+            print_in_color(str(e), 'red')
             return {'Status':False,'Exception':e}
 
     def ssh_command(self, command):
@@ -37,15 +39,20 @@ class SSH():
         #stdin.close()
         self.output=''
         self.stderr=''
-        for line in stdout.read().splitlines():
+        for line in stdout.read().decode().splitlines():
             self.output+=line+'\n'
-        for line in stderr.read().splitlines():
+        for line in stderr.read().decode().splitlines():
             self.stderr+=line+'\n'
-        return {'Stdout':self.output, 'Stderr':self.stderr}
+        result= {'Stdout':self.output, 'Stderr':self.stderr}
+        if len(result['Stderr'])!=0 and 'warning' in str(result['Stderr']).lower():
+            print_in_color(result['Stderr'],'yellow')
+        else:
+            print_in_color(result['Stderr'], 'red')
+        return result
 
     def ssh_command_only(self, command):
         self.stdin,self.stdout,self.stderr=self.client.exec_command(command)
-        return {'Stdout':self.stdout.read(),'Stderr':self.stderr.read()}
+        return {'Stdout':self.stdout.read(),'Stderr':self.stderr.read().decode()}
 
     def scp_upload(self, src_abs_path, dst_abs_path):
         try:
@@ -56,6 +63,7 @@ class SSH():
             t2=time.time()
             return {'Status':True,'AverageBW':file_size/(t2-t1),'ExecutionTime':t2-t1}
         except  Exception as e:
+            print_in_color(str(e), 'red')
             return {'Status':False,'Exception':e}
 
     def scp_download(self,remote_abs_path,local_abs_path):
@@ -67,6 +75,7 @@ class SSH():
             file_size=os.path.getsize(local_abs_path)
             return {'Status': True,'AverageBW':file_size/(t2-t1),'ExecutionTime':t2-t1}
         except  Exception as e:
+            print_in_color(str(e), 'red')
             return {'Status': False, 'Exception': e}
 
     def ssh_close(self):
