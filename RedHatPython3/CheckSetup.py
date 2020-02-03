@@ -139,6 +139,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     def test_003_errors_in_ironic_logs(self):
         print('\ntest_003_errors_in_ironic_logs')
         command="sudo grep -R ' ERROR ' /var/log/containers/ironic/*"
+        command = "date"
         for ip in controller_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
             print (ssh_object)
