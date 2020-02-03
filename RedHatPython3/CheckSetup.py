@@ -26,6 +26,7 @@ python2 CheckSetup.py AnsibleNetworkingFunctionalityTests.test_001_ironic_in_cat
 #####################################################################################
 '''
 
+
 # QE Setup #
 qe_setup_parameters={
     'baremetal_guest_ports':['xe-0/0/6', 'xe-0/0/7'],#,'xe-0/0/42','xe-0/0/43','xe-0/0/44','xe-0/0/45'],
