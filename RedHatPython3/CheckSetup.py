@@ -186,8 +186,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                 out=ssh_object.ssh_command(com)
                 output.append(out['Stdout'])
                 stderr.append(out['Stderr'])
-            output = ssh_object.ssh_command(command)['Stdout']
-            fil.write(output)
+            for line in output:
+                fil.write(line)
             ssh_object.ssh_close()
             fil.close()
             self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in server log\s, for more details in:'+result_file)
