@@ -98,9 +98,8 @@ def print_in_color(string,color_or_format=None):
 
 def exec_command_line_command(command):
     try:
-        print_in_color('--> '+command, 'blue')
-        command_as_list = command.split(' ')
-        result = subprocess.check_output(command, stdin=True, stderr=subprocess.STDOUT, shell=True)
+        #result = subprocess.check_output(command, shell=True, encoding='UTF-8')
+        result = subprocess.check_output(command, stdin=True, stderr=subprocess.STDOUT, shell=True,encoding='UTF-8')
         json_output = None
         try:
             json_output = json.loads(result.lower())
@@ -108,9 +107,9 @@ def exec_command_line_command(command):
             pass
         return {'ReturnCode': 0, 'CommandOutput': result, 'JsonOutput': json_output}
     except subprocess.CalledProcessError as e:
-        print_in_color(command,'red')
-        print_in_color(e.output, 'red')
         return {'ReturnCode': e.returncode, 'CommandOutput': e.output}
+
+
 
 def profanity_check(text, check_lines_contains_string=None):
     text=str(text).split('\n')
