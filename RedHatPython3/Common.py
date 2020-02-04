@@ -5,6 +5,9 @@ import subprocess
 import json
 import urllib.request, urllib.parse, urllib.error
 
+
+
+
 class SSH():
     def __init__(self, host, user, password='', key_path=''):
         self.host=host
@@ -143,8 +146,7 @@ def profanity_check(text, check_lines_contains_string=None):
     if check_lines_contains_string!=None:
         text=[line for line in text if check_lines_contains_string.lower() in line.lower()]
     for line in text:
-        url = urllib.parse.quote("http://www.wdylike.appspot.com/?q="+line)
-        connection = urllib.request.urlopen(url)
+        connection = urllib.request.urlopen("http://www.wdylike.appspot.com/?q="+line)
         output = connection.read()
         connection.close()
         if "true" in output:
@@ -152,17 +154,6 @@ def profanity_check(text, check_lines_contains_string=None):
     return {'ProfanityCheckResult':False, 'Failed_Line':None}
 
 
-# def profanity_check(text, check_lines_contains_string=None):
-#     text=str(text).split('\n')
-#     if check_lines_contains_string!=None:
-#         text=[line for line in text if check_lines_contains_string.lower() in line.lower()]
-#     for line in text:
-#         connection = urllib.request.urlopen("http://www.wdylike.appspot.com/?q="+line)
-#         output = connection.read()
-#         connection.close()
-#         if "true" in output:
-#             return {'ProfanityCheckResult':True, 'Failed_Line':line}
-#     return {'ProfanityCheckResult':False, 'Failed_Line':None}
 
 
 def collect_log_paths(log_root_path):
