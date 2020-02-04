@@ -141,10 +141,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         command="sudo grep -r ' ERROR ' /var/log/containers/ironic/"
         for ip in controller_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
-            print (ssh_object)
             ssh_object.ssh_connect_key()
             output = ssh_object.ssh_command(command)['Stdout']
-            print (output)
             ssh_object.ssh_close()
             self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in log\n'+output)
 

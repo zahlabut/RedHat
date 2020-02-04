@@ -47,7 +47,7 @@ class SSH():
 
 
     def ssh_command(self, command):
-        print_in_color('--> '+command,'blue')
+        print_in_color(self.ip+'--> '+command,'blue')
         stdin,stdout,stderr=self.client.exec_command(command)
         #stdin.close()
         self.output=''
@@ -143,12 +143,27 @@ def profanity_check(text, check_lines_contains_string=None):
     if check_lines_contains_string!=None:
         text=[line for line in text if check_lines_contains_string.lower() in line.lower()]
     for line in text:
-        connection = urllib.request.urlopen("http://www.wdylike.appspot.com/?q="+line)
+        url = urllib.parse.quote("http://www.wdylike.appspot.com/?q="+line)
+        connection = urllib.request.urlopen(url)
         output = connection.read()
         connection.close()
         if "true" in output:
             return {'ProfanityCheckResult':True, 'Failed_Line':line}
     return {'ProfanityCheckResult':False, 'Failed_Line':None}
+
+
+# def profanity_check(text, check_lines_contains_string=None):
+#     text=str(text).split('\n')
+#     if check_lines_contains_string!=None:
+#         text=[line for line in text if check_lines_contains_string.lower() in line.lower()]
+#     for line in text:
+#         connection = urllib.request.urlopen("http://www.wdylike.appspot.com/?q="+line)
+#         output = connection.read()
+#         connection.close()
+#         if "true" in output:
+#             return {'ProfanityCheckResult':True, 'Failed_Line':line}
+#     return {'ProfanityCheckResult':False, 'Failed_Line':None}
+
 
 def collect_log_paths(log_root_path):
     logs=[]
