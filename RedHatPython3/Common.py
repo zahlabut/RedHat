@@ -148,6 +148,8 @@ def profanity_check(text, check_lines_contains_string=None):
     for line in text:
         connection = urllib.request.urlopen("http://www.wdylike.appspot.com/?q="+urllib.parse.quote(line))
         output = connection.read()
+        print (output)
+        print type(output)
         connection.close()
         if "true" in output:
             return {'ProfanityCheckResult':True, 'Failed_Line':line}
