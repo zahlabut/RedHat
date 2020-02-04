@@ -35,7 +35,7 @@ class SSH():
             return {'Status':False,'Exception':e}
 
     def ssh_command(self, command):
-        print_in_color(self.host+'--> '+command,'blue')
+        print_in_color(self.host+' --> '+command,'blue')
         stdin,stdout,stderr=self.client.exec_command(command)
         #stdin.close()
         self.output=''
