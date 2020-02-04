@@ -5,6 +5,8 @@ import subprocess
 import json
 import urllib
 
+not_supported_logs=[]
+
 class SSH():
     def __init__(self, host, user, password='', key_path=''):
         self.host=host

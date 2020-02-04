@@ -6,7 +6,7 @@ import json
 import urllib.request, urllib.parse, urllib.error
 
 
-
+not_supported_logs=[]
 
 class SSH():
     def __init__(self, host, user, password='', key_path=''):
