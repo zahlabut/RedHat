@@ -139,29 +139,17 @@ def exec_command_line_command(command):
         print_in_color(e.output, 'red')
         return {'ReturnCode': e.returncode, 'CommandOutput': e.output}
 
-
-
 def profanity_check(text, check_lines_contains_string=None):
     text=str(text).split('\n')
     if check_lines_contains_string!=None:
         text=[line for line in text if check_lines_contains_string.lower() in line.lower()]
     for line in text:
-        print (line)
-        connection = urllib.request.urlopen("http://www.wdylike.appspot.com/?q="+urllib.parse(line))
-
-        print ("http://www.wdylike.appspot.com/?q="+urllib.parse(line))
-        #print ("http://www.wdylike.appspot.com/?q="+urllib.parse.quote(line)
+        connection = urllib.request.urlopen("http://www.wdylike.appspot.com/?q="+urllib.parse.quote(line))
         output = connection.read().decode()
-
-        print (output)
-        print (type(output))
         connection.close()
         if "true" in output:
             return {'ProfanityCheckResult':True, 'Failed_Line':line}
     return {'ProfanityCheckResult':False, 'Failed_Line':None}
-
-
-
 
 def collect_log_paths(log_root_path):
     logs=[]
