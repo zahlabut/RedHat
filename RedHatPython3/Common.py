@@ -147,10 +147,10 @@ def profanity_check(text, check_lines_contains_string=None):
         text=[line for line in text if check_lines_contains_string.lower() in line.lower()]
     for line in text:
         print (line)
-        connection = urllib.request.urlopen("http://www.wdylike.appspot.com/?q="+urllib.parse.quote(line))
+        connection = urllib.request.urlopen("http://www.wdylike.appspot.com/?q="+urllib.parse(line))
 
-        print ("http://www.wdylike.appspot.com/?q="+urllib.parse.quote(line))
-
+        print ("http://www.wdylike.appspot.com/?q="+urllib.parse(line))
+        #print ("http://www.wdylike.appspot.com/?q="+urllib.parse.quote(line)
         output = connection.read().decode()
 
         print (output)
