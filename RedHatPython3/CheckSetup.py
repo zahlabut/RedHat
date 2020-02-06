@@ -146,7 +146,10 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             ssh_object.ssh_connect_key()
             output = ssh_object.ssh_command(command)['Stdout']
             fil.write(output)
+            fil.close()
             ssh_object.ssh_close()
+
+            print('\n'*8)
             self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in Ironic logs\n'
                                                                 'for more details check: '+result_file)
 
