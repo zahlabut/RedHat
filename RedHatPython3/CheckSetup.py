@@ -140,7 +140,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         print('\ntest_003_errors_in_ironic_logs')
         result_file='Ironic_Errors_In_Logs.log'
         fil=open(result_file,'w')
-        command="sudo grep -r ' ERROR ' /var/log/containers/ironic/"
+        command="sudo grep -r ' ERRORppp ' /var/log/containers/ironic/"
         for ip in controller_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
