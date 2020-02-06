@@ -148,9 +148,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             fil.write(output)
             fil.close()
             ssh_object.ssh_close()
-
-            print('\n'*8)
-            self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in Ironic logs\nfor more details check: '+result_file)
+            self.assertEquals(0, os.path.getsize(result_file), 'Failed: ' + ip + ' ERROR detected in Ironic logs\nfor more details check: '+result_file)
 
     """ This test is planed to validate that neutron_api docker is up and running on all Controllers """
     def test_004_dockers_neutron_api_status(self):
