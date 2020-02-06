@@ -138,13 +138,17 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     """ This test is planed to validate that no ERRORs exists in Ironic's logs on Overcloud """
     def test_003_errors_in_ironic_logs(self):
         print('\ntest_003_errors_in_ironic_logs')
+        result_file='Ironic_Errors_In_Logs.log'
+        fil=open(result_file,'w')
         command="sudo grep -r ' ERROR ' /var/log/containers/ironic/"
         for ip in controller_ips:
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
             output = ssh_object.ssh_command(command)['Stdout']
+            fil.write(output)
             ssh_object.ssh_close()
-            self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in log\n'+output)
+            self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in Ironic logs\n'
+                                                                'for more details check: '+result_file)
 
     """ This test is planed to validate that neutron_api docker is up and running on all Controllers """
     def test_004_dockers_neutron_api_status(self):
