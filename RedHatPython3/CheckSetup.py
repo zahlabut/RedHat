@@ -139,9 +139,9 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
     def test_003_errors_in_ironic_logs(self):
         print('\ntest_003_errors_in_ironic_logs')
         result_file='Ironic_Errors_In_Logs.log'
-        fil=open(result_file,'w')
         command="sudo grep -r ' ERRORppp ' /var/log/containers/ironic/"
         for ip in controller_ips:
+            fil = open(result_file, 'w')
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
             output = ssh_object.ssh_command(command)['Stdout']
