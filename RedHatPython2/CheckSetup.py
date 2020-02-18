@@ -14,10 +14,12 @@ manageable_timeout=600 #Test 009 "Clean"
 available_timeout=600 #Test 009 "Clean"
 create_bm_server_timeout=1200
 delete_server_timeouts=300
+use_podman=False
 if '15' in exec_command_line_command('cat /etc/rhosp-release')['CommandOutput']:
     use_podman=True
 if '16' in exec_command_line_command('cat /etc/rhosp-release')['CommandOutput']:
     use_podman=True
+
 
 '''
 #####################################################################################
@@ -169,8 +171,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         print('\ntest_005_errors_in_neutron_api')
         result_file='Server_Log_Errors.log'
         for ip in controller_ips:
-            fil = open(result_file, 'w')
-            fil.write('--- ControllerIP: '+ip+'\n')
+            res_fil = open(result_file, 'w')
+            res_fil.write('--- ControllerIP: '+ip+'\n')
             commands = []
             output, stderr = [], []
             ssh_object = SSH(ip, user=overclud_user, key_path=overcloud_ssh_key)
@@ -178,7 +180,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             log_files=ssh_object.ssh_command('sudo ls /var/log/containers/neutron | grep -i server.log')['Stdout']
             log_files=[fil.strip() for fil in log_files.splitlines()]
             for log in log_files:
-                fil.write(log+'\n')
+                res_fil.write(log+'\n')
                 if log.endswith('.gz') == True:
                     commands.append("sudo zgrep ' ERROR ' /var/log/containers/neutron/"+log)
                 else:
@@ -190,7 +192,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             for line in output:
                 fil.write(line)
             ssh_object.ssh_close()
-            fil.close()
+            res_fil.close()
             self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in server log\s, for more details in:'+result_file)
 
     """ This test is planed to validate that "indication string" which is indicates that
