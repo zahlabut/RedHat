@@ -125,6 +125,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         print '\ntest_002_ironic_dockers_status'
         ironic_dockers=['ironic_pxe_http','ironic_pxe_tftp','ironic_neutron_agent','ironic_conductor','ironic_api']
         for ip in controller_ips:
+            print ip
             ssh_object = SSH(ip,user=overclud_user,key_path=overcloud_ssh_key)
             ssh_object.ssh_connect_key()
             for doc in ironic_dockers:
@@ -132,6 +133,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                 if use_podman==True:
                     command=command.replace('docker','podman')
                 output=ssh_object.ssh_command(command)['Stdout']
+                print output
                 self.assertNotIn('unhealthy', output, 'Failed: ' + ip + ' ' + doc + ' status is unhealthy')
                 self.assertIn(doc, output, 'Failed: ' + doc + ' is not running')
             ssh_object.ssh_close()
