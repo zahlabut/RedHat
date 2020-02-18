@@ -190,7 +190,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
                 output.append(out['Stdout'])
                 stderr.append(out['Stderr'])
             for line in output:
-                fil.write(line)
+                res_fil.write(line)
             ssh_object.ssh_close()
             res_fil.close()
             self.assertNotIn('ERROR', output, 'Failed: ' + ip + ' ERROR detected in server log\s, for more details in:'+result_file)
