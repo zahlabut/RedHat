@@ -195,19 +195,28 @@ if kernel_id or ram_id not in str(exec_command_line_command(source_command + 'op
 
 # Create image from qcow2 file #
 if 'overcloud-full.vmlinuz' not in existing_images:
-    result=exec_command_line_command(source_command+'openstack image create --file /home/stack/overcloud-full.vmlinuz --public --container-format aki --disk-format aki -f value -c id  overcloud-full.vmlinuz')
+    command='openstack image create --file /home/stack/overcloud-full.vmlinuz --public --container-format aki --disk-format aki -f value -c id  overcloud-full.vmlinuz'
+    if setup_type=='virt':
+        command=command.replace('/home/stack', virt_setup_overcloud_images).replace('overcloud-full.vmlinuz','overcloud-full-vmlinuz')
+    result=exec_command_line_command(source_command+command)
     id1=result['CommandOutput'].strip()
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
 
 if 'overcloud-full.initrd' not in existing_images:
-    result=exec_command_line_command(source_command+'openstack image create --file /home/stack/overcloud-full.initrd --public --container-format ari --disk-format ari -f value -c id overcloud-full.initrd')
+    command='openstack image create --file /home/stack/overcloud-full.initrd --public --container-format ari --disk-format ari -f value -c id overcloud-full.initrd'
+    if setup_type=='virt':
+        command=command.replace('/home/stack',virt_setup_overcloud_images).replace('overcloud-full.initrd','overcloud-full-initrd')
+    result=exec_command_line_command(source_command+command)
     id2=result['CommandOutput'].strip()
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
 
 if 'overcloud-full' not in existing_images:
-    result=exec_command_line_command(source_command+'openstack image create --file /home/stack/overcloud-full.qcow2 --public --container-format bare --disk-format qcow2 --property kernel_id='+id1+' --property ramdisk_id='+id2+' overcloud-full')
+    command='openstack image create --file /home/stack/overcloud-full.qcow2 --public --container-format bare --disk-format qcow2 --property kernel_id='+id1+' --property ramdisk_id='+id2+' overcloud-full'
+    if setup_type=='virt':
+        command=command.replace('/home/stack',virt_setup_overcloud_images).replace('overcloud-full.qcow2','overcloud-full')
+    result=exec_command_line_command(source_command+command)
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
 
@@ -235,7 +244,7 @@ if 'virtual-hosts' not in existing_aggregates:
 
 # Add ICMP and SSH to the Default security group #
 if '22' not in str(exec_command_line_command(source_command+'openstack security group show '+default_security_group_id+' -f json')['JsonOutput']):
-    result=exec_command_line_command(source_command+'openstack security group rule create --dst-port 22 '+default_security_group_id)
+    result=exec_command_line_command(source_command+'openstack security group rule create --dst-port 22 --protocol tcp '+default_security_group_id)
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
 
