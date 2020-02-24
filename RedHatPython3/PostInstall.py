@@ -212,7 +212,7 @@ if 'overcloud-full.initrd' not in existing_images:
 if 'overcloud-full' not in existing_images:
     command='openstack image create --file /home/stack/overcloud-full.qcow2 --public --container-format bare --disk-format qcow2 --property kernel_id='+id1+' --property ramdisk_id='+id2+' overcloud-full'
     if setup_type=='virt':
-        command=command.replace('/home/stack',virt_setup_overcloud_images)
+        command=command.replace('/home/stack',virt_setup_overcloud_images).replace('overcloud-full.qcow2','overcloud-full')
     result=exec_command_line_command(source_command+command)
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
