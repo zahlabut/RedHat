@@ -194,7 +194,7 @@ if kernel_id or ram_id not in str(exec_command_line_command(source_command + 'op
 if 'overcloud-full.vmlinuz' not in existing_images:
     command='openstack image create --file /home/stack/overcloud-full.vmlinuz --public --container-format aki --disk-format aki -f value -c id  overcloud-full.vmlinuz'
     if setup_type=='virt':
-        command=command.replace('/home/stack', virt_setup_overcloud_images)
+        command=command.replace('/home/stack', virt_setup_overcloud_images).replace('overcloud-full.vmlinuz','overcloud-full-vmlinuz')
     result=exec_command_line_command(source_command+command)
     id1=result['CommandOutput'].strip()
     if result['ReturnCode']!=0:
@@ -203,7 +203,7 @@ if 'overcloud-full.vmlinuz' not in existing_images:
 if 'overcloud-full.initrd' not in existing_images:
     command='openstack image create --file /home/stack/overcloud-full.initrd --public --container-format ari --disk-format ari -f value -c id overcloud-full.initrd'
     if setup_type=='virt':
-        command=command.replace('/home/stack',virt_setup_overcloud_images)
+        command=command.replace('/home/stack',virt_setup_overcloud_images).replace('overcloud-full.initrd','overcloud-full-initrd')
     result=exec_command_line_command(source_command+command)
     id2=result['CommandOutput'].strip()
     if result['ReturnCode']!=0:
