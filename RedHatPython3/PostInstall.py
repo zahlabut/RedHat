@@ -1,8 +1,22 @@
 ### To delete all related to openstack project purge --project admin ###
 
 
+
 from Common import *
 source_command='source /home/stack/overcloudrc;'
+source_undercloud='source /home/stack/stackrc;'
+virt_setup_overcloud_images='/home/stack/overcloud_images'
+
+# Is Virt or Baremetal setup check
+nodes = exec_command_line_command(source_undercloud+'openstack server list -f json')['JsonOutput']
+nodes_names = [item['name'].lower() for item in nodes]
+if 'ceph' in str(nodes_names):
+    setup_type='baremetal'
+else:
+    setup_type='virt'
+print (setup_type)
+sys.exit(1)
+
 
 existing_baremetal_nodes=[item['name'] for item in exec_command_line_command(source_command+'openstack baremetal node list -f json')['JsonOutput']]
 print('BareMetals --> ',existing_baremetal_nodes)

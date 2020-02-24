@@ -23,7 +23,7 @@ if '16' in exec_command_line_command('cat /etc/rhosp-release')['CommandOutput']:
 '''
 #####################################################################################
 To run a single test, execute:
-python2 CheckSetup.py AnsibleNetworkingFunctionalityTests.test_001_ironic_in_catalog
+python3 CheckSetup.py AnsibleNetworkingFunctionalityTests.test_001_ironic_in_catalog
 #####################################################################################
 '''
 
