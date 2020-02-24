@@ -16,7 +16,7 @@ if 'ceph' in str(nodes_names):
     setup_type='baremetal'
 else:
     setup_type='virt'
-print (setup_type)
+print ('Setup Type is:'+setup_type)
 
 
 existing_baremetal_nodes=[item['name'] for item in exec_command_line_command(source_command+'openstack baremetal node list -f json')['JsonOutput']]
