@@ -45,12 +45,11 @@ virt_setup_parameters={
     'baremetal_guest_ports':['xe-0/0/4', 'xe-0/0/5'],
     'switch_type':'juniper_emulator_sw',
     'switch_ip':read_yaml(ans_temp_file_path)['parameter_defaults']['ML2HostConfigs']['junos']['ansible_host'],
-    'switch_user':read_yaml(ans_temp_file_path)['parameter_defaults']['ML2HostConfigs']['junos']['ansible_user'],
+    'switch_user':'ansible',
     'switch_password':read_yaml(ans_temp_file_path)['parameter_defaults']['ML2HostConfigs']['junos']['ansible_ssh_pass'],
     'tenant_nets':['tempest-shared','tempest-shared'], #Duplicated in order to create 2 BM in parallel in test 010
     'setup':'Virtual_Setup'
 }
-print (virt_setup_parameters)
 
 
 
