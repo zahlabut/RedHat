@@ -81,7 +81,7 @@ if cephs==[]:
         result = exec_command_line_command(
             source_command + 'openstack keypair create --public-key /home/stack/.ssh/id_rsa.pub default')
 else:
-    template_path='/home/stack/virt_vswitch/networking-ansible.yaml'
+    template_path='/home/stack/templates/neutron-ml2-ansible.yaml'
     qe_setup_parameters = {
         'baremetal_guest_ports': ports,
         'switch_type': 'juniper_physical_sw',
