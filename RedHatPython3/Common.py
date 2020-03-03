@@ -262,6 +262,9 @@ def get_switch_configuration_file(ip,user,password,sw_type=None):
     return out
 
 def get_juniper_sw_get_port_vlan(ip, user, password, ports):
+
+    print(ip, user, password, ports)
+
     ssh_object = SSH(ip, user, password)
     ssh_object.ssh_connect_password()
     result_dic={}
