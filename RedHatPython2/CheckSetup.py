@@ -28,9 +28,18 @@ python2 CheckSetup.py AnsibleNetworkingFunctionalityTests.test_001_ironic_in_cat
 #####################################################################################
 '''
 
+# Get Baremetal Ports
+bm_ports=exec_command_line_command(source_overcloud+'openstack baremetal port list -f json')['JsonOutput']
+bm_ports=[item['uuid'] for item in bm_ports]
+ports=[]
+for bm_port in bm_ports:
+    port=exec_command_line_command(source_overcloud+'openstack baremetal port show '+bm_port+' -f json')['JsonOutput']['local_link_connection']['port_id']
+    ports.append(port)
+
+
 # QE Setup #
 qe_setup_parameters={
-    'baremetal_guest_ports':['xe-0/0/6', 'xe-0/0/7'],#,'xe-0/0/42','xe-0/0/43','xe-0/0/44','xe-0/0/45'],
+    'baremetal_guest_ports':ports,
     'switch_type':'juniper_physical_sw',
     'switch_ip':'10.9.95.25',
     'switch_user':'ansible',
@@ -42,7 +51,7 @@ qe_setup_parameters={
 # Virtual Setup #
 ans_temp_file_path='/home/stack/virt_vswitch/networking-ansible.yaml'
 virt_setup_parameters={
-    'baremetal_guest_ports':['xe-0/0/4', 'xe-0/0/5'],
+    'baremetal_guest_ports':ports,
     'switch_type':'juniper_emulator_sw',
     'switch_ip':read_yaml(ans_temp_file_path)['parameter_defaults']['ML2HostConfigs']['junos']['ansible_host'],
     'switch_user':'ansible',
@@ -50,6 +59,7 @@ virt_setup_parameters={
     'tenant_nets':['tempest-shared','tempest-shared'], #Duplicated in order to create 2 BM in parallel in test 010
     'setup':'Virtual_Setup'
 }
+
 
 
 ### Get controllers IPs ###
