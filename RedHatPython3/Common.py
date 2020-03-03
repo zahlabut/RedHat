@@ -270,12 +270,13 @@ def get_juniper_sw_get_port_vlan(ip, user, password, ports):
     result_dic={}
     for port in ports:
         try:
-            enter_to_cli_command='cli'
-            out = ssh_object.ssh_command_only(enter_to_cli_command)['Stdout']
-            print (out)
+            # enter_to_cli_command='cli'
+            # out = ssh_object.ssh_command_only(enter_to_cli_command)['Stdout']
+            # print (out)
 
 
-            command='show configuration interfaces '+port
+            command='cli;show configuration interfaces '+port
+
             out=ssh_object.ssh_command_only(command)['Stdout']
             vlans=[line.split('members')[1].strip(';').replace('[','').replace(']','') for line in out.split('\n') if 'members' in line]
             vlans=[item for item in vlans[0].split(' ') if item!='']
