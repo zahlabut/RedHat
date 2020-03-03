@@ -12,7 +12,7 @@ source_tenant_user='source /home/stack/userrc;'
 overcloud_log_path='/var/log'
 manageable_timeout=900 #Test 009 "Clean"
 available_timeout=900 #Test 009 "Clean"
-create_bm_server_timeout=1200
+create_bm_server_timeout=1500
 delete_server_timeouts=600
 use_podman=False
 if '15' in exec_command_line_command('cat /etc/rhosp-release')['CommandOutput']:
@@ -40,10 +40,11 @@ qe_setup_parameters={
 }
 
 # Virtual Setup #
+ans_temp_file_path='/home/stack/virt_vswitch/networking-ansible.yaml'
 virt_setup_parameters={
     'baremetal_guest_ports':['xe-0/0/4', 'xe-0/0/5'],
     'switch_type':'juniper_emulator_sw',
-    'switch_ip':'172.16.0.63',
+    'switch_ip':read_yaml(ans_temp_file_path)['parameter_defaults']['ML2HostConfigs']['junos']['ansible_host'],
     'switch_user':'ansible',
     'switch_password':'Juniper',
     'tenant_nets':['tempest-shared','tempest-shared'], #Duplicated in order to create 2 BM in parallel in test 010

@@ -4,9 +4,18 @@ import time
 import subprocess
 import json
 import urllib.request, urllib.parse, urllib.error
-
-
+import yaml
 not_supported_logs=[]
+
+def read_yaml(file_path):
+    try:
+        with open(file_path, 'r') as stream:
+            data_loaded = yaml.safe_load(stream)
+        return data_loaded
+    except yaml.YAMLError as e:
+        print('Failed on "read_yaml" with: '+str(e))
+        return None
+
 
 class SSH():
     def __init__(self, host, user, password='', key_path=''):
