@@ -41,21 +41,20 @@ for bm_port in bm_ports:
 qe_setup_parameters={
     'baremetal_guest_ports':ports,
     'switch_type':'juniper_physical_sw',
-    'switch_ip':'10.9.95.25',
-    'switch_user':'ansible',
-    'switch_password':'N3tAutomation!',
+    'switch_ip':read_yaml('/home/stack/templates/neutron-ml2-ansible.yaml')['parameter_defaults']['ML2HostConfigs']['switch1']['ansible_host'],
+    'switch_user':read_yaml('/home/stack/templates/neutron-ml2-ansible.yaml')['parameter_defaults']['ML2HostConfigs']['switch1']['ansible_user'],
+    'switch_password':read_yaml('/home/stack/templates/neutron-ml2-ansible.yaml')['parameter_defaults']['ML2HostConfigs']['switch1']['ansible_ssh_pass'],
     'tenant_nets':['tenant-net','tenant-net2'],
     'setup':'QE_Setup'
 }
 
 # Virtual Setup #
-ans_temp_file_path='/home/stack/virt_vswitch/networking-ansible.yaml'
 virt_setup_parameters={
     'baremetal_guest_ports':ports,
     'switch_type':'juniper_emulator_sw',
-    'switch_ip':read_yaml(ans_temp_file_path)['parameter_defaults']['ML2HostConfigs']['junos']['ansible_host'],
+    'switch_ip':read_yaml('/home/stack/templates/neutron-ml2-ansible.yaml')['parameter_defaults']['ML2HostConfigs']['junos']['ansible_host'],
     'switch_user':'ansible',
-    'switch_password':read_yaml(ans_temp_file_path)['parameter_defaults']['ML2HostConfigs']['junos']['ansible_ssh_pass'],
+    'switch_password':read_yaml('/home/stack/templates/neutron-ml2-ansible.yaml')['parameter_defaults']['ML2HostConfigs']['junos']['ansible_ssh_pass'],
     'tenant_nets':['tempest-shared','tempest-shared'], #Duplicated in order to create 2 BM in parallel in test 010
     'setup':'Virtual_Setup'
 }
