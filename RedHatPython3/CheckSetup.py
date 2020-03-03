@@ -56,16 +56,14 @@ for ip in nodes_ips:
 
 ### No Ceph = Virt Setup ###
 if cephs==[]:
+    template_path='/home/stack/virt_vswitch/networking-ansible.yaml'
     virt_setup_parameters = {
         'baremetal_guest_ports': ports,
         'switch_type': 'juniper_emulator_sw',
         'switch_ip':
-            read_yaml('/home/stack/templates/neutron-ml2-ansible.yaml')['parameter_defaults']['ML2HostConfigs'][
-                'junos']['ansible_host'],
+            read_yaml(template_path)['parameter_defaults']['ML2HostConfigs']['junos']['ansible_host'],
         'switch_user': 'ansible',
-        'switch_password':
-            read_yaml('/home/stack/templates/neutron-ml2-ansible.yaml')['parameter_defaults']['ML2HostConfigs'][
-                'junos']['ansible_ssh_pass'],
+        'switch_password':read_yaml(template_path)['parameter_defaults']['ML2HostConfigs']['junos']['ansible_ssh_pass'],
         'tenant_nets': ['tempest-shared', 'tempest-shared'],
     # Duplicated in order to create 2 BM in parallel in test 010
         'setup': 'Virtual_Setup'
@@ -80,18 +78,14 @@ if cephs==[]:
         result = exec_command_line_command(
             source_command + 'openstack keypair create --public-key /home/stack/.ssh/id_rsa.pub default')
 else:
+    template_path='/home/stack/virt_vswitch/networking-ansible.yaml'
     qe_setup_parameters = {
         'baremetal_guest_ports': ports,
         'switch_type': 'juniper_physical_sw',
         'switch_ip':
-            read_yaml('/home/stack/templates/neutron-ml2-ansible.yaml')['parameter_defaults']['ML2HostConfigs'][
-                'switch1']['ansible_host'],
-        'switch_user':
-            read_yaml('/home/stack/templates/neutron-ml2-ansible.yaml')['parameter_defaults']['ML2HostConfigs'][
-                'switch1']['ansible_user'],
-        'switch_password':
-            read_yaml('/home/stack/templates/neutron-ml2-ansible.yaml')['parameter_defaults']['ML2HostConfigs'][
-                'switch1']['ansible_ssh_pass'],
+            read_yaml(template_path)['parameter_defaults']['ML2HostConfigs']['switch1']['ansible_host'],
+        'switch_user':read_yaml(template_path)['parameter_defaults']['ML2HostConfigs']['switch1']['ansible_user'],
+        'switch_password':read_yaml(template_path)['parameter_defaults']['ML2HostConfigs']['switch1']['ansible_ssh_pass'],
         'tenant_nets': ['tenant-net', 'tenant-net2'],
         'setup': 'QE_Setup'
     }
