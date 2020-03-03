@@ -35,31 +35,6 @@ for bm_port in bm_ports:
     port=exec_command_line_command(source_overcloud+'openstack baremetal port show '+bm_port+' -f json')['JsonOutput']['local_link_connection']['port_id']
     ports.append(port)
 
-
-# QE Setup #
-qe_setup_parameters={
-    'baremetal_guest_ports':ports,
-    'switch_type':'juniper_physical_sw',
-    'switch_ip':read_yaml('/home/stack/templates/neutron-ml2-ansible.yaml')['parameter_defaults']['ML2HostConfigs']['switch1']['ansible_host'],
-    'switch_user':read_yaml('/home/stack/templates/neutron-ml2-ansible.yaml')['parameter_defaults']['ML2HostConfigs']['switch1']['ansible_user'],
-    'switch_password':read_yaml('/home/stack/templates/neutron-ml2-ansible.yaml')['parameter_defaults']['ML2HostConfigs']['switch1']['ansible_ssh_pass'],
-    'tenant_nets':['tenant-net','tenant-net2'],
-    'setup':'QE_Setup'
-}
-
-# Virtual Setup #
-virt_setup_parameters={
-    'baremetal_guest_ports':ports,
-    'switch_type':'juniper_emulator_sw',
-    'switch_ip':read_yaml('/home/stack/templates/neutron-ml2-ansible.yaml')['parameter_defaults']['ML2HostConfigs']['junos']['ansible_host'],
-    'switch_user':'ansible',
-    'switch_password':read_yaml('/home/stack/templates/neutron-ml2-ansible.yaml')['parameter_defaults']['ML2HostConfigs']['junos']['ansible_ssh_pass'],
-    'tenant_nets':['tempest-shared','tempest-shared'], #Duplicated in order to create 2 BM in parallel in test 010
-    'setup':'Virtual_Setup'
-}
-
-
-
 ### Get controllers IPs ###
 controllers = exec_command_line_command(source_undercloud+'openstack server list --name controller -f json')[
     'JsonOutput']
@@ -81,6 +56,20 @@ for ip in nodes_ips:
 
 ### No Ceph = Virt Setup ###
 if cephs==[]:
+    virt_setup_parameters = {
+        'baremetal_guest_ports': ports,
+        'switch_type': 'juniper_emulator_sw',
+        'switch_ip':
+            read_yaml('/home/stack/templates/neutron-ml2-ansible.yaml')['parameter_defaults']['ML2HostConfigs'][
+                'junos']['ansible_host'],
+        'switch_user': 'ansible',
+        'switch_password':
+            read_yaml('/home/stack/templates/neutron-ml2-ansible.yaml')['parameter_defaults']['ML2HostConfigs'][
+                'junos']['ansible_ssh_pass'],
+        'tenant_nets': ['tempest-shared', 'tempest-shared'],
+    # Duplicated in order to create 2 BM in parallel in test 010
+        'setup': 'Virtual_Setup'
+    }
     prms=virt_setup_parameters
     # Create key pair #
     source_command = 'source /home/stack/overcloudrc;'
@@ -91,6 +80,21 @@ if cephs==[]:
         result = exec_command_line_command(
             source_command + 'openstack keypair create --public-key /home/stack/.ssh/id_rsa.pub default')
 else:
+    qe_setup_parameters = {
+        'baremetal_guest_ports': ports,
+        'switch_type': 'juniper_physical_sw',
+        'switch_ip':
+            read_yaml('/home/stack/templates/neutron-ml2-ansible.yaml')['parameter_defaults']['ML2HostConfigs'][
+                'switch1']['ansible_host'],
+        'switch_user':
+            read_yaml('/home/stack/templates/neutron-ml2-ansible.yaml')['parameter_defaults']['ML2HostConfigs'][
+                'switch1']['ansible_user'],
+        'switch_password':
+            read_yaml('/home/stack/templates/neutron-ml2-ansible.yaml')['parameter_defaults']['ML2HostConfigs'][
+                'switch1']['ansible_ssh_pass'],
+        'tenant_nets': ['tenant-net', 'tenant-net2'],
+        'setup': 'QE_Setup'
+    }
     prms=qe_setup_parameters
 
 
