@@ -11,7 +11,7 @@ source_undercloud='source /home/stack/stackrc;'
 source_tenant_user='source /home/stack/userrc;'
 overcloud_log_path='/var/log'
 manageable_timeout=1500 #Test 009 "Clean"
-available_timeout=5*1500 #Test 009 "Clean"
+available_timeout=1500 #Test 009 "Clean"
 create_bm_server_timeout=1500
 delete_server_timeouts=1500
 use_podman=False
@@ -270,19 +270,14 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             exec_command_line_command(source_overcloud+'openstack baremetal node provide '+id)
         start_time=time.time()
         to_stop=False
-        while to_stop==False and (time.time()<(start_time+available_timeout)):
-
-
-            print ('while',time.time())
+        while to_stop==False and (time.time()<(start_time+manageable_timeout)):
             time.sleep(10)
-
-
             actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
             print(actual_vlans)
             if str(actual_vlans).count(str(baremetal_vlan_id))==len(prms['baremetal_guest_ports']):
                 to_stop=True
         self.assertIn(str(baremetal_vlan_id),str(actual_vlans), 'Failed: baremetal ports are not set to baremetal network vlan:\n' +str(actual_vlans))
-        status=wait_till_bm_is_in_state(source_overcloud, 'available')
+        status=wait_till_bm_is_in_state(source_overcloud, 'available',available_timeout)
         self.assertEqual(True,status,'Failed, BM are not in "available" Provisioning State!')
 
     """ This test is planed to validate that Bare Metal guests creation (as Servers on Overcloud) is successfully done and that
