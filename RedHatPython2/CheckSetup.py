@@ -10,10 +10,10 @@ source_overcloud='source /home/stack/overcloudrc;'
 source_undercloud='source /home/stack/stackrc;'
 source_tenant_user='source /home/stack/userrc;'
 overcloud_log_path='/var/log'
-manageable_timeout=1500 #Test 009 "Clean"
-available_timeout=1500 #Test 009 "Clean"
-create_bm_server_timeout=1500
-delete_server_timeouts=1500
+manageable_timeout=1000*5 #Test 009 "Clean"
+available_timeout=1000*5 #Test 009 "Clean"
+create_bm_server_timeout=1000*5
+delete_server_timeouts=1000*5
 use_podman=False
 if '15' in exec_command_line_command('cat /etc/rhosp-release')['CommandOutput']:
     use_podman=True
