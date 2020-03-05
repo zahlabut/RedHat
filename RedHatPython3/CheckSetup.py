@@ -11,7 +11,7 @@ source_undercloud='source /home/stack/stackrc;'
 source_tenant_user='source /home/stack/userrc;'
 overcloud_log_path='/var/log'
 manageable_timeout=1500 #Test 009 "Clean"
-available_timeout=2*1500 #Test 009 "Clean"
+available_timeout=3*1500 #Test 009 "Clean"
 create_bm_server_timeout=1500
 delete_server_timeouts=1500
 use_podman=False
@@ -270,7 +270,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             exec_command_line_command(source_overcloud+'openstack baremetal node provide '+id)
         start_time=time.time()
         to_stop=False
-        while to_stop==False and (time.time()<(start_time+manageable_timeout)):
+        while to_stop==False and (time.time()<(start_time+available_timeout)):
             time.sleep(10)
             actual_vlans = get_juniper_sw_get_port_vlan(prms['switch_ip'], prms['switch_user'], prms['switch_password'], prms['baremetal_guest_ports'])
             print(actual_vlans)
