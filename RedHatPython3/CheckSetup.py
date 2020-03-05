@@ -114,7 +114,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.baremetal_node_states=[item['provisioning state'] for item in exec_command_line_command(source_overcloud+'openstack baremetal node list -f json')['JsonOutput']]
         if list(set(self.baremetal_node_states))!=['enroll']:
             # Make sure that BM Nodes are in "available" and wait some time if needed
-            status=wait_till_bm_is_in_state(source_overcloud, 'available')
+            status=wait_till_bm_is_in_state(source_overcloud, 'available',available_timeout)
             self.assertEqual(True,status,'Failed, not all BM are in "available" Provisioning State!')
         else:
             print('--> Baremetal Nodes are in "enroll", SetUp activates "Clean" using dedicated test case')
@@ -309,7 +309,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             expected_vlans_on_switch.append(str(vlan_id))
 
         # Wait till all servers are getting into "active"
-        result=wait_till_servers_are_active(source_overcloud)
+        result=wait_till_servers_are_active(source_overcloud, create_bm_server_timeout)
         self.assertEqual(True, result, 'Failed, not all Servers are in "active" status!')
 
         # Make sure that each server was created on proper network, basing on VLAN id comparison
@@ -373,7 +373,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             expected_vlans_on_switch.append(str(vlan_id))
 
         # Wait till all servers are getting into "active"
-        result=wait_till_servers_are_active(source_overcloud)
+        result=wait_till_servers_are_active(source_overcloud,create_bm_server_timeout)
         self.assertEqual(True, result, 'Failed, not all Servers are in "active" status!')
 
         # Make sure that each server was created on proper network, basing on VLAN id comparison
@@ -425,7 +425,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
 
         # Wait till all servers are getting into "active"
-        result=wait_till_servers_are_active(source_overcloud)
+        result=wait_till_servers_are_active(source_overcloud,create_bm_server_timeout)
         self.assertEqual(True, result, 'Failed, not all Servers are in "active" status!')
 
         # Make sure that each server was created on proper network, basing on VLAN id comparison
@@ -458,7 +458,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         expected_vlans_on_switch.append(str(vlan_id))
 
         # Wait till all servers are getting into "active"
-        result=wait_till_servers_are_active(source_overcloud)
+        result=wait_till_servers_are_active(source_overcloud,create_bm_server_timeout)
         self.assertEqual(True, result, 'Failed, not all Servers are in "active" status!')
 
         # Make sure that each server was created on proper network, basing on VLAN id comparison
@@ -536,7 +536,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
 
         # Wait till all servers are getting into "active"
-        result=wait_till_servers_are_active(source_overcloud)
+        result=wait_till_servers_are_active(source_overcloud,create_bm_server_timeout)
         self.assertEqual(True, result, 'Failed, not all Servers are in "active" status!')
 
         # Check Trunk on Switch port
