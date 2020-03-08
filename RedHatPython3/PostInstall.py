@@ -217,7 +217,7 @@ if 'overcloud-full' not in existing_images:
         all_errors.append(result['CommandOutput'])
 
 # Create cirros image
-if 'ciross' not in existing_images:
+if 'cirros' not in existing_images:
     install_wget='sudo yum install wget -y'
     print (exec_command_line_command(install_wget)['ReturnCode'])
     download_cirros='wget -4 http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img'
