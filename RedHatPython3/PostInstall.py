@@ -219,11 +219,11 @@ if 'overcloud-full' not in existing_images:
 # Create cirros image
 if 'ciross' not in existing_images:
     install_wget='sudo yum install wget -y'
-    exec_command_line_command(install_wget)
+    print (exec_command_line_command(install_wget)['JsonOutput'])
     download_cirros='wget -4 http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img'
-    exec_command_line_command(download_cirros)
-    exec_command_line_command('openstack image create --disk-format qcow2 --file cirros-0.3.5-x86_64-disk.img --public cirros')
-    exec_command_line_command('openstack image create --disk-format qcow2 --file rhel-guest-image-7.2-20151102.0.x86_64.qcow2 --public rhel')
+    print (exec_command_line_command(download_cirros)['JsonOutput'])
+    print (exec_command_line_command('openstack image create --disk-format qcow2 --file cirros-0.3.5-x86_64-disk.img --public cirros')['JsonOutput'])
+    print (exec_command_line_command('openstack image create --disk-format qcow2 --file rhel-guest-image-7.2-20151102.0.x86_64.qcow2 --public rhel')['JsonOutput'])
 
 if 'baremetal-hosts' not in existing_aggregates:
     result=exec_command_line_command(source_command+'openstack aggregate create --property baremetal=true baremetal-hosts')
