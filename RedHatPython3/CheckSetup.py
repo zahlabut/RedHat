@@ -304,9 +304,19 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             counter+=1
             vlan_id=exec_command_line_command(source_overcloud+'openstack network show '+net+' -f json')['JsonOutput']['provider:segmentation_id']
             create_bm_command=source_overcloud+'openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+net+' '+bm_name+str(counter)
+
+            if prms['setup']=='Virtual_Setup':
+                create_bm_command=create_bm_command.replace('overcloud-full','cirros')
+
+
+
             result=exec_command_line_command(create_bm_command)
             self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest, command return non Zero status code\n'+result['CommandOutput'])
             create_vm_command=source_overcloud+'openstack server create --flavor small --image overcloud-full --key default --nic net-id='+net+' '+vm_name+str(counter)
+
+            if prms['setup']=='Virtual_Setup':
+                create_vm_command=create_vm_command.replace('overcloud-full','cirros')
+
             result=exec_command_line_command(create_vm_command)
             self.assertEqual(0, result['ReturnCode'], 'Failed: create VM, command return non Zero status code\n'+result['CommandOutput'])
             expected_vlans_on_switch.append(str(vlan_id))
