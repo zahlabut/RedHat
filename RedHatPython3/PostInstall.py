@@ -160,6 +160,12 @@ if 'small' not in existing_flavors:
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
 
+# Create m1.micro flavor #
+if 'm1.micro' not in existing_flavors:
+    result=exec_command_line_command(source_command+'openstack flavor create --id auto --ram 128 --vcpus 2 --disk 1 --public m1.micro')
+    if result['ReturnCode']!=0:
+        all_errors.append(result['CommandOutput'])
+
 # Create bm-deploy-kernel image #
 if 'bm-deploy-kernel' not in existing_images:
     result=exec_command_line_command(source_command+'openstack image create --container-format aki  --disk-format aki --public --file /home/stack/ironic-python-agent.kernel bm-deploy-kernel -f json')

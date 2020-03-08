@@ -311,8 +311,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
 
 
-            #result=exec_command_line_command(create_bm_command)
-            #self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest, command return non Zero status code\n'+result['CommandOutput'])
+            result=exec_command_line_command(create_bm_command)
+            self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest, command return non Zero status code\n'+result['CommandOutput'])
 
 
 
@@ -321,7 +321,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
 
 
             if prms['setup']=='Virtual_Setup':
-                create_vm_command=create_vm_command.replace('overcloud-full','cirros').replace('small','virtual')
+                create_vm_command=create_vm_command.replace('overcloud-full','cirros').replace('small','m1.micro')
 
             result=exec_command_line_command(create_vm_command)
             self.assertEqual(0, result['ReturnCode'], 'Failed: create VM, command return non Zero status code\n'+result['CommandOutput'])
@@ -612,7 +612,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         self.existing_servers_ids=[node['id'] for node in exec_command_line_command(source_overcloud+'openstack server list --all -f json')['JsonOutput']]
         print('--> Existing servers IDs: ',self.existing_servers_ids)
         if self.existing_servers_ids!=[]:
-            print('--> Delete all existing BM Guests')
+            print('--> Delete all existing servers')
             delete_result=delete_server(source_overcloud, self.existing_servers_ids, 300)
             self.assertEqual(True, delete_result, 'Failed to delete existing servers: '+str(self.existing_servers_ids))
 
