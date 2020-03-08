@@ -64,7 +64,7 @@ if cephs==[]:
             read_yaml(template_path)['parameter_defaults']['ML2HostConfigs']['junos']['ansible_host'],
         'switch_user': 'ansible',
         'switch_password':read_yaml(template_path)['parameter_defaults']['ML2HostConfigs']['junos']['ansible_ssh_pass'],
-        'tenant_nets': ['tempest-shared', 'tempest-shared'],
+        'tenant_nets': ['tenant-net', 'tenant-net2'],
     # Duplicated in order to create 2 BM in parallel in test 010
         'setup': 'Virtual_Setup'
     }
@@ -294,6 +294,9 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         counter=0
         tenant_nets=prms['tenant_nets']
         tenant_net_ids=[item['id'] for item in exec_command_line_command(source_overcloud+'openstack network list -f json')['JsonOutput'] if item['name'] in tenant_nets]
+
+        print (tenant_net_ids)
+
         self.assertNotEqual(0,len(tenant_net_ids),'Failed, no tenant networks detected')
         expected_vlans_on_switch=[]
         # Create servers
