@@ -17,7 +17,7 @@ nodes:
           local_link_connection:
             switch_id: 00:00:00:00:00:00
             switch_info: switch1
-            port_id: xe-0/0/6
+            port_id: xe-1/0/6
     - name: ironic-1
       driver: ipmi
       driver_info:
@@ -36,4 +36,4 @@ nodes:
           local_link_connection:
             switch_id: 00:00:00:00:00:00
             switch_info: switch1
-            port_id: xe-0/0/7
+            port_id: xe-1/0/7
