@@ -36,8 +36,6 @@ for bm_port in bm_ports:
     port=exec_command_line_command(source_overcloud+'openstack baremetal port show '+bm_port+' -f json')['JsonOutput']['local_link_connection']['port_id']
     ports.append(port)
 
-
-
 ### Get controllers IPs ###
 controllers = exec_command_line_command(source_undercloud+'openstack server list --name controller -f json')[
     'JsonOutput']
