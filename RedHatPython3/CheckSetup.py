@@ -45,20 +45,6 @@ cephs = exec_command_line_command(source_undercloud+'openstack server list --nam
     'JsonOutput']
 cephs_ips = [item['networks'].split('=')[-1] for item in cephs]
 
-
-#REMOVE
-cephs=[]
-#REMOVE
-#REMOVE
-#REMOVE
-#REMOVE
-#REMOVE
-#REMOVE
-#REMOVE
-#REMOVE
-#REMOVE
-
-
 ### Get Overcloud Node IPs ###
 nodes = exec_command_line_command(source_undercloud+'openstack server list -f json')['JsonOutput']
 nodes_ips = [item['networks'].split('=')[-1] for item in nodes]
