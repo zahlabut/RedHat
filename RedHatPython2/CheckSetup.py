@@ -301,10 +301,10 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         for net in tenant_net_ids:
             counter+=1
             vlan_id=exec_command_line_command(source_overcloud+'openstack network show '+net+' -f json')['JsonOutput']['provider:segmentation_id']
-            create_bm_command=source_overcloud+'openstack server create --flavor baremetal --image overcloud-full --key default --nic net-id='+net+' '+bm_name+str(counter)
+            create_bm_command=source_overcloud+'openstack server create --flavor baremetal --image cirros --key default --nic net-id='+net+' '+bm_name+str(counter)
             result=exec_command_line_command(create_bm_command)
             self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest, command return non Zero status code\n'+result['CommandOutput'])
-            create_vm_command=source_overcloud+'openstack server create --flavor small --image overcloud-full --key default --nic net-id='+net+' '+vm_name+str(counter)
+            create_vm_command=source_overcloud+'openstack server create --flavor small --image cirros --key default --nic net-id='+net+' '+vm_name+str(counter)
             result=exec_command_line_command(create_vm_command)
             self.assertEqual(0, result['ReturnCode'], 'Failed: create VM, command return non Zero status code\n'+result['CommandOutput'])
             expected_vlans_on_switch.append(str(vlan_id))
@@ -339,7 +339,8 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
         # Only Servers with the same index, it means "1" (VM_1 for example) should work and the rest should not.
         first_bm_ip=[server['FloatingIp'] for server in servers_info if server['Name']=='BM_Guest_1'.lower()][0]
         print first_bm_ip
-        is_ssh_ok=check_ssh(first_bm_ip,'cloud-user','')
+        #is_ssh_ok=check_ssh(first_bm_ip,'cloud-user','')
+        is_ssh_ok=check_ssh(first_bm_ip,'root','cubswin:)')
         self.assertEquals(True, is_ssh_ok, 'Failed to establish SSH connection to BM Guest FloatingIp: '+first_bm_ip)
 
         for server in servers_info:
