@@ -57,7 +57,7 @@ for ip in nodes_ips:
 
 ### No Ceph = Virt Setup ###
 if cephs==[]:
-    template_path='/home/stack/virt_vswitch/networking-ansible.yaml'
+    template_path='/home/stack/virt_vswitch/networking-ansible-vqfx.yaml'
     virt_setup_parameters = {
         'baremetal_guest_ports': ports,
         'switch_type': 'juniper_emulator_sw',
