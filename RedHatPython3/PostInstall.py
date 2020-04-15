@@ -205,10 +205,15 @@ if 'overcloud-full.vmlinuz' not in existing_images:
     if result['ReturnCode']!=0:
         all_errors.append(result['CommandOutput'])
 
-if 'overcloud-full.initrd' not in existing_images:
+if setup_type=='baremetal' and 'overcloud-full.initrd' not in existing_images:
     command='openstack image create --file /home/stack/overcloud-full.initrd --public --container-format ari --disk-format ari -f value -c id overcloud-full.initrd'
-    if setup_type=='virt':
-        command=command.replace('/home/stack',virt_setup_overcloud_images).replace('overcloud-full.initrd','overcloud-full-initrd')
+    result=exec_command_line_command(source_command+command)
+    id2=result['CommandOutput'].strip()
+    if result['ReturnCode']!=0:
+        all_errors.append(result['CommandOutput'])
+
+if setup_type == 'virt' and 'overcloud-full-initrd' not in existing_images:
+    command='openstack image create --file /home/stack/overcloud-full.initrd --public --container-format ari --disk-format ari -f value -c id overcloud-full-initrd'
     result=exec_command_line_command(source_command+command)
     id2=result['CommandOutput'].strip()
     if result['ReturnCode']!=0:
