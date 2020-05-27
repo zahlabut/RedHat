@@ -231,11 +231,11 @@ if 'cirros' not in existing_images:
     print (exec_command_line_command(install_wget)['ReturnCode'])
     download_cirros='wget -4 http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img'
     print (exec_command_line_command(download_cirros)['ReturnCode'])
-    print (exec_command_line_command('openstack image create --disk-format qcow2 --file cirros-0.3.5-x86_64-disk.img --public cirros')['ReturnCode'])
+    print (exec_command_line_command(source_command+'openstack image create --disk-format qcow2 --file cirros-0.3.5-x86_64-disk.img --public cirros')['ReturnCode'])
 if 'rhel' not in existing_images:
     download_rhel='wget -4 http://file.tlv.redhat.com/~itbrown/images/rhel-guest-image-7.2-20151102.0.x86_64.qcow2'
     print (exec_command_line_command(download_rhel)['ReturnCode'])
-    print (exec_command_line_command('openstack image create --disk-format qcow2 --file rhel-guest-image-7.2-20151102.0.x86_64.qcow2 --public rhel')['ReturnCode'])
+    print (exec_command_line_command(source_command+'openstack image create --disk-format qcow2 --file rhel-guest-image-7.2-20151102.0.x86_64.qcow2 --public rhel')['ReturnCode'])
 
 
 if 'baremetal-hosts' not in existing_aggregates:
