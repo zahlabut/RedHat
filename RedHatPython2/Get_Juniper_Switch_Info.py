@@ -2,7 +2,7 @@ from Common import *
 
 # QE Setup #
 setup_parameters={
-    'baremetal_guest_ports':['xe-0/0/6', 'xe-0/0/7'],
+    'baremetal_guest_ports':['xe-1/0/6', 'xe-1/0/7'],
     'switch_type':'juniper_physical_sw',
     'switch_ip':'10.10.191.221',
     'switch_user':'ansible',
