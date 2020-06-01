@@ -385,6 +385,7 @@ class AnsibleNetworkingFunctionalityTests(unittest.TestCase):
             self.assertEqual(0, result['ReturnCode'], 'Failed: create BM guest command return non Zero status code\n'+result['CommandOutput'])
             expected_vlans_on_switch.append(str(vlan_id))
 
+
         # Wait till all servers are getting into "active"
         result=wait_till_servers_are_active(source_overcloud,create_bm_server_timeout)
         self.assertEqual(True, result, 'Failed, not all Servers are in "active" status!')
